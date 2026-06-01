@@ -1,15 +1,35 @@
 Rails.application.routes.draw do
-  root to: "pages#home"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  get "quizz_games/create"
+  get "quizz_games/destroy"
+  get "list_games/create"
+  get "list_games/destroy"
+  get "quizzs/index"
+  get "quizzs/show"
+  get "quizzs/new"
+  get "quizzs/create"
+  get "quizzs/edit"
+  get "quizzs/update"
+  get "quizzs/destroy"
+  get "lists/index"
+  get "lists/show"
+  get "lists/new"
+  get "lists/create"
+  get "lists/edit"
+  get "lists/update"
+  get "lists/destroy"
+  get "games/index"
+  get "games/show"
+  devise_for :users
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  resources :games, only: [:index, :show]
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  resources :lists do
+    resources :list_games, only: [:create, :destroy]
+  end
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  resources :quizzs do
+    resources :quizz_games, only: [:create, :destroy]
+  end
+
+  root "games#index"
 end

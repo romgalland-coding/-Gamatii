@@ -10,9 +10,61 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_01_130910) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_133936) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "games", force: :cascade do |t|
+    t.string "cover_img"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "developer"
+    t.string "game_mode", default: [], array: true
+    t.string "genre"
+    t.string "in_game_img"
+    t.string "platforms"
+    t.string "publisher"
+    t.float "rating"
+    t.date "release_date"
+    t.string "title"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "list_games", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "game_id", null: false
+    t.bigint "list_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_list_games_on_game_id"
+    t.index ["list_id"], name: "index_list_games_on_list_id"
+  end
+
+  create_table "lists", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "list_type", default: [], array: true
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "votes_count"
+    t.index ["user_id"], name: "index_lists_on_user_id"
+  end
+
+  create_table "quizz_games", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "game_id", null: false
+    t.bigint "quizz_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["game_id"], name: "index_quizz_games_on_game_id"
+    t.index ["quizz_id"], name: "index_quizz_games_on_quizz_id"
+    t.index ["user_id"], name: "index_quizz_games_on_user_id"
+  end
+
+  create_table "quizzs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
 
   create_table "solid_cable_messages", force: :cascade do |t|
     t.binary "channel", null: false
@@ -156,6 +208,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_130910) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "gamer_tag"
+    t.string "platform", default: [], array: true
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  add_foreign_key "list_games", "games"
+  add_foreign_key "list_games", "lists"
+  add_foreign_key "lists", "users"
+  add_foreign_key "quizz_games", "games"
+  add_foreign_key "quizz_games", "quizzs"
+  add_foreign_key "quizz_games", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
