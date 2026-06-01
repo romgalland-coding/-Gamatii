@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_01_133936) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_151321) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,18 +49,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_133936) do
     t.index ["user_id"], name: "index_lists_on_user_id"
   end
 
-  create_table "quizz_games", force: :cascade do |t|
+  create_table "quiz_games", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "game_id", null: false
-    t.bigint "quizz_id", null: false
+    t.bigint "quiz_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["game_id"], name: "index_quizz_games_on_game_id"
-    t.index ["quizz_id"], name: "index_quizz_games_on_quizz_id"
-    t.index ["user_id"], name: "index_quizz_games_on_user_id"
+    t.index ["game_id"], name: "index_quiz_games_on_game_id"
+    t.index ["quiz_id"], name: "index_quiz_games_on_quiz_id"
+    t.index ["user_id"], name: "index_quiz_games_on_user_id"
   end
 
-  create_table "quizzs", force: :cascade do |t|
+  create_table "quizzes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
@@ -225,9 +225,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_133936) do
   add_foreign_key "list_games", "games"
   add_foreign_key "list_games", "lists"
   add_foreign_key "lists", "users"
-  add_foreign_key "quizz_games", "games"
-  add_foreign_key "quizz_games", "quizzs"
-  add_foreign_key "quizz_games", "users"
+  add_foreign_key "quiz_games", "games"
+  add_foreign_key "quiz_games", "quizzes"
+  add_foreign_key "quiz_games", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
