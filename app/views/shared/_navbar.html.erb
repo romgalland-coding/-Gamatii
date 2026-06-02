@@ -19,7 +19,7 @@
         <span>Lists</span>
       <% end %>
 
-      <%= link_to "#", class: "bottom-nav__item" do %>
+      <%= link_to daily_quizzes_path, class: "bottom-nav__item #{'bottom-nav__item--active' if request.path.start_with?('/quizzes')}" do %>
         <i class="fa-solid fa-trophy"></i>
         <span>Quiz</span>
       <% end %>
