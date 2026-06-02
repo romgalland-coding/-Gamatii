@@ -1,0 +1,94 @@
+// Gamatii neo-brutalist button style
+// Mirrors ui-primitives.tsx PushButton variants
+
+.btn {
+  border: 2.5px solid #000;
+  border-radius: 1rem;
+  font-weight: 600;
+  box-shadow: 4px 4px 0 0 #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  color: #000;
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 #000;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $mat-blue;
+    outline-offset: 2px;
+  }
+}
+
+// Variant mappings
+.btn-primary {
+  background-color: $mat-blue;
+  border-color: #000;
+  color: #000;
+
+  &:hover, &:focus {
+    background-color: $mat-blue-light;
+    border-color: #000;
+    color: #000;
+  }
+}
+
+.btn-success {
+  background-color: $mat-green;
+  border-color: #000;
+  color: #000;
+
+  &:hover, &:focus {
+    background-color: $mat-green-light;
+    border-color: #000;
+    color: #000;
+  }
+}
+
+.btn-warning {
+  background-color: $mat-yellow;
+  border-color: #000;
+  color: #000;
+
+  &:hover, &:focus {
+    background-color: $mat-yellow-light;
+    border-color: #000;
+    color: #000;
+  }
+}
+
+.btn-danger {
+  background-color: $mat-red;
+  border-color: #000;
+  color: #000;
+
+  &:hover, &:focus {
+    background-color: $mat-red-light;
+    border-color: #000;
+    color: #000;
+  }
+}
+
+.btn-secondary {
+  background-color: white;
+  border-color: #000;
+  color: #000;
+
+  &:hover, &:focus {
+    background-color: $color-muted;
+    border-color: #000;
+    color: #000;
+  }
+}
+
+.btn-outline-primary {
+  background-color: white;
+  border-color: #000;
+  color: #000;
+
+  &:hover, &:focus {
+    background-color: $mat-blue-light;
+    border-color: #000;
+    color: #000;
+  }
+}

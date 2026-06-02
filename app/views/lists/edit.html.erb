@@ -1,0 +1,17 @@
+<div class="lists-page">
+  <%= link_to "‹ Back", @list, class: "list-show__back" %>
+
+  <header>
+    <h1 class="lists-title">Edit list</h1>
+  </header>
+
+  <%= simple_form_for @list do |f| %>
+    <%= f.input :name,
+          label: false,
+          placeholder: "List name",
+          input_html: { class: "form-control" } %>
+    <%= f.submit "Save", class: "btn btn-primary w-100" %>
+  <% end %>
+</div>
+
+<%= render "shared/bottom_nav", active: :lists %>

@@ -1,0 +1,206 @@
+.profile-page {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+// Header
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background-color: $mat-yellow;
+  border: 2.5px solid #000;
+  box-shadow: 1px 1px 0 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.profile-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #000;
+  margin: 0;
+}
+
+.profile-subtitle {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+// Field rows (show view)
+.profile-field {
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__value {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background-color: white;
+    border: 2.5px solid #000;
+    box-shadow: 1px 1px 0 0 #000;
+    font-weight: 500;
+    color: #000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__edit {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.75rem 0.875rem;
+    border-radius: 0.75rem;
+    background-color: $mat-yellow;
+    border: 2.5px solid #000;
+    box-shadow: 3px 3px 0 0 #000;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #000;
+    text-decoration: none;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+    &:hover {
+      color: #000;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 0 #000;
+    }
+  }
+}
+
+.profile-empty-devices {
+  font-size: 0.9375rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.75rem;
+}
+
+.profile-add-device {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  background-color: $mat-blue;
+  border: 2.5px solid #000;
+  box-shadow: 3px 3px 0 0 #000;
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:hover {
+    color: #000;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 #000;
+  }
+}
+
+// Delete confirmation
+.profile-delete-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  font-weight: 700;
+  color: $mat-red-dark;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+
+  &:hover { opacity: 0.8; }
+}
+
+.profile-delete-confirm {
+  background-color: $mat-red-light;
+  border: 2.5px solid #000;
+  border-radius: 1rem;
+  box-shadow: 4px 4px 0 0 #000;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+
+  &__cancel {
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    background-color: white;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 0 #000;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  &__confirm {
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    background-color: $mat-red;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 0 #000;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #000;
+    cursor: pointer;
+  }
+}
+
+// Edit view — device checkboxes
+.profile-devices-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-device-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background-color: white;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &--selected {
+    background-color: $mat-yellow-light;
+  }
+}
+
+.profile-device-checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}

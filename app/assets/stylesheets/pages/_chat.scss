@@ -1,0 +1,424 @@
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 96px); // subtract bottom nav height
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+// Header
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  background-color: $mat-yellow-light;
+  border-bottom: 2.5px solid #000;
+  flex-shrink: 0;
+
+  &__back {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #000;
+  }
+
+  &__titles {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__new {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+    background-color: $mat-yellow;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 0 #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    cursor: pointer;
+    color: #000;
+    transition: transform 0.1s, box-shadow 0.1s;
+
+    &:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 0 #000;
+    }
+  }
+
+  &__app-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: rgba(0, 0, 0, 0.45);
+    line-height: 1;
+  }
+
+  &__chat-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Sidebar
+.chat-sidebar {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+
+  &--open {
+    pointer-events: auto;
+
+    .chat-sidebar__overlay { opacity: 1; }
+    .chat-sidebar__panel   { transform: translateX(0); }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &__panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 80%;
+    max-width: 300px;
+    background: $mat-bg;
+    border-right: 2.5px solid #000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1rem 0.75rem;
+    border-bottom: 2px solid #000;
+    flex-shrink: 0;
+  }
+
+  &__header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__heading {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: #000;
+  }
+
+  &__create {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &:hover { color: #000; }
+  }
+
+  &__list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: #000;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.1s;
+
+    &:hover { background: rgba(0,0,0,0.06); }
+
+    &--active {
+      background: $mat-yellow;
+      font-weight: 700;
+    }
+  }
+
+  &__item-icon {
+    font-size: 0.75rem;
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+
+  &__item-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+}
+
+
+// Messages scroll area
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Individual message row
+.chat-message {
+  display: flex;
+  flex-direction: column;
+
+  &--user     { align-items: flex-end; }
+  &--assistant { align-items: flex-start; }
+}
+
+// Bubble
+.chat-bubble {
+  max-width: 78%;
+  padding: 0.75rem 1rem;
+  border-radius: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.4;
+
+  &--user {
+    background-color: $mat-yellow;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  &--assistant {
+    background-color: white;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 0 #000;
+    border-bottom-left-radius: 0.25rem;
+  }
+}
+
+// Game recommendation card
+.rec-card {
+  border: 2.5px solid #000;
+  border-radius: 1.25rem;
+  box-shadow: 4px 4px 0 0 #000;
+  overflow: hidden;
+  background-color: white;
+  margin-top: 0.75rem;
+  max-width: 300px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &--action-wishlist {
+    border-color: $mat-blue;
+    box-shadow: 4px 4px 0 0 $mat-blue;
+    .rec-card__badge--wishlist { display: flex; }
+  }
+  &--action-played {
+    border-color: $mat-green;
+    box-shadow: 4px 4px 0 0 $mat-green;
+    .rec-card__badge--played { display: flex; }
+  }
+  &--action-skip {
+    border-color: $mat-red;
+    box-shadow: 4px 4px 0 0 $mat-red;
+    .rec-card__badge--skip { display: flex; }
+  }
+
+  &__badge {
+    display: none;
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 2px solid #000;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    z-index: 1;
+
+    &--wishlist { background-color: $mat-blue; }
+    &--played   { background-color: $mat-green; }
+    &--skip     { background-color: $mat-red; }
+  }
+
+  &__cover {
+    width: 100%;
+    height: 140px;
+    background-size: cover;
+    background-position: center;
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $mat-blue-light;
+      font-size: 2.5rem;
+      color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &__body {
+    padding: 0.875rem 1rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.625rem;
+  }
+
+  &__tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    background-color: $mat-yellow;
+    border: 1.5px solid #000;
+    letter-spacing: 0.02em;
+
+    &--muted {
+      background-color: $mat-bg;
+    }
+  }
+
+  &__desc {
+    font-size: 0.8125rem;
+    color: rgba(0, 0, 0, 0.65);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 2px solid #000;
+  }
+
+  &__btn {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.25rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+// Input bar
+.chat-input-bar {
+  padding: 0.75rem 1rem;
+  border-top: 2.5px solid #000;
+  background-color: $mat-bg;
+  flex-shrink: 0;
+}
+
+.chat-input-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background-color: white;
+  border: 2.5px solid #000;
+  box-shadow: 3px 3px 0 0 #000;
+  font-size: 0.9375rem;
+  color: #000;
+
+  &::placeholder { color: rgba(0, 0, 0, 0.4); }
+  &:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 0 #000;
+  }
+}
+
+.chat-send-btn {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background-color: $mat-yellow;
+  border: 2.5px solid #000;
+  box-shadow: 3px 3px 0 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 #000;
+  }
+}
+
+.chat-limit-notice {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0.75rem 0;
+}

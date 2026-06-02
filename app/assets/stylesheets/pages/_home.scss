@@ -1,1 +1,120 @@
-// Specific CSS for your home-page
+.home-page {
+  max-width: 420px;
+  margin: 0 auto;
+  height: calc(100vh - 5rem);
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.5rem 1.25rem;
+  gap: clamp(0.75rem, 2.5vh, 1.5rem);
+}
+
+// Header absorbs extra vertical space on large phones — title stays centered inside
+.home-page > header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.home-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #000;
+
+  em { font-style: italic; }
+}
+
+.home-subtitle {
+  font-size: 0.9375rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin: clamp(0.2rem, 0.8vh, 0.5rem) 0 0;
+}
+
+// 3x2 game cover grid — aspect-ratio 3/2 keeps cells square (3 cols × 2 rows)
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 4px;
+  border-radius: 1.25rem;
+  border: 2.5px solid #000;
+  box-shadow: 1px 1px 0 0 #000;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+
+  &__cell {
+    background-size: cover;
+    background-position: center;
+    background-color: $mat-blue-light;
+  }
+}
+
+// Feature rows
+.home-features {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: clamp(0.4rem, 1.5vh, 0.85rem) 0;
+
+  &__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    border: 2px solid #000;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9375rem;
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin: 0 0 0.15rem;
+  }
+
+  &__desc {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.55);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__divider {
+    margin: 0;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.home-cta-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.home-cta {
+  font-size: 1rem;
+}
+
+.home-signin-link {
+  display: block;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: 0.25rem 0;
+  text-align: center;
+
+  &:hover { color: #000; }
+}
