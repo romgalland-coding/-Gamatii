@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   devise_for :users
   root "pages#home"
 
+  get  'discover',     to: 'discover#index', as: :discover
+  post 'discover',     to: 'discover#create'
+  get  'discover/:id', to: 'discover#show',  as: :discover_list
+
   resources :games, only: [:show]
 
   resources :lists do

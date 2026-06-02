@@ -3,7 +3,6 @@ class ListsController < ApplicationController
   before_action :set_list, only: %i[show edit update destroy]
 
   def index
-    @lists = policy_scope(List)
     if current_user
       @lists = current_user.lists.includes(:games).order(created_at: :desc)
     else
@@ -12,8 +11,8 @@ class ListsController < ApplicationController
   end
 
   def show
-    @games = @list.games
     authorize @list
+    @games = @list.games
   end
 
   def new
@@ -22,7 +21,7 @@ class ListsController < ApplicationController
   end
 
   def create
-    @list = current_user.lists.build(list_params)
+    @list = current_user.lists.build(list_params.merge(list_type: "custom"))
     authorize @list
     if @list.save
       redirect_to @list

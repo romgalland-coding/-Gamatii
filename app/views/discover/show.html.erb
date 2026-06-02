@@ -1,0 +1,41 @@
+<div data-controller="discover"
+     data-discover-list-id-value="<%= @list.id %>"
+     data-discover-initial-mode-value="<%= params[:query].present? ? 'grid' : 'swipe' %>">
+
+  <h1><%= @list.name %></h1>
+
+  <button class="btn btn-primary"        data-action="click->discover#showSwipe" data-discover-target="btnSwipe">Swipe</button>
+  <button class="btn btn-outline-primary" data-action="click->discover#showGrid"  data-discover-target="btnGrid">Search</button>
+
+  <div data-discover-target="swipeView">
+    <% @games.first(10).each do |game| %>
+      <div data-discover-target="card" data-game-id="<%= game.id %>">
+        <img src="<%= game.cover_img %>" alt="<%= game.title %>">
+        <h3><%= game.title %></h3>
+        <p><%= game.genre %></p>
+        <button class="btn btn-danger"  data-action="click->discover#dislike">Pass</button>
+        <button class="btn btn-success" data-action="click->discover#like">Add</button>
+      </div>
+    <% end %>
+  </div>
+
+  <div data-discover-target="gridView" class="d-none">
+    <%= form_with url: discover_list_path(@list), method: :get do |f| %>
+      <%= f.text_field :query, value: params[:query], placeholder: "Search games..." %>
+      <%= f.submit "Search" %>
+    <% end %>
+
+    <% @games.each do |game| %>
+      <div>
+        <span><%= game.title %></span>
+        <%= form_with url: list_list_games_path(@list), method: :post do |f| %>
+          <%= hidden_field_tag :game_id, game.id %>
+          <%= f.submit "+" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+
+<%= render "shared/navbar" %>
