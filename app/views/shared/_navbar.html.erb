@@ -1,35 +1,41 @@
-<% return unless user_signed_in? %>
+<% active ||= nil %>
 
-<nav class="bottom-nav__bar">
-  <div class="bottom-nav__items">
+<nav class="bottom-nav">
+  <div class="bottom-nav__bar">
+    <div class="bottom-nav__items">
 
-    <% if user_signed_in? && (chat = current_user.chats.order(created_at: :desc).first) %>
-      <%= link_to chat_path(chat), class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/chats")}" do %>
-        <i class="fa-solid fa-message"></i>
-        <span>Chat</span>
+      <%= link_to root_path, class: "bottom-nav__item #{'bottom-nav__item--active' if request.path == '/'}" do %>
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
       <% end %>
-    <% else %>
-      <%= button_to chats_path, method: :post, class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/chats")}", form: { style: "display:contents" } do %>
-        <i class="fa-solid fa-message"></i>
-        <span>Chat</span>
-      <% end %>
-    <% end %>
 
-    <%= link_to games_path, class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/games")}" do %>
-      <i class="fa-solid fa-gamepad"></i>
-      <span>Games</span>
-    <% end %>
+      <%= link_to "#", class: "bottom-nav__item" do %>
+        <i class="fa-solid fa-compass"></i>
+        <span>Discover</span>
+      <% end %>
 
-    <% if user_signed_in? %>
-      <%= link_to profile_path, class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/profile")}" do %>
-        <i class="fa-solid fa-user"></i>
-        <span>Profile</span>
+      <%= link_to lists_path, class: "bottom-nav__item #{'bottom-nav__item--active' if request.path.start_with?('/lists')}" do %>
+        <i class="fa-solid fa-list"></i>
+        <span>Lists</span>
       <% end %>
-    <% else %>
-      <%= link_to new_user_session_path, class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/users")}" do %>
-        <i class="fa-solid fa-user"></i>
-        <span>Login</span>
+
+      <%= link_to "#", class: "bottom-nav__item" do %>
+        <i class="fa-solid fa-trophy"></i>
+        <span>Quiz</span>
       <% end %>
-    <% end %>
+
+      <% if user_signed_in? %>
+        <%= link_to "#", class: "bottom-nav__item" do %>
+          <i class="fa-solid fa-user"></i>
+          <span>Profile</span>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_session_path, class: "bottom-nav__item #{'bottom-nav__item--active' if request.path.start_with?('/users')}" do %>
+          <i class="fa-solid fa-user"></i>
+          <span>Login</span>
+        <% end %>
+      <% end %>
+
+    </div>
   </div>
 </nav>
