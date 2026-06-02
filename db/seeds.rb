@@ -22,7 +22,7 @@ end
 # ── Clean slate ───────────────────────────────────────────────────────────────
 
 puts "Cleaning previous seed data…"
-seed_emails = %w[pixelknight@gamatii.com neonbyte@gamatii.com vortexcaster@gamatii.com]
+seed_emails = %w[pixelknight@gmail.com neonbyte@gmail.com vortexcaster@gmail.com]
 User.where(email: seed_emails).each do |u|
   u.lists.each { |l| l.list_games.destroy_all }
   u.lists.destroy_all
