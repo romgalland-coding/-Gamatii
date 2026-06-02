@@ -24,5 +24,5 @@ class User < ApplicationRecord
   has_many :quiz_games, dependent: :destroy
   has_many :quizzes, through: :quiz_games
 
-  validates :username, presence: true, uniqueness: true, length: { maximum: 20 }
+  validates :gamer_tag, presence: true, uniqueness: true, length: { maximum: 20 }
 end
