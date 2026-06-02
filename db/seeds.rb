@@ -128,4 +128,12 @@ SEED_USERS.each do |data|
   end
 end
 
+# ── Daily Quizzes ─────────────────────────────────────────────────────────────
+
+puts "\nCreating daily quizzes…"
+Quiz.where(name: ["Top 5 Zelda games", "Top 5 PC games"]).destroy_all
+Quiz.create!(name: "Top 5 Zelda games")   # yesterday
+Quiz.create!(name: "Top 5 PC games")      # today
+puts "  2 quizzes created."
+
 puts "\nSeed complete!"
