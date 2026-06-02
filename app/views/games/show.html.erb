@@ -28,7 +28,7 @@
   </div>
 
   <div class="game-show__tags">
-    <% @game.platforms.to_s.gsub(/[\[\]"]/, "").split(",").map(&:strip).reject(&:blank?).each do |platform| %>
+    <% @game.platforms.each do |platform| %>
       <span class="game-show__platform-tag"><%= platform %></span>
     <% end %>
   </div>
