@@ -1,13 +1,13 @@
 require "test_helper"
 
-class QuizzGamesControllerTest < ActionDispatch::IntegrationTest
+class QuizGamesControllerTest < ActionDispatch::IntegrationTest
   test "should get create" do
-    get quizz_games_create_url
+    get quiz_games_create_url
     assert_response :success
   end
 
   test "should get destroy" do
-    get quizz_games_destroy_url
+    get quiz_games_destroy_url
     assert_response :success
   end
 end
