@@ -1,35 +1,60 @@
-<div class="game-show-page">
+<div class="game-show">
 
-  <%= link_to "< Back", :back, class: "list-show__back" %>
-
-  <div class="game-show__cover" style="background-image: url('<%= @game.cover_img %>')"></div>
-
-  <div class="game-show__meta">
-    <% @game.platforms.split(", ").each do |platform| %>
-      <span class="chip chip-blue"><%= platform %></span>
+  <div class="game-show__header">
+    <%= link_to :back, class: "game-show__back" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back
     <% end %>
-    <% @game.game_mode.each do |mode| %>
-      <span class="chip chip-green"><%= mode %></span>
+    <div class="game-show__badges">
+      <% if @user_lists.present? %>
+        <% @user_lists.first(2).each do |list| %>
+          <span class="game-show__list-badge">
+            <i class="fa-solid fa-heart"></i>
+            <%= list.list_type.in?(%w[wishlist played]) ? list.list_type.capitalize : list.name %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="game-show__genre"><%= @game.genre %></p>
+  <h1 class="game-show__title"><%= @game.title %></h1>
+
+  <div class="game-show__cover" style="background-image: url('<%= @game.cover_img %>'); background-size: cover; background-position: center;"></div>
+
+  <div class="game-show__thumbnails">
+    <div class="game-show__thumb" style="background-image: url('<%= @game.in_game_img %>'); background-size: cover; background-position: center;"></div>
+    <div class="game-show__thumb"></div>
+    <div class="game-show__thumb"></div>
+  </div>
+
+  <div class="game-show__tags">
+    <% @game.platforms.to_s.gsub(/[\[\]"]/, "").split(",").map(&:strip).reject(&:blank?).each do |platform| %>
+      <span class="game-show__platform-tag"><%= platform %></span>
     <% end %>
   </div>
 
-  <h1 class="game-show__title"><%= @game.title %></h1>
-  <p class="game-show__developer"><%= @game.developer %></p>
+  <h2 class="game-show__section-title">Description</h2>
+  <div class="game-show__desc-box"><%= @game.description %></div>
 
-  <% if @game.in_game_img.present? %>
-    <div class="game-show__screenshots">
-      <div class="game-show__screenshot" style="background-image: url('<%= @game.in_game_img %>')"></div>
+  <div class="game-show__info">
+    <div class="game-show__info-badge">
+      <div class="game-show__info-label">Studio</div>
+      <%= @game.developer || "TBD" %>
     </div>
-  <% end %>
-
-  <div class="game-show__description">
-    <p><%= @game.description %></p>
+    <div class="game-show__info-badge">
+      <div class="game-show__info-label">Released</div>
+      <%= @game.release_date&.year || "TBD" %>
+    </div>
+    <div class="game-show__info-badge">
+      <div class="game-show__info-label">Rating</div>
+      <%= @game.rating || "N/A" %>
+    </div>
   </div>
 
   <% if current_user %>
-    <%= link_to "+ Add to a list", "#", class: "btn btn-primary w-100" %>
+    <%= link_to "+ Add to a list", "#", class: "btn btn-primary w-100 game-show__cta" %>
   <% end %>
 
 </div>
 
-<%= render "shared/bottom_nav" %>
+<%= render "shared/navbar" %>
