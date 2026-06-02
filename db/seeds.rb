@@ -48,7 +48,7 @@ games = rawg_list.filter_map do |g|
   detail = rawg_get("/games/#{g['id']}")
   sleep 0.2
 
-  platforms_str = g["platforms"]&.map { |p| p.dig("platform", "name") }&.join(", ")
+  platforms_arr = g["platforms"]&.map { |p| p.dig("platform", "name") } || []
   modes         = game_modes_from_tags(detail["tags"])
 
   print "."
@@ -57,7 +57,7 @@ games = rawg_list.filter_map do |g|
     cover_img:    g["background_image"],
     in_game_img:  g.dig("short_screenshots", 1, "image"),
     genre:        g.dig("genres", 0, "name"),
-    platforms:    platforms_str,
+    platforms:    platforms_arr,
     rating:       g["rating"],
     release_date: g["released"],
     description:  detail["description_raw"]&.slice(0, 2000),
@@ -127,5 +127,13 @@ SEED_USERS.each do |data|
     puts "  #{user.gamer_tag} › #{list.name} (#{ldata[:list_type].first}): #{slice.size} games"
   end
 end
+
+# ── Daily Quizzes ─────────────────────────────────────────────────────────────
+
+puts "\nCreating daily quizzes…"
+Quiz.where(name: ["Top 5 Zelda games", "Top 5 PC games"]).destroy_all
+Quiz.create!(name: "Top 5 Zelda games")   # yesterday
+Quiz.create!(name: "Top 5 PC games")      # today
+puts "  2 quizzes created."
 
 puts "\nSeed complete!"
