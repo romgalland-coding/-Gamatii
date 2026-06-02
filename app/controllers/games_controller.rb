@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
   def show
+    authorize @games
     @game = Game.find(params[:id])
     return unless current_user
 
