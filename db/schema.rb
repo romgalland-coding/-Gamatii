@@ -30,15 +30,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_094618) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "list_games", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.bigint "game_id", null: false
-    t.bigint "list_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["game_id"], name: "index_list_games_on_game_id"
-    t.index ["list_id"], name: "index_list_games_on_list_id"
-  end
-
   create_table "lists", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "list_type", default: "{}"
@@ -60,24 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_094618) do
     t.index ["user_id"], name: "index_quiz_games_on_user_id"
   end
 
-  create_table "quizz_games", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.bigint "game_id", null: false
-    t.bigint "quizz_id", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["game_id"], name: "index_quizz_games_on_game_id"
-    t.index ["quizz_id"], name: "index_quizz_games_on_quizz_id"
-    t.index ["user_id"], name: "index_quizz_games_on_user_id"
-  end
-
   create_table "quizzes", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "quizzs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
@@ -239,15 +213,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_094618) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "list_games", "games"
-  add_foreign_key "list_games", "lists"
   add_foreign_key "lists", "users"
   add_foreign_key "quiz_games", "games"
   add_foreign_key "quiz_games", "quizzes"
   add_foreign_key "quiz_games", "users"
-  add_foreign_key "quizz_games", "games"
-  add_foreign_key "quizz_games", "quizzs"
-  add_foreign_key "quizz_games", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
