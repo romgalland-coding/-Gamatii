@@ -16,4 +16,6 @@ Rails.application.routes.draw do
 
   resources :quiz_games, only: [:destroy]
 
+  resource :profile, only: [:show, :edit, :update]
+
 end
