@@ -1,9 +1,9 @@
 class QuizGamesController < ApplicationController
-  before_action :authenticate_user!
-
   def create
     @quiz = Quiz.find(params[:quiz_id])
     game  = Game.find_by("LOWER(title) = ?", params[:game_title].to_s.downcase.strip)
+
+    authorize QuizGame
 
     redirect_to daily_quizzes_path(tab: tab_for(@quiz)), alert: "Game not found." and return if game.nil?
 
@@ -24,7 +24,9 @@ class QuizGamesController < ApplicationController
 
   def destroy
     @quiz_game = current_user.quiz_games.find(params[:id])
+    authorize @quiz_game
     quiz = @quiz_game.quiz
+
     @quiz_game.destroy
     redirect_to daily_quizzes_path(tab: tab_for(quiz))
   end
