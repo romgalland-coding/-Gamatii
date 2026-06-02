@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_01_151321) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_02_094618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,10 +19,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_151321) do
     t.datetime "created_at", null: false
     t.text "description"
     t.string "developer"
-    t.string "game_mode", default: [], array: true
+    t.string "game_mode", default: "{}"
     t.string "genre"
     t.string "in_game_img"
-    t.string "platforms"
+    t.string "platforms", default: [], null: false, array: true
     t.string "publisher"
     t.float "rating"
     t.date "release_date"
@@ -41,7 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_151321) do
 
   create_table "lists", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "list_type", default: [], array: true
+    t.string "list_type", default: "{}"
     t.string "name"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
