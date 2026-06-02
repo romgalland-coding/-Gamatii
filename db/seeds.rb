@@ -77,7 +77,7 @@ puts "\n  #{games.size} Game records created."
 
 SEED_USERS = [
   {
-    email:    "pixelknight@gamatii.com",
+    email:    "pixelknight@gmail.com",
     password: "password",
     gamer_tag: "PixelKnight",
     platform: ["PC", "Nintendo Switch"],
@@ -88,7 +88,7 @@ SEED_USERS = [
     ]
   },
   {
-    email:    "neonbyte@gamatii.com",
+    email:    "neonbyte@gmail.com",
     password: "password",
     gamer_tag: "NeonByte",
     platform: ["PlayStation 5", "PlayStation 4"],
@@ -99,7 +99,7 @@ SEED_USERS = [
     ]
   },
   {
-    email:    "vortexcaster@gamatii.com",
+    email:    "vortexcaster@gmail.com",
     password: "password",
     gamer_tag: "VortexCaster",
     platform: ["Xbox Series S/X", "Xbox One", "PC"],
