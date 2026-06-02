@@ -23,4 +23,6 @@ class User < ApplicationRecord
   has_many :lists, dependent: :destroy
   has_many :quiz_games, dependent: :destroy
   has_many :quizzes, through: :quiz_games
+
+  validates :username, presence: true, uniqueness: true, length: { maximum: 20 }
 end
