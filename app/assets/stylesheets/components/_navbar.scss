@@ -1,12 +1,64 @@
-.navbar-lewagon {
-  justify-content: space-between;
-  background: white;
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: $mat-bg;
+  border-top: 3px solid #000;
+
+  &__bar {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  &__items {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.2rem;
+    width: 5rem;
+    min-height: 3.6rem;
+    padding: 0.3rem 0.45rem;
+    border-radius: 0.75rem;
+    border: 2px solid #000;
+    background-color: white;
+    box-shadow: 2px 2px 0 0 #000;
+    color: #000;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    text-align: center;
+
+    i {
+      font-size: 1.1rem;
+    }
+
+    &:hover {
+      color: #000;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    &--active {
+      background-color: $mat-blue;
+      // box-shadow: 3px 3px 0 0 #000;  "former box shadow"
+      box-shadow: none;
+      transform: translateY(-2px);
+    }
+  }
 }
 
-.navbar-lewagon .navbar-collapse {
-  flex-grow: 0;
-}
-
-.navbar-lewagon .navbar-brand img {
-  width: 40px;
+// Ensure page content doesn't hide behind the fixed nav
+body {
+  padding-bottom: 5rem;
 }

@@ -1,0 +1,414 @@
+.games-page {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.games-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #000;
+  margin-bottom: 0.25rem;
+}
+
+.games-subtitle {
+  font-size: 0.9375rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 1.25rem;
+}
+
+// Tab switcher
+.games-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0.25rem;
+  background-color: white;
+  border: 2.5px solid #000;
+  border-radius: 1rem;
+  box-shadow: 1px 1px 0 0 #000;
+}
+
+.games-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  background: none;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.1s ease;
+
+  &--active {
+    background-color: $mat-yellow;
+    border-color: #000;
+    box-shadow: 1px 1px 0 0 #000;
+    color: #000;
+  }
+}
+
+// Game cards grid
+.games-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.games-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 2rem 0;
+  font-size: 0.9375rem;
+
+  a {
+    color: #000;
+    font-weight: 600;
+  }
+}
+
+// Individual game card
+.game-card__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.game-card {
+  position: relative;
+  background-color: white;
+  border: 2.5px solid #000;
+  border-radius: 1rem;
+  box-shadow: 1px 1px 0 0 #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-card__cover {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background-color: $mat-blue-light;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 2.5px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metacritic-badge {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  min-width: 1.6rem;
+  padding: 0.1rem 0.25rem;
+  border: 1px solid #000;
+  border-radius: 0.3rem;
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-align: center;
+  line-height: 1.4;
+
+  &--lg {
+    position: static;
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    min-width: 2.25rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  &--green-light { background-color: $mat-green-light; }
+  &--green       { background-color: $mat-green; }
+  &--green-dark  { background-color: $mat-green-dark; }
+  &--yellow      { background-color: $mat-yellow; }
+  &--red         { background-color: $mat-red; }
+}
+
+.game-card__cover-placeholder {
+  i {
+    font-size: 2rem;
+    color: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.game-card__body {
+  padding: 0.75rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.game-card__title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #000;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.game-card__genre {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+.game-card__platform {
+  display: inline-block;
+  margin-top: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background-color: $mat-blue-light;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.game-card__footer {
+  margin-top: auto;
+  padding: 0 0.75rem 0.75rem;
+
+  form { margin: 0; }
+}
+
+.game-card__action {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.4rem;
+  border-radius: 0.75rem;
+  border: 2px solid #000;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  box-shadow: 2px 2px 0 0 #000;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 0 #000;
+  }
+
+  &--green {
+    background-color: $mat-green;
+    color: #000;
+  }
+
+  &--blue {
+    background-color: $mat-blue;
+    color: #000;
+  }
+
+  &--white {
+    background-color: white;
+    color: #000;
+  }
+}
+
+.games-discover {
+  font-size: 1rem;
+  background-color: #9FC5F8;
+  color: #000;
+  border: none;
+  font-weight: 700;
+}
+
+// Title row with Edit button
+.games-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.games-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.games-sort-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.games-sort-container {
+  position: relative;
+}
+
+.games-sort-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: auto;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: left;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  color: #000;
+  cursor: pointer;
+  transition: none;
+  margin-right: 1rem;
+}
+
+.games-sort-toggle:hover,
+.games-sort-toggle:focus {
+  background-color: transparent;
+  color: #000;
+}
+
+#filter-icon {
+  transition: transform 0.2s ease;
+}
+
+.filter-icon--open {
+  transform: scaleY(-1);
+}
+
+.games-sort-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: white;
+  border: 2.5px solid #000;
+  border-radius: 1rem;
+  box-shadow: 1px 1px 0 0 #000;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 9999;
+  min-width: 18rem;
+}
+
+.games-sort-row {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.games-sort-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.games-sort-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.games-sort-button {
+  display: inline-flex;
+  align-items: right;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 2.5px solid #000;
+  background-color: white;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  box-shadow: 2px 2px 0 0 #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+}
+
+.games-sort-button:hover,
+.games-sort-button:focus {
+  background-color: $mat-yellow;
+}
+
+.games-sort-button--active {
+  background-color: $mat-yellow;
+  color: #000;
+}
+
+.games-sort-button--apply {
+  background-color: $mat-blue;
+  color: #000;
+
+  &:hover, &:focus { background-color: $mat-blue; }
+}
+
+.games-sort-button--clear {
+  background-color: $mat-red;
+  color: #000;
+
+  &:hover, &:focus { background-color: $mat-red; }
+}
+
+// Owned edit mode
+.game-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 2.5px solid #000;
+  box-shadow: 3px 3px 0 0 #000;
+  background-color: #e53e3e;
+  color: white;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 #000;
+  }
+}
+
+.game-card__delete-form {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  margin: 0;
+}
+
+.game-card__delete-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background-color: white;
+  border: 2.5px solid #000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: #000;
+}
+
+.owned-section.editing .game-card__delete-btn,
+.wishlist-section.editing .game-card__delete-btn {
+  display: flex;
+}
+
+.game-show__hero {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  border: 2.5px solid #000;
+  box-shadow: 4px 4px 0 0 #000;
+}

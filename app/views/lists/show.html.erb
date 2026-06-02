@@ -1,0 +1,52 @@
+<div class="list-show-page">
+
+  <%= link_to "‹ Back", lists_path, class: "list-show__back" %>
+
+  <div class="card card-flat list-show__header">
+    <h1 class="list-show__name"><%= @list.name %></h1>
+    <p class="list-show__meta">by <%= @list.user.gamer_tag %> · <%= pluralize(@games.size, "game") %></p>
+    <div class="list-show__actions">
+      <span class="chip chip-red">
+        <i class="fa-solid fa-heart"></i> <%= @list.votes_count || 0 %>
+      </span>
+      <button class="btn btn-warning list-show__share">
+        <i class="fa-solid fa-share"></i> Share
+      </button>
+    </div>
+  </div>
+
+  <% if @games.any? %>
+    <ol class="list-show__games">
+      <% @games.each_with_index do |game, index| %>
+        <li class="list-game-row card">
+          <span class="list-game-row__rank"><%= index + 1 %></span>
+          <div class="list-game-row__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+          <div class="list-game-row__info">
+            <span class="list-game-row__title"><%= game.title %></span>
+            <span class="list-game-row__genre"><%= game.genre %></span>
+          </div>
+          <% if current_user == @list.user %>
+            <% join = ListGame.find_by(list: @list, game: game) %>
+            <%= link_to list_game_path(join),
+                  class: "list-game-row__remove",
+                  data: { turbo_method: :delete, turbo_confirm: "Remove #{game.title} from this list?" } do %>
+              <i class="fa-solid fa-trash"></i>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  <% else %>
+    <p class="lists-empty">This list is empty. Add some games!</p>
+  <% end %>
+
+  <% if current_user == @list.user %>
+    <%= link_to "+ Add more games", "#", class: "btn btn-primary w-100 list-show__add" %>
+    <%= link_to "Delete list", list_path(@list),
+          class: "btn btn-danger w-100 list-show__delete",
+          data: { turbo_method: :delete, turbo_confirm: "Delete \"#{@list.name}\"? This can't be undone." } %>
+  <% end %>
+
+</div>
+
+<%= render "shared/bottom_nav", active: :lists %>

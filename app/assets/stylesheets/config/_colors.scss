@@ -1,10 +1,33 @@
-// Define variables for your color scheme
+// matIA brand palette — sourced from Gamatii-Designs/src/styles/theme.css
 
-// For example:
-$red: #FD1015;
-$blue: #0D6EFD;
-$yellow: #FFC65A;
-$orange: #E67E22;
-$green: #1EDD88;
-$gray: #0E0000;
-$light-gray: #F4F4F4;
+// Primary brand colors
+$mat-bg:           #FAF3E3;
+$mat-blue:         #9FC5F8;
+$mat-blue-light:   #DAEDFB; // ~35% blue + white
+$mat-yellow:       #FFE599;
+$mat-yellow-light: #FFF5D1; // ~35% yellow + white
+$mat-green:        #9FF8A8;
+$mat-green-light:  #D6FCE0; // ~35% green + white
+$mat-green-dark:   #52C25E; // ~70% green + black
+$mat-red:          #F89FA0;
+$mat-red-light:    #FCD9DA; // ~35% red + white
+$mat-red-dark:     #D9686A; // ~70% red + black
+
+// Semantic / UI colors
+$color-background:   #ffffff;
+$color-foreground:   #030213;
+$color-muted:        #ececf0;
+$color-muted-fg:     #717182;
+$color-accent:       #e9ebef;
+$color-border:       rgba(0, 0, 0, 0.1);
+$color-input-bg:     #f3f3f5;
+$color-destructive:  #d4183d;
+
+// Legacy aliases kept for backward compatibility with existing Bootstrap variables
+$red:        $mat-red;
+$blue:       $mat-blue;
+$yellow:     $mat-yellow;
+$orange:     #E67E22;   // no Gamatii equivalent — retained as-is
+$green:      $mat-green;
+$gray:       $color-foreground;
+$light-gray: $mat-bg;

@@ -1,0 +1,75 @@
+// Gamatii neo-brutalist card style
+// Mirrors ui-primitives.tsx Card component
+
+.card {
+  border: 2.5px solid #000;
+  border-radius: 1rem;
+  box-shadow: 5px 5px 0 0 #000;
+  background-color: white;
+
+  .card-header {
+    border-bottom: 2px solid #000;
+    font-weight: 700;
+  }
+
+  .card-footer {
+    border-top: 2px solid #000;
+  }
+
+  // Tint variants — add these classes alongside .card
+  &.card-blue   { background-color: $mat-blue-light; }
+  &.card-yellow { background-color: $mat-yellow-light; }
+  &.card-green  { background-color: $mat-green-light; }
+  &.card-red    { background-color: $mat-red-light; }
+
+  // Flat / non-interactive card — no border or shadow
+  &.card-flat {
+    border: none;
+    box-shadow: none;
+  }
+
+  // Clickable / interactive card
+  &.card-clickable {
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+    &:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 6px 6px 0 0 #000;
+    }
+
+    &:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 0 #000;
+    }
+  }
+}
+
+// Chip / badge — mirrors ui-primitives.tsx Chip
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  // border: 2px solid #000;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #000;
+
+  &.chip-yellow { background-color: $mat-yellow; }
+  &.chip-blue   { background-color: $mat-blue; }
+  &.chip-green  { background-color: $mat-green; }
+  &.chip-red    { background-color: $mat-red; }
+
+  .chip-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover { opacity: 0.7; }
+  }
+}
