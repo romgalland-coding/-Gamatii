@@ -1,0 +1,122 @@
+<div class="quiz-page">
+
+  <div class="quiz-header">
+    <div>
+      <h1 class="quiz-title"><i class="fa-solid fa-trophy"></i> Daily Quiz</h1>
+      <p class="quiz-subtitle">Build today's list, guess yesterday's.</p>
+    </div>
+    <span class="quiz-timer">23:59:59</span>
+  </div>
+
+  <div class="quiz-tabs">
+    <%= link_to daily_quizzes_path, class: "quiz-tab #{'quiz-tab--active' if params[:tab] != 'yesterday'}" do %>
+      Today
+    <% end %>
+    <%= link_to daily_quizzes_path(tab: "yesterday"), class: "quiz-tab #{'quiz-tab--active' if params[:tab] == 'yesterday'}" do %>
+      Guess yesterday
+    <% end %>
+  </div>
+
+  <% if params[:tab] == "yesterday" %>
+
+    <%# ---- YESTERDAY TAB ---- %>
+
+    <div class="quiz-prompt quiz-prompt--blue">
+      <p class="quiz-prompt__label">YESTERDAY</p>
+      <h2 class="quiz-prompt__title"><%= @yesterday_quiz.name %></h2>
+      <p class="quiz-prompt__desc">Find what people guessed yesterday</p>
+      <% if current_user %>
+        <p class="quiz-prompt__score">
+          Score: <%= @score %> pts · <%= @guesses_remaining %> guesses remaining
+        </p>
+      <% end %>
+    </div>
+
+    <% if current_user %>
+      <div class="quiz-input-row">
+        <%= form_with url: quiz_quiz_games_path(@yesterday_quiz), method: :post, data: { turbo: false } do |f| %>
+          <%= text_field_tag :game_title,
+                nil,
+                placeholder: "Guess a game…",
+                class: "quiz-input",
+                autocomplete: "off",
+                disabled: @guesses_remaining <= 0 %>
+          <%= submit_tag "", class: "quiz-input-btn" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <ol class="quiz-answers">
+      <% @yesterday_answers.each_with_index do |game, i| %>
+        <% guessed = current_user && @my_guesses.any? { |qg| qg.game_id == game.id } %>
+        <li class="quiz-answer-row #{'quiz-answer-row--revealed' if guessed}">
+          <span class="quiz-answer-row__rank">#<%= i + 1 %></span>
+          <span class="quiz-answer-row__title">
+            <% if guessed %>
+              <%= game.title %>
+            <% else %>
+              <span class="quiz-answer-row__hidden">– – – – –</span>
+            <% end %>
+          </span>
+          <span class="quiz-answer-row__pct"><%= [92, 78, 54, 41, 33][i] %>%</span>
+        </li>
+      <% end %>
+    </ol>
+
+  <% else %>
+
+    <%# ---- TODAY TAB ---- %>
+
+    <div class="quiz-prompt quiz-prompt--yellow">
+      <p class="quiz-prompt__label">TODAY'S LIST</p>
+      <h2 class="quiz-prompt__title"><%= @today_quiz.name %></h2>
+      <p class="quiz-prompt__desc">Add up to 5 games. Submissions close at midnight.</p>
+    </div>
+
+    <% if current_user %>
+      <div class="quiz-input-row">
+        <%= form_with url: quiz_quiz_games_path(@today_quiz), method: :post, data: { turbo: false } do %>
+          <%= text_field_tag :game_title,
+                nil,
+                placeholder: "Pick a game…",
+                class: "quiz-input",
+                autocomplete: "off",
+                disabled: @my_submissions.count >= 5 %>
+          <%= submit_tag "", class: "quiz-input-btn" %>
+        <% end %>
+      </div>
+
+      <p class="quiz-picks-label">YOUR PICKS · <%= @my_submissions.count %>/5</p>
+
+      <% if @my_submissions.any? %>
+        <ul class="quiz-picks">
+          <% @my_submissions.each do |qg| %>
+            <li class="quiz-pick-row">
+              <span><%= qg.game.title %></span>
+              <%= link_to quiz_game_path(qg),
+                    class: "quiz-pick-row__remove",
+                    data: { turbo_method: :delete } do %>
+                <i class="fa-solid fa-xmark"></i>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="quiz-picks-empty">Add games to get started.</div>
+      <% end %>
+
+      <%= button_tag class: "btn btn-primary w-100 quiz-submit",
+            disabled: @my_submissions.count == 0 do %>
+        <i class="fa-solid fa-paper-plane"></i> Submit picks
+      <% end %>
+    <% else %>
+      <div class="quiz-picks-empty">
+        <%= link_to "Sign in", new_user_session_path %> to submit your picks.
+      </div>
+    <% end %>
+
+  <% end %>
+
+</div>
+
+<%= render "shared/navbar" %>
