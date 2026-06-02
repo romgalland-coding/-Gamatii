@@ -25,12 +25,12 @@
       <% end %>
 
       <% if user_signed_in? %>
-        <%= link_to "#", class: "bottom-nav__item" do %>
+        <%= link_to profile_path, class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/profile")}" do %>
           <i class="fa-solid fa-user"></i>
           <span>Profile</span>
         <% end %>
       <% else %>
-        <%= link_to new_user_session_path, class: "bottom-nav__item #{'bottom-nav__item--active' if request.path.start_with?('/users')}" do %>
+        <%= link_to new_user_session_path, class: "bottom-nav__item #{"bottom-nav__item--active" if request.path.start_with?("/users")}" do %>
           <i class="fa-solid fa-user"></i>
           <span>Login</span>
         <% end %>
