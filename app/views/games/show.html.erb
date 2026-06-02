@@ -1,0 +1,35 @@
+<div class="game-show-page">
+
+  <%= link_to "< Back", :back, class: "list-show__back" %>
+
+  <div class="game-show__cover" style="background-image: url('<%= @game.cover_img %>')"></div>
+
+  <div class="game-show__meta">
+    <% @game.platforms.split(", ").each do |platform| %>
+      <span class="chip chip-blue"><%= platform %></span>
+    <% end %>
+    <% @game.game_mode.each do |mode| %>
+      <span class="chip chip-green"><%= mode %></span>
+    <% end %>
+  </div>
+
+  <h1 class="game-show__title"><%= @game.title %></h1>
+  <p class="game-show__developer"><%= @game.developer %></p>
+
+  <% if @game.in_game_img.present? %>
+    <div class="game-show__screenshots">
+      <div class="game-show__screenshot" style="background-image: url('<%= @game.in_game_img %>')"></div>
+    </div>
+  <% end %>
+
+  <div class="game-show__description">
+    <p><%= @game.description %></p>
+  </div>
+
+  <% if current_user %>
+    <%= link_to "+ Add to a list", "#", class: "btn btn-primary w-100" %>
+  <% end %>
+
+</div>
+
+<%= render "shared/bottom_nav" %>
