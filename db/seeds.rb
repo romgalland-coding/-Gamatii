@@ -48,7 +48,7 @@ games = rawg_list.filter_map do |g|
   detail = rawg_get("/games/#{g['id']}")
   sleep 0.2
 
-  platforms_str = g["platforms"]&.map { |p| p.dig("platform", "name") }&.join(", ")
+  platforms_arr = g["platforms"]&.map { |p| p.dig("platform", "name") } || []
   modes         = game_modes_from_tags(detail["tags"])
 
   print "."
@@ -57,7 +57,7 @@ games = rawg_list.filter_map do |g|
     cover_img:    g["background_image"],
     in_game_img:  g.dig("short_screenshots", 1, "image"),
     genre:        g.dig("genres", 0, "name"),
-    platforms:    platforms_str,
+    platforms:    platforms_arr,
     rating:       g["rating"],
     release_date: g["released"],
     description:  detail["description_raw"]&.slice(0, 2000),
