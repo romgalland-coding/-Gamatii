@@ -4,4 +4,5 @@ class Game < ApplicationRecord
 
   has_many :quiz_games, dependent: :destroy
   has_many :quizzes, through: :quiz_games
+
 end
