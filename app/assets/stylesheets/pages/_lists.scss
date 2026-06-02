@@ -241,3 +241,70 @@
   color: #000;
   &:hover { color: #000; }
 }
+
+// ===================== DISCOVER =====================
+
+.discover-swipe-deck {
+  position: relative;
+  min-height: 450px;
+}
+
+.discover-swipe-card__cover {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  border-radius: calc(1rem - 2.5px) calc(1rem - 2.5px) 0 0;
+}
+
+.discover-swipe-btn {
+  border-radius: 50% !important;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discover-grid-card__cover {
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+  border-radius: calc(1rem - 2.5px) calc(1rem - 2.5px) 0 0;
+  position: relative;
+}
+
+.discover-grid-card__add-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $mat-green;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.discover-edit-btn {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: $mat-blue-light;
+  border: 2px solid #000;
+  color: #000;
+  text-decoration: none;
+  &:hover { background-color: $mat-blue; color: #000; }
+}

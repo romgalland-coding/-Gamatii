@@ -11,19 +11,15 @@ export default class extends Controller {
   showSwipe() {
     this.swipeViewTarget.classList.remove("d-none")
     this.gridViewTarget.classList.add("d-none")
-    this.btnSwipeTarget.classList.add("btn-primary")
-    this.btnSwipeTarget.classList.remove("btn-outline-primary")
-    this.btnGridTarget.classList.add("btn-outline-primary")
-    this.btnGridTarget.classList.remove("btn-primary")
+    this.btnSwipeTarget.classList.replace("btn-outline-primary", "btn-warning")
+    this.btnGridTarget.classList.replace("btn-warning", "btn-outline-primary")
   }
 
   showGrid() {
     this.swipeViewTarget.classList.add("d-none")
     this.gridViewTarget.classList.remove("d-none")
-    this.btnGridTarget.classList.add("btn-primary")
-    this.btnGridTarget.classList.remove("btn-outline-primary")
-    this.btnSwipeTarget.classList.add("btn-outline-primary")
-    this.btnSwipeTarget.classList.remove("btn-primary")
+    this.btnGridTarget.classList.replace("btn-outline-primary", "btn-warning")
+    this.btnSwipeTarget.classList.replace("btn-warning", "btn-outline-primary")
   }
 
   like(event) {

@@ -1,18 +1,27 @@
-<h1>Discover</h1>
+<div class="lists-page">
+  <h1 class="lists-title">Create a list</h1>
 
-<%= form_with scope: :list, url: discover_path do |f| %>
-  <%= f.text_field :name, placeholder: "List name", required: true %>
-  <%= f.submit "Create list" %>
-<% end %>
+  <%= form_with scope: :list, url: discover_path do |f| %>
+    <%= f.text_field :name, placeholder: "Describe what you're looking for…", class: "form-control" %>
+    <%= f.submit "Find games", class: "btn btn-primary w-100 mt-3" %>
+  <% end %>
 
-<% if @lists.any? %>
-  <hr>
-  <h2>Your lists</h2>
-  <ul>
-    <% @lists.each do |list| %>
-      <li><%= link_to list.name, discover_list_path(list) %></li>
-    <% end %>
-  </ul>
-<% end %>
+  <% if @lists.any? %>
+    <p class="lists-subtitle text-center">OR EDIT EXISTING LIST</p>
+    <div class="d-flex flex-column gap-2">
+      <% @lists.each do |list| %>
+        <div class="list-game-row card">
+          <div class="list-game-row__info">
+            <span class="list-game-row__title"><%= list.name %></span>
+            <span class="list-game-row__genre"><%= pluralize(list.games.size, "game") %></span>
+          </div>
+          <%= link_to discover_list_path(list), class: "discover-edit-btn" do %>
+            <i class="fa-solid fa-pencil"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
 
 <%= render "shared/navbar" %>
