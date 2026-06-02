@@ -1,0 +1,50 @@
+<% if game %>
+  <div class="swipe-wrapper"
+       data-controller="swipe"
+       data-swipe-list-id-value="<%= list_id %>">
+
+    <div class="swipe-card"
+         data-swipe-target="card"
+         data-game-id="<%= game.id %>"
+         data-action="mousedown->swipe#dragStart touchstart->swipe#dragStart">
+
+      <div class="swipe-card__like-label" data-swipe-target="likeLabel">LIKE</div>
+      <div class="swipe-card__nope-label" data-swipe-target="nopeLabel">NOPE</div>
+
+      <div class="swipe-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+
+      <div class="swipe-card__info">
+        <p class="swipe-card__genre"><%= game.genre %></p>
+        <h3 class="swipe-card__title"><%= game.title %></h3>
+        <div class="swipe-card__meta">
+          <% if game.developer.present? %>
+            <span class="swipe-card__dev"><%= game.developer %></span>
+          <% end %>
+          <% if game.rating.present? %>
+            <span class="swipe-card__rating">
+              <i class="fa-solid fa-star"></i> <%= game.rating %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="swipe-actions">
+      <button class="swipe-btn swipe-btn--nope" data-action="click->swipe#swipeLeft" type="button">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button class="swipe-btn swipe-btn--like" data-action="click->swipe#swipeRight" type="button">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </div>
+
+  </div>
+
+<% else %>
+  <div class="discover-done">
+    <div class="discover-done__icon"><i class="fa-solid fa-circle-check"></i></div>
+    <h3 class="discover-done__title">All caught up!</h3>
+    <p class="discover-done__text">You've seen all available games for this session.</p>
+    <%= link_to "Start over", discover_path(list_id: list_id, start: 1), class: "btn btn-primary w-100" %>
+  </div>
+<% end %>

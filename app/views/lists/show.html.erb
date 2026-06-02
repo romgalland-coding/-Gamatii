@@ -7,14 +7,18 @@
     <p class="list-show__meta">by <%= @list.user.gamer_tag %> · <%= pluralize(@games.size, "game") %></p>
   </div>
 
-  <div class="list-show__actions">
-    <span class="list-show__likes">
-      <i class="fa-solid fa-heart"></i> <%= @list.votes_count || 0 %>
-    </span>
-    <button class="list-show__share">
-      <i class="fa-solid fa-share"></i> Share
-    </button>
-  </div>
+<div class="list-show__actions">
+  <span class="list-show__likes">
+    <i class="fa-solid fa-heart"></i> <%= @list.votes_count || 0 %>
+  </span>
+  <button class="list-show__share"
+          data-controller="share"
+          data-share-url-value="<%= list_url(@list) %>"
+          data-share-title-value="<%= @list.name %>"
+          data-action="click->share#share">
+    <i class="fa-solid fa-share"></i> Share
+  </button>
+</div>
 
   <% if @games.any? %>
     <ol class="list-show__games">
