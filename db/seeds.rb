@@ -82,9 +82,9 @@ SEED_USERS = [
     gamer_tag: "PixelKnight",
     platform: ["PC", "Nintendo Switch"],
     lists: [
-      { name: "Wishlist",       list_type: ["wishlist"], range: 0..9  },
-      { name: "Played",         list_type: ["played"],   range: 10..24 },
-      { name: "Indie Gems",     list_type: ["custom"],   range: 25..33 }
+      { name: "Wishlist",       list_type: "wishlist", range: 0..9  },
+      { name: "Played",         list_type: "played",   range: 10..24 },
+      { name: "Indie Gems",     list_type: "custom",   range: 25..33 }
     ]
   },
   {
@@ -93,9 +93,9 @@ SEED_USERS = [
     gamer_tag: "NeonByte",
     platform: ["PlayStation 5", "PlayStation 4"],
     lists: [
-      { name: "Wishlist",         list_type: ["wishlist"], range: 4..13  },
-      { name: "Played",           list_type: ["played"],   range: 14..28 },
-      { name: "Open World Picks", list_type: ["custom"],   range: 29..37 }
+      { name: "Wishlist",         list_type: "wishlist", range: 4..13  },
+      { name: "Played",           list_type: "played",   range: 14..28 },
+      { name: "Open World Picks", list_type: "custom",   range: 29..37 }
     ]
   },
   {
@@ -104,9 +104,9 @@ SEED_USERS = [
     gamer_tag: "VortexCaster",
     platform: ["Xbox Series S/X", "Xbox One", "PC"],
     lists: [
-      { name: "Wishlist",          list_type: ["wishlist"], range: 2..11  },
-      { name: "Played",            list_type: ["played"],   range: 12..26 },
-      { name: "Multiplayer Favs",  list_type: ["custom"],   range: 27..35 }
+      { name: "Wishlist",          list_type: "wishlist", range: 2..11  },
+      { name: "Played",            list_type: "played",   range: 12..26 },
+      { name: "Multiplayer Favs",  list_type: "custom",   range: 27..35 }
     ]
   }
 ]
