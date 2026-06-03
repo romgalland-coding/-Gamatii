@@ -30,7 +30,7 @@ class ListGamesController < ApplicationController
                   alert: (saved ? nil : "Could not add game to list.")
     end
   end
-  
+
   def destroy
     @list_game = ListGame.find(params[:id])
     @list = @list_game.list
