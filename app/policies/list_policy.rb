@@ -16,6 +16,10 @@ class ListPolicy < ApplicationPolicy
     true
   end
 
+  def discover?
+    user.present? && record.user == user
+  end
+
   def update?
     user.present? && record.user == user
   end
