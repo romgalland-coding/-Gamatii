@@ -25,6 +25,7 @@
             <% else %>
               <%= button_to "Add to list", list_list_games_path(@list),
                     params: {
+                      origin:    "discover",
                       rawg_id:   game["id"],
                       genre:     params[:genre],
                       platforms: params[:platforms],
