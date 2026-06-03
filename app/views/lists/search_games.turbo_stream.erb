@@ -12,6 +12,7 @@
             </span>
           </div>
           <%= form_with url: list_list_games_path(@list_id), method: :post do |f| %>
+            <%= f.hidden_field :origin, value: "list" %>
             <%= f.hidden_field :rawg_id, value: game["id"] %>
             <%= f.hidden_field :game_title, value: game["name"] %>
             <button type="submit" class="btn btn-success search-autocomplete__add">+<span class="search-autocomplete__add-label"> Add to my list</span></button>
