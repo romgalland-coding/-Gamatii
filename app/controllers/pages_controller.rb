@@ -10,7 +10,7 @@ class PagesController < ApplicationController
                          .order(Arel.sql("COUNT(list_games.id) DESC"))
                          .limit(4)
 
-    @popular_lists = List.order(votes_count: :desc).limit(4)
+    @popular_lists = List.includes(:user).order(votes_count: :desc).limit(4)
   end
 
   def discover

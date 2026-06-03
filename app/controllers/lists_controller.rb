@@ -5,9 +5,9 @@ class ListsController < ApplicationController
   def index
     @lists = policy_scope(List)
     if current_user
-      @lists = current_user.lists.includes(:games).order(created_at: :desc)
+      @lists = current_user.lists.includes(:games, :user).order(created_at: :desc)
     else
-      @lists = List.includes(:games).order(created_at: :desc)
+      @lists = List.includes(:games, :user).order(created_at: :desc)
     end
   end
 
