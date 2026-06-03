@@ -23,7 +23,7 @@ class ListsController < ApplicationController
   end
 
   def create
-    @list = current_user.lists.build(list_params)
+    @list = current_user.lists.build(list_params.merge(list_type: "custom"))
     authorize @list
     if @list.save
       redirect_to discover_list_path(@list,
@@ -94,7 +94,7 @@ class ListsController < ApplicationController
   end
 
   def list_params
-    params.require(:list).permit(:name, :list_type)
+    params.require(:list).permit(:name)
   end
 
 end

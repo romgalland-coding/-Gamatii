@@ -4,8 +4,6 @@
         placeholder: "e.g. Best Mario games, cozy rainy day picks…",
         input_html: { class: "form-control" } %>
 
-  <%= f.input :list_type, collection: List::LIST_TYPES, include_blank: "Select a type" %>
-
   <div class="mb-3">
     <label class="form-label">Genre</label>
     <%= select_tag :genre, options_for_select(@genres.map { |g| [g[:name], g[:id]] }), include_blank: "All genres", class: "form-select" %>
