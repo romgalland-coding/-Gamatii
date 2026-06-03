@@ -1,11 +1,82 @@
-<h1>Welcome to Gamatii</h1>
+<div class="home-page">
 
-<% if user_signed_in? %>
-  <p>Hello, <%= current_user.gamer_tag %> 👋</p>
-  <%= button_to "Log out", destroy_user_session_path, method: :delete %>
-<% else %>
-  <%= link_to "Sign up", new_user_registration_path, class: "btn" %>
-  <%= link_to "Log in", new_user_session_path, class: "btn" %>
-<% end %>
+  <%# ---------- Welcome ---------- %>
+  <header class="home-welcome">
+    <p class="home-welcome__eyebrow">Welcome back</p>
+    <h1 class="home-welcome__name">
+      <%= current_user ? current_user.gamer_tag : "Gamer" %>
+    </h1>
+  </header>
 
-<%= render "shared/navbar", active: :lists %>
+  <%# ---------- Quiz CTA ---------- %>
+  <%= link_to daily_quizzes_path, class: "quiz-cta" do %>
+    <div class="quiz-cta__icon"><i class="fa-solid fa-trophy"></i></div>
+    <div class="quiz-cta__text">
+      <span class="quiz-cta__label">Today's Quiz</span>
+      <span class="quiz-cta__title">Play the daily quiz</span>
+    </div>
+    <i class="fa-solid fa-arrow-right quiz-cta__arrow"></i>
+  <% end %>
+
+  <%# ---------- Popular Games ---------- %>
+  <section class="home-section">
+    <header class="home-section__head">
+      <h2 class="home-section__title">🔥 Popular this week</h2>
+    </header>
+    <p class="home-section__subtitle">Most added to lists in the last 3 days.</p>
+
+    <div class="popular-games">
+      <% @popular_games.each do |game| %>
+        <%= link_to game_path(game), class: "popular-game" do %>
+          <div class="popular-game__cover"
+               style="background-image: url('<%= game.cover_img %>')"></div>
+          <div class="popular-game__body">
+            <h3 class="popular-game__title"><%= game.title %></h3>
+            <p class="popular-game__meta">
+              <%= pluralize(game.lists.size, "list") %>
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <%# ---------- Popular Lists ---------- %>
+  <section class="home-section">
+    <header class="home-section__head">
+      <h2 class="home-section__title">Popular lists</h2>
+    </header>
+    <p class="home-section__subtitle">Most-liked lists right now.</p>
+
+    <div class="popular-lists">
+      <% @popular_lists.each do |list| %>
+        <%= link_to list_path(list), class: "card card-clickable list-card" do %>
+          <div class="list-card__covers">
+            <% list.games.first(4).each do |game| %>
+              <div class="list-card__cover"
+                   style="background-image: url('<%= game.cover_img %>')"></div>
+            <% end %>
+            <% (4 - list.games.size).clamp(0, 4).times do %>
+              <div class="list-card__cover list-card__cover--empty"></div>
+            <% end %>
+          </div>
+          <div class="list-card__body">
+            <h3 class="list-card__name"><%= list.name %></h3>
+            <p class="list-card__meta">
+              <i class="fa-solid fa-heart"></i> <%= list.votes_count %>
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <%# ---------- Create a list CTA ---------- %>
+  <% if current_user %>
+    <%= link_to "✦ Create a new list", new_list_path,
+                class: "btn btn-primary w-100 home-create-btn" %>
+  <% end %>
+
+</div>
+
+<%= render "shared/navbar", active: :home %>

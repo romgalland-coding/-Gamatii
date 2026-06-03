@@ -137,3 +137,8 @@ Quiz.create!(name: "Top 5 PC games")      # today
 puts "  2 quizzes created."
 
 puts "\nSeed complete!"
+
+
+# ── Random vote counts (placeholder until likes exist) ───────────────────────
+puts "\nAssigning random vote counts to lists…"
+List.find_each { |list| list.update_column(:votes_count, rand(0..200)) }
