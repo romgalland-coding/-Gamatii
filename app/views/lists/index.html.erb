@@ -20,6 +20,9 @@
           </div>
           <div class="list-card__body">
             <h2 class="list-card__name"><%= list.name %></h2>
+            <p class="list-card__author">
+              by <%= list.user == current_user ? "you" : list.user.gamer_tag %>
+            </p>
             <p class="list-card__meta"><%= pluralize(list.games.size, "game") %></p>
           </div>
         <% end %>
