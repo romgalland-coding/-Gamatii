@@ -21,7 +21,7 @@
   <%# ---------- Popular Games ---------- %>
   <section class="home-section">
     <header class="home-section__head">
-      <h2 class="home-section__title">🔥 Popular this week</h2>
+      <h2 class="home-section__title">🔥 Popular games this week</h2>
     </header>
     <p class="home-section__subtitle">Most added to lists in the last 3 days.</p>
 
@@ -62,6 +62,9 @@
           </div>
           <div class="list-card__body">
             <h3 class="list-card__name"><%= list.name %></h3>
+            <p class="list-card__author">
+              by <%= list.user == current_user ? "you" : list.user.gamer_tag %>
+            </p>
             <p class="list-card__meta">
               <i class="fa-solid fa-heart"></i> <%= list.votes_count %>
             </p>

@@ -9,7 +9,14 @@
   </div>
 
   <div class="card list-show__header">
-    <h1 class="list-show__name"><%= @list.name %></h1>
+    <div class="list-show__title-row">
+      <h1 class="list-show__name"><%= @list.name %></h1>
+      <% if current_user == @list.user %>
+        <%= link_to edit_list_path(@list), class: "list-show__edit", "aria-label": "Edit list" do %>
+          <i class="fa-solid fa-pen"></i>
+        <% end %>
+      <% end %>
+    </div>
     <p class="list-show__meta">by <%= @list.user.gamer_tag %> · <%= pluralize(@list_games.size, "game") %></p>
   </div>
 

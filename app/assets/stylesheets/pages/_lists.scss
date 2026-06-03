@@ -66,6 +66,12 @@
     text-overflow: ellipsis;
   }
 
+  &__author {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.55);
+    margin: 0;
+  }
+
   &__meta {
     font-size: 0.8rem;
     color: rgba(0, 0, 0, 0.55);
@@ -118,6 +124,22 @@
   gap: 0.5rem;
   padding: 1.25rem;
   background-color: #fff;
+}
+
+.list-show__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.list-show__edit {
+  flex-shrink: 0;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 1.1rem;
+  text-decoration: none;
+
+  &:hover { color: #000; }
 }
 
 .list-show__name {
