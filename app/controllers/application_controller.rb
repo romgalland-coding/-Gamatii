@@ -13,6 +13,13 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Always send users to the homepage after login, ignoring Devise's stored
+  # location (friendly forwarding). Without this, hitting an auth-protected page
+  # while logged out — e.g. the quiz — would bounce there after sign-in.
+  def after_sign_in_path_for(_resource)
+    root_path
+  end
+
   def load_rawg_filter_options
     rawg = RawgService.new
     @genres     = rawg.genres_discovery
