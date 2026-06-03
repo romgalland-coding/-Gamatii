@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   resources :games, only: [:show]
 
   resources :lists do
+    collection do
+      get :search_games
+    end
     resources :list_games, only: [:create]
   end
 

@@ -1,6 +1,36 @@
 <div class="list-show-page">
 
-  <%= link_to "‹ Back", lists_path, class: "list-show__back" %>
+  <div class="list-show__topbar">
+    <%= link_to "‹ Back", lists_path, class: "list-show__back" %>
+
+    <% if current_user == @list.user %>
+      <div data-controller="search-modal" data-list-id="<%= @list.id %>">
+        <button class="btn btn-primary list-show__add"
+                data-action="click->search-modal#open">
+          + Add more games
+        </button>
+
+        <div data-search-modal-target="modal" class="search-modal">
+          <div class="search-modal__overlay"
+               data-action="click->search-modal#close"></div>
+          <div class="search-modal__box">
+            <div class="search-modal__header">
+              <h3>Search a game</h3>
+              <button data-action="click->search-modal#close">✕</button>
+            </div>
+            <input type="text"
+                   placeholder="Tetris"
+                   data-search-modal-target="input"
+                   data-action="input->search-modal#search"
+                   class="search-modal__input" />
+            <div class="search-modal__results">
+              <div id="search_results" data-search-modal-target="results"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 
   <div class="card list-show__header">
     <h1 class="list-show__name"><%= @list.name %></h1>
@@ -47,7 +77,6 @@
   <% end %>
 
   <% if current_user == @list.user %>
-    <%= link_to "+ Add more games", "#", class: "btn btn-primary w-100 list-show__add" %>
     <%= link_to "Delete list", list_path(@list),
           class: "btn btn-danger w-100 list-show__delete",
           data: { turbo_method: :delete, turbo_confirm: "Delete \"#{@list.name}\"? This can't be undone." } %>
