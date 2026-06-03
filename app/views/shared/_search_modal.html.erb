@@ -1,0 +1,25 @@
+<div data-controller="search-modal" data-list-id="<%= list_id %>">
+  <button class="btn btn-primary list-show__add"
+          data-action="click->search-modal#open">
+    + Add more games
+  </button>
+
+  <div data-search-modal-target="modal" class="search-modal">
+    <div class="search-modal__overlay"
+         data-action="click->search-modal#close"></div>
+    <div class="search-modal__box">
+      <div class="search-modal__header">
+        <h3>Search a game</h3>
+        <button data-action="click->search-modal#close">✕</button>
+      </div>
+      <input type="text"
+             placeholder="Tetris"
+             data-search-modal-target="input"
+             data-action="input->search-modal#search"
+             class="search-modal__input" />
+      <div class="search-modal__results">
+        <div id="search_results" data-search-modal-target="results"></div>
+      </div>
+    </div>
+  </div>
+</div>

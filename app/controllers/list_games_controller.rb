@@ -22,12 +22,12 @@ class ListGamesController < ApplicationController
     filter_params = params.permit(:genre, :publisher, :game_mode, :rating, :from, :to, platforms: [])
 
     if @list_game.save
-      redirect_to discover_list_path(@list, **filter_params)
+      redirect_to list_path(@list, **filter_params)
     else
-      redirect_to discover_list_path(@list, **filter_params), alert: "Could not add game to list."
+      redirect_to list_path(@list, **filter_params), alert: "Could not add game to list."
     end
   end
-  
+
   def destroy
     @list_game = ListGame.find(params[:id])
     @list = @list_game.list
