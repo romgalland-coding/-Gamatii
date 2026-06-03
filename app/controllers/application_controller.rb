@@ -31,10 +31,10 @@ class ApplicationController < ActionController::Base
     publishers = Thread.new { with_connection { rawg.publishers } }
     game_modes = Thread.new { with_connection { rawg.tags } }
 
-    @genres     = genres.value
-    @platforms  = platforms.value
-    @publishers = publishers.value
-    @game_modes = game_modes.value
+    @genres     = genres.value.sort_by     { |g| g[:name].to_s }
+    @platforms  = platforms.value.sort_by  { |p| p[:name].to_s }
+    @publishers = publishers.value.sort_by { |p| p[:name].to_s }
+    @game_modes = game_modes.value.sort_by { |t| t[:name].to_s }
   end
 
   def with_connection(&)
