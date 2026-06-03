@@ -22,6 +22,9 @@ Rails.application.routes.draw do
   resources :list_games, only: [:destroy]
 
   resources :quizzes, only: [:show] do
+    member do
+      get :autocomplete_games
+    end
     collection do
       get :daily
     end

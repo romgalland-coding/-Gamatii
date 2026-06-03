@@ -1,0 +1,7 @@
+<%= turbo_stream.update "quiz_autocomplete_results" do %>
+  <% if @results.any? %>
+    <%= render partial: "quizzes/autocomplete_results", locals: { results: @results } %>
+  <% else %>
+    <p class="search-autocomplete__empty">No matching games.</p>
+  <% end %>
+<% end %>

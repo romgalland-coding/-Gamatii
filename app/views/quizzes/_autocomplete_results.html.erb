@@ -1,0 +1,20 @@
+<ul class="search-autocomplete">
+  <% results.each do |game| %>
+    <li class="search-autocomplete__item">
+      <div class="search-autocomplete__cover"
+           style="background-image: url('<%= game.cover_img %>')"></div>
+      <div class="search-autocomplete__info">
+        <span class="search-autocomplete__name"><%= game.title %></span>
+        <span class="search-autocomplete__meta">
+          <%= [game.genre, game.release_date&.year].compact.join(" · ") %>
+        </span>
+      </div>
+      <button type="button"
+              class="btn btn-success search-autocomplete__add"
+              data-action="quiz-autocomplete#pick"
+              data-game-title="<%= game.title %>">
+        +<span class="search-autocomplete__add-label"> Pick</span>
+      </button>
+    </li>
+  <% end %>
+</ul>

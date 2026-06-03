@@ -113,10 +113,44 @@
 }
 
 // Search input row
+.quiz-input-row {
+  position: relative;
+}
+
 .quiz-input-row form {
   display: flex;
   gap: 0.6rem;
   align-items: center;
+}
+
+// Autocomplete dropdown anchored under the input
+.quiz-autocomplete-results {
+  position: absolute;
+  z-index: 50;
+  left: 0;
+  right: 2.75rem; // leave room for the submit button
+  margin-top: 0.5rem;
+
+  &:empty { display: none; }
+
+  .search-autocomplete {
+    background: #fff;
+    border: 2.5px solid #000;
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 0 #000;
+    padding: 0.4rem 0.6rem;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .search-autocomplete__empty {
+    background: #fff;
+    border: 2.5px solid #000;
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 0 #000;
+    padding: 0.75rem;
+    margin: 0;
+  }
 }
 
 .quiz-input {
