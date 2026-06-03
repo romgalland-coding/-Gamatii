@@ -61,6 +61,17 @@ class ListsController < ApplicationController
     authorize @list
   end
 
+  def search_games
+    skip_authorization
+    @query = params[:query]
+    @list_id = params[:list_id]
+    @results = RawgService.new.search(@query)
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   def update
     authorize @list
     if @list.update(list_params)

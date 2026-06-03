@@ -10,7 +10,7 @@ class RawgService
     response = HTTParty.get("#{BASE_URL}/games", query: {
       key: @api_key,
       search: query,
-      search_precise: true,
+      ordering: "-added",
       page_size: 5
     })
     response["results"]
