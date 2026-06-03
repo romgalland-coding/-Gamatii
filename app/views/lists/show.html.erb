@@ -34,7 +34,7 @@
 
   <div class="card list-show__header">
     <h1 class="list-show__name"><%= @list.name %></h1>
-    <p class="list-show__meta">by <%= @list.user.gamer_tag %> · <%= pluralize(@games.size, "game") %></p>
+    <p class="list-show__meta">by <%= @list.user.gamer_tag %> · <%= pluralize(@list_games.size, "game") %></p>
   </div>
 
   <div class="list-show__actions"
@@ -49,31 +49,28 @@
     </button>
   </div>
 
-  <% if @games.any? %>
+  <% if @list_games.any? %>
     <ol class="list-show__games">
-      <% @games.each_with_index do |game, index| %>
+      <% @list_games.each_with_index do |lg, index| %>
         <li class="list-game-row card">
           <span class="list-game-row__rank"><%= index + 1 %></span>
-          <%= link_to game_path(game), class: "list-game-row__link" do %>
-            <div class="list-game-row__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+          <%= link_to game_path(lg.game), class: "list-game-row__link" do %>
+            <div class="list-game-row__cover" style="background-image: url('<%= lg.game.cover_img %>')"></div>
             <div class="list-game-row__info">
-              <span class="list-game-row__title"><%= game.title %></span>
-              <span class="list-game-row__genre"><%= game.genre %></span>
+              <span class="list-game-row__title"><%= lg.game.title %></span>
+              <span class="list-game-row__genre"><%= lg.game.genre %></span>
             </div>
           <% end %>
           <% if current_user == @list.user %>
-            <% join = ListGame.find_by(list: @list, game: game) %>
-            <%= link_to list_game_path(join),
+            <%= link_to list_game_path(lg),
                   class: "list-game-row__remove",
-                  data: { turbo_method: :delete, turbo_confirm: "Remove #{game.title} from this list?" } do %>
+                  data: { turbo_method: :delete, turbo_confirm: "Remove #{lg.game.title} from this list?" } do %>
               <i class="fa-solid fa-trash"></i>
             <% end %>
           <% end %>
         </li>
       <% end %>
     </ol>
-  <% else %>
-    <p class="lists-empty">This list is empty. Add some games!</p>
   <% end %>
 
   <% if current_user == @list.user %>

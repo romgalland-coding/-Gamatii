@@ -12,7 +12,7 @@ class ListsController < ApplicationController
   end
 
   def show
-    @games = @list.games
+    @list_games = @list.list_games
     authorize @list
   end
 
@@ -90,11 +90,10 @@ class ListsController < ApplicationController
   private
 
   def set_list
-    @list = List.find(params[:id])
+    @list = List.includes(:list_games, :games).find(params[:id])
   end
 
   def list_params
     params.require(:list).permit(:name, :list_type)
   end
-
 end
