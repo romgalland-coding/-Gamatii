@@ -22,10 +22,23 @@ class ApplicationController < ActionController::Base
 
   def load_rawg_filter_options
     rawg = RawgService.new
-    @genres     = rawg.genres_discovery
-    @platforms  = rawg.platforms
-    @publishers = rawg.publishers
-    @game_modes = rawg.tags
+    # These four lists are cached in RawgService, but on a cold cache each one is
+    # a blocking RAWG HTTP call. Fetch them concurrently so a cache-miss load
+    # costs ~one round-trip instead of four sequential ones. Each thread checks
+    # out its own DB/cache connection, which we release before joining.
+    genres     = Thread.new { with_connection { rawg.genres_discovery } }
+    platforms  = Thread.new { with_connection { rawg.platforms } }
+    publishers = Thread.new { with_connection { rawg.publishers } }
+    game_modes = Thread.new { with_connection { rawg.tags } }
+
+    @genres     = genres.value
+    @platforms  = platforms.value
+    @publishers = publishers.value
+    @game_modes = game_modes.value
+  end
+
+  def with_connection(&)
+    ActiveRecord::Base.connection_pool.with_connection(&)
   end
 
   def skip_pundit?

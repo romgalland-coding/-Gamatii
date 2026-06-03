@@ -24,26 +24,39 @@ class RawgService
     response.parsed_response
   end
 
+  # The four "filter option" lists below are effectively static (RAWG's catalog
+  # of genres/platforms/publishers/tags rarely changes), so we cache them for a
+  # day to keep them out of the request path. See ApplicationController#load_rawg_filter_options.
+  FILTER_OPTIONS_TTL = 1.day
+
   def genres_discovery
-    response = HTTParty.get("#{BASE_URL}/genres", query: { key: @api_key })
-    response["results"].map { |g| { id: g["slug"], name: g["name"] } }
+    Rails.cache.fetch("rawg/genres_discovery", expires_in: FILTER_OPTIONS_TTL) do
+      response = HTTParty.get("#{BASE_URL}/genres", query: { key: @api_key })
+      response["results"].map { |g| { id: g["slug"], name: g["name"] } }
+    end
   end
 
   def platforms
-    response = HTTParty.get("#{BASE_URL}/platforms", query: { key: @api_key })
-    response["results"].map { |p| { id: p["id"], name: p["name"] } }
+    Rails.cache.fetch("rawg/platforms", expires_in: FILTER_OPTIONS_TTL) do
+      response = HTTParty.get("#{BASE_URL}/platforms", query: { key: @api_key })
+      response["results"].map { |p| { id: p["id"], name: p["name"] } }
+    end
   end
 
   def publishers
-    response = HTTParty.get("#{BASE_URL}/publishers", query: { key: @api_key, page_size: 40 })
-    response["results"].map { |p| { id: p["slug"], name: p["name"] } }
+    Rails.cache.fetch("rawg/publishers", expires_in: FILTER_OPTIONS_TTL) do
+      response = HTTParty.get("#{BASE_URL}/publishers", query: { key: @api_key, page_size: 40 })
+      response["results"].map { |p| { id: p["slug"], name: p["name"] } }
+    end
   end
 
   def tags
-    response = HTTParty.get("#{BASE_URL}/tags", query: { key: @api_key, page_size: 40 })
-    response["results"]
-    .select { |t| GAME_MODE_SLUGS.include?(t["slug"]) }
-      .map { |t| { id: t["slug"], name: t["name"] } }
+    Rails.cache.fetch("rawg/tags", expires_in: FILTER_OPTIONS_TTL) do
+      response = HTTParty.get("#{BASE_URL}/tags", query: { key: @api_key, page_size: 40 })
+      response["results"]
+      .select { |t| GAME_MODE_SLUGS.include?(t["slug"]) }
+        .map { |t| { id: t["slug"], name: t["name"] } }
+    end
   end
 
   def search_games(filters = {})
