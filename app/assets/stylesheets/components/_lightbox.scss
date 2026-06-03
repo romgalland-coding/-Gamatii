@@ -1,0 +1,101 @@
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  align-items: center;
+  justify-content: center;
+
+  &.is-open {
+    display: flex;
+  }
+}
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.lightbox__box {
+  position: relative;
+  z-index: 1;
+  width: 90vw;
+  max-width: 640px;
+  aspect-ratio: 16 / 9;
+  border: 2.5px solid #000;
+  border-radius: 0.75rem;
+  box-shadow: 6px 6px 0 0 #000;
+  overflow: hidden;
+  background: #111;
+}
+
+.lightbox__image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  &--prev { left: 0.5rem; }
+  &--next { right: 0.5rem; }
+}
+
+.lightbox__counter {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid #000;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.game-show__thumb--clickable {
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

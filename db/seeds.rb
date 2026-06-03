@@ -53,9 +53,11 @@ games = rawg_list.filter_map do |g|
 
   print "."
   Game.create!(
+    rawg_id:      g["id"],
     title:        g["name"],
     cover_img:    g["background_image"],
     in_game_img:  g.dig("short_screenshots", 1, "image"),
+    screenshots:  (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
     genre:        g.dig("genres", 0, "name"),
     platforms:    platforms_arr,
     rating:       g["rating"],
