@@ -59,23 +59,6 @@ class RawgService
     response["results"] || []
   end
 
-  def by_genre(genre_name, exclude_rawg_id:, devices: [])
-    genre_slug = genre_name.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/-+\z/, '')
-    platform_ids = platform_ids_for(devices)
-
-    query = {
-      key:      @api_key,
-      genres:   genre_slug,
-      ordering: "-metacritic",
-      page_size: 10
-    }
-    query[:platforms] = platform_ids.join(",") if platform_ids.any?
-
-    response = HTTParty.get("#{BASE_URL}/games", query: query)
-    results = response["results"] || []
-    results.reject { |g| g["id"] == exclude_rawg_id }
-  end
-
   private
 
   def platform_ids_for(devices)
