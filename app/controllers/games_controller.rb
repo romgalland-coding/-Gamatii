@@ -7,4 +7,10 @@ class GamesController < ApplicationController
 
     @user_lists = current_user.lists.joins(:list_games).where(list_games: { game_id: @game.id })
   end
+
+  def rawg_preview
+    skip_authorization
+    @rawg_id = params[:rawg_id]
+    @game = RawgService.new.find(@rawg_id)
+  end
 end
