@@ -3,11 +3,16 @@ Rails.application.routes.draw do
   root "pages#home"
   get "discover", to: "pages#discover"
 
-  resources :games, only: [:show]
+  resources :games, only: [:show] do
+    collection do
+      get :search
+    end
+  end
 
   resources :lists do
     collection do
       get :search_games
+    end
     member do
       get :discover
     end
@@ -26,10 +31,4 @@ Rails.application.routes.draw do
   resources :quiz_games, only: [:destroy]
 
   resource :profile, only: [:show, :edit, :update]
-  resources :games, only: [:show] do
-  collection do
-    get :search
-  end
-end
-
 end
