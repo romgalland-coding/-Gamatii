@@ -1,6 +1,7 @@
 # app/services/rawg_service.rb
 class RawgService
   BASE_URL = "https://api.rawg.io/api"
+  GAME_MODE_SLUGS = ["singleplayer", "multiplayer", "co-op", "split-screen", "online-multiplayer", "local-multiplayer"]
 
   def initialize
     @api_key = ENV["RAWG_API_KEY"]
@@ -39,10 +40,9 @@ class RawgService
   end
 
   def tags
-    game_mode_slugs = ["singleplayer", "multiplayer", "co-op", "split-screen", "online-multiplayer", "local-multiplayer"]
     response = HTTParty.get("#{BASE_URL}/tags", query: { key: @api_key, page_size: 40 })
     response["results"]
-      .select { |t| game_mode_slugs.include?(t["slug"]) }
+    .select { |t| GAME_MODE_SLUGS.include?(t["slug"]) }
       .map { |t| { id: t["slug"], name: t["name"] } }
   end
 
