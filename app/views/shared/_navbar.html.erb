@@ -9,7 +9,7 @@
         <span>Home</span>
       <% end %>
 
-      <%= link_to "#", class: "bottom-nav__item" do %>
+      <%= link_to discover_path, class: "bottom-nav__item #{'bottom-nav__item--active' if request.path == '/discover'}" do %>
         <i class="fa-solid fa-compass"></i>
         <span>Discover</span>
       <% end %>

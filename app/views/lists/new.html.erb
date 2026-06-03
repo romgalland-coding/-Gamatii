@@ -6,13 +6,7 @@
     <p class="lists-subtitle">Describe what you're looking for</p>
   </header>
 
-  <%= simple_form_for @list do |f| %>
-    <%= f.input :name,
-          label: false,
-          placeholder: "e.g. Best Mario games, cozy rainy day picks…",
-          input_html: { class: "form-control" } %>
-    <%= f.submit "Find games", class: "btn btn-primary w-100" %>
-  <% end %>
+  <%= render "lists/form" %>
 </div>
 
 <%= render "shared/navbar", active: :lists %>

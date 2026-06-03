@@ -1,0 +1,45 @@
+<%= simple_form_for @list do |f| %>
+  <%= f.input :name,
+        label: false,
+        placeholder: "e.g. Best Mario games, cozy rainy day picks…",
+        input_html: { class: "form-control" } %>
+
+  <%= f.input :list_type, collection: List::LIST_TYPES, include_blank: "Select a type" %>
+
+  <div class="mb-3">
+    <label class="form-label">Genre</label>
+    <%= select_tag :genre, options_for_select(@genres.map { |g| [g[:name], g[:id]] }), include_blank: "All genres", class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Publisher</label>
+    <%= select_tag :publisher, options_for_select(@publishers.map { |p| [p[:name], p[:id]] }), include_blank: "All publishers", class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Platforms</label>
+    <%= select_tag "platforms[]", options_for_select(@platforms.map { |p| [p[:name], p[:id]] }), multiple: true, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Game mode</label>
+    <%= select_tag :game_mode, options_for_select(@game_modes.map { |t| [t[:name], t[:id]] }), include_blank: "All modes", class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Minimum rating (Metacritic)</label>
+    <%= number_field_tag :rating, nil, min: 0, max: 100, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Release date from</label>
+    <%= date_field_tag :from, nil, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Release date to</label>
+    <%= date_field_tag :to, nil, class: "form-control" %>
+  </div>
+
+  <%= f.submit "Create & discover games", class: "btn btn-primary w-100" %>
+<% end %>

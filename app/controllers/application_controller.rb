@@ -13,6 +13,14 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def load_rawg_filter_options
+    rawg = RawgService.new
+    @genres     = rawg.genres_discovery
+    @platforms  = rawg.platforms
+    @publishers = rawg.publishers
+    @game_modes = rawg.tags
+  end
+
   def skip_pundit?
     devise_controller? || params[:controller] =~ /(^(rails_)?admin)|(^pages$)/
   end
