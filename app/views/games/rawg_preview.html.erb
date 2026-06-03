@@ -1,0 +1,35 @@
+<%= turbo_frame_tag "game_preview_#{@rawg_id}" do %>
+  <% if @game["background_image"].present? %>
+    <%= image_tag @game["background_image"], class: "img-fluid rounded mb-3 w-100",
+          style: "max-height: 220px; object-fit: cover;" %>
+  <% end %>
+
+  <p class="text-muted mb-1"><%= @game["genres"]&.map { |g| g["name"] }&.join(", ") %></p>
+  <h4 class="mb-3"><%= @game["name"] %></h4>
+
+  <% if @game["platforms"].present? %>
+    <div class="mb-3">
+      <% @game["platforms"].each do |p| %>
+        <span class="badge bg-secondary me-1 mb-1"><%= p.dig("platform", "name") %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <h6 class="text-uppercase text-muted">Description</h6>
+  <p><%= @game["description_raw"].presence || "No description available." %></p>
+
+  <div class="row text-center g-2">
+    <div class="col">
+      <div class="fw-bold"><%= @game["developers"]&.map { |d| d["name"] }&.join(", ").presence || "TBD" %></div>
+      <small class="text-muted">Studio</small>
+    </div>
+    <div class="col">
+      <div class="fw-bold"><%= @game["released"]&.first(4) || "TBD" %></div>
+      <small class="text-muted">Released</small>
+    </div>
+    <div class="col">
+      <div class="fw-bold"><%= @game["metacritic"] || "N/A" %></div>
+      <small class="text-muted">Rating</small>
+    </div>
+  </div>
+<% end %>

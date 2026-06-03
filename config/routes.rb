@@ -9,6 +9,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # road for the game show using the rawg id, used for the discover page
+  get "rawg_games/:rawg_id/preview", to: "games#rawg_preview", as: :rawg_game_preview
+
   resources :lists do
     collection do
       get :search_games
