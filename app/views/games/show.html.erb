@@ -21,10 +21,32 @@
 
   <div class="game-show__cover" style="background-image: url('<%= @game.cover_img %>'); background-size: cover; background-position: center;"></div>
 
-  <div class="game-show__thumbnails">
-    <div class="game-show__thumb" style="background-image: url('<%= @game.in_game_img %>'); background-size: cover; background-position: center;"></div>
-    <div class="game-show__thumb"></div>
-    <div class="game-show__thumb"></div>
+  <% shots = @game.screenshots.presence || [@game.in_game_img].compact %>
+  <div class="game-show__thumbnails"
+       data-controller="lightbox"
+       data-lightbox-images-value="<%= shots.to_json %>">
+    <% shots.each_with_index do |url, i| %>
+      <div class="game-show__thumb game-show__thumb--clickable"
+           style="background-image: url('<%= url %>'); background-size: cover; background-position: center;"
+           data-action="click->lightbox#open"
+           data-lightbox-index-param="<%= i %>"></div>
+    <% end %>
+    <% (3 - shots.size).times do %>
+      <div class="game-show__thumb"></div>
+    <% end %>
+
+    <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
+      <div class="lightbox__backdrop" data-action="click->lightbox#close"></div>
+      <div class="lightbox__box">
+        <button class="lightbox__close" data-action="click->lightbox#close">✕</button>
+        <div class="lightbox__image" data-lightbox-target="image"></div>
+        <% if shots.size > 1 %>
+          <button class="lightbox__nav lightbox__nav--prev" data-action="click->lightbox#prev">‹</button>
+          <button class="lightbox__nav lightbox__nav--next" data-action="click->lightbox#next">›</button>
+        <% end %>
+        <div class="lightbox__counter" data-lightbox-target="counter"></div>
+      </div>
+    </div>
   </div>
 
   <div class="game-show__tags">
@@ -34,7 +56,19 @@
   </div>
 
   <h2 class="game-show__section-title">Description</h2>
-  <div class="game-show__desc-box"><%= @game.description %></div>
+  <% desc = @game.description.to_s %>
+  <% truncated = desc.length > 220 %>
+  <div class="game-show__desc-box" <% if truncated %>data-controller="expand"<% end %>>
+    <% if truncated %>
+      <span data-expand-target="short"><%= desc[0..219].rstrip %>…</span>
+      <span data-expand-target="full" class="d-none"><%= desc %></span>
+      <button class="game-show__read-more" data-action="click->expand#toggle">
+        <span data-expand-target="btn">Read more</span>
+      </button>
+    <% else %>
+      <%= desc %>
+    <% end %>
+  </div>
 
   <div class="game-show__info">
     <div class="game-show__info-badge">
