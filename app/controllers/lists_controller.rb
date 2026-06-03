@@ -27,13 +27,13 @@ class ListsController < ApplicationController
     authorize @list
     if @list.save
       redirect_to discover_list_path(@list,
-        genre: params[:genre],
-        platforms: params[:platforms],
-        publisher: params[:publisher],
-        game_mode: params[:game_mode],
-        rating: params[:rating],
-        from: params[:from],
-        to: params[:to]
+        genre:      params[:genre],
+        platforms:  params[:platforms],
+        publisher:  params[:publisher],
+        game_mode:  params[:game_mode],
+        rating:     params[:rating],
+        from:       params[:from],
+        to:         params[:to]
       )
     else
       load_rawg_filter_options
