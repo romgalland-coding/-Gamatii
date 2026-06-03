@@ -1,25 +1,6 @@
 <%= turbo_stream.update "search_results" do %>
   <% if @results.present? %>
-    <ul class="search-autocomplete">
-      <% @results.each do |game| %>
-        <li class="search-autocomplete__item">
-          <div class="search-autocomplete__cover"
-               style="background-image: url('<%= game["background_image"] %>')"></div>
-          <div class="search-autocomplete__info">
-            <span class="search-autocomplete__name"><%= game["name"] %></span>
-            <span class="search-autocomplete__meta">
-              <%= [game.dig("genres", 0, "name"), game["released"]&.split("-")&.first].compact.join(" · ") %>
-            </span>
-          </div>
-          <%= form_with url: list_list_games_path(@list_id), method: :post do |f| %>
-            <%= f.hidden_field :origin, value: "list" %>
-            <%= f.hidden_field :rawg_id, value: game["id"] %>
-            <%= f.hidden_field :game_title, value: game["name"] %>
-            <button type="submit" class="btn btn-success search-autocomplete__add">+<span class="search-autocomplete__add-label"> Add to my list</span></button>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
+    <%= render partial: "shared/search_game_results", locals: { results: @results } %>
   <% else %>
     <p class="search-autocomplete__empty">No games found.</p>
   <% end %>
