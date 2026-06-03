@@ -1,5 +1,5 @@
 <div class="lists-page">
-  <%= link_to "< Back", lists_path, class: "list-show__back" %>
+  <%= link_to "‹ Lists", lists_path, class: "list-show__back" %>
 
   <header>
     <h1 class="lists-title"><%= @list.name %></h1>
@@ -25,6 +25,7 @@
             <% else %>
               <%= button_to "Add to list", list_list_games_path(@list),
                     params: {
+                      origin:    "discover",
                       rawg_id:   game["id"],
                       genre:     params[:genre],
                       platforms: params[:platforms],

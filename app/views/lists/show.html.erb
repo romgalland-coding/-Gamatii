@@ -1,7 +1,7 @@
 <div class="list-show-page">
 
   <div class="list-show__topbar">
-    <%= link_to "‹ Back", lists_path, class: "list-show__back" %>
+    <%= link_to "‹ Lists", lists_path, class: "list-show__back" %>
 
     <% if current_user == @list.user %>
       <%= render "shared/search_modal", list_id: @list.id %>

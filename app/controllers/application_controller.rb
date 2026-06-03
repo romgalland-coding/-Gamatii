@@ -13,12 +13,32 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Always send users to the homepage after login, ignoring Devise's stored
+  # location (friendly forwarding). Without this, hitting an auth-protected page
+  # while logged out — e.g. the quiz — would bounce there after sign-in.
+  def after_sign_in_path_for(_resource)
+    root_path
+  end
+
   def load_rawg_filter_options
     rawg = RawgService.new
-    @genres     = rawg.genres_discovery
-    @platforms  = rawg.platforms
-    @publishers = rawg.publishers
-    @game_modes = rawg.tags
+    # These four lists are cached in RawgService, but on a cold cache each one is
+    # a blocking RAWG HTTP call. Fetch them concurrently so a cache-miss load
+    # costs ~one round-trip instead of four sequential ones. Each thread checks
+    # out its own DB/cache connection, which we release before joining.
+    genres     = Thread.new { with_connection { rawg.genres_discovery } }
+    platforms  = Thread.new { with_connection { rawg.platforms } }
+    publishers = Thread.new { with_connection { rawg.publishers } }
+    game_modes = Thread.new { with_connection { rawg.tags } }
+
+    @genres     = genres.value
+    @platforms  = platforms.value
+    @publishers = publishers.value
+    @game_modes = game_modes.value
+  end
+
+  def with_connection(&)
+    ActiveRecord::Base.connection_pool.with_connection(&)
   end
 
   def skip_pundit?
