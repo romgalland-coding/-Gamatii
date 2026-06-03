@@ -1,0 +1,46 @@
+<div class="lists-page">
+  <%= link_to "< Back", lists_path, class: "list-show__back" %>
+
+  <header>
+    <h1 class="lists-title"><%= @list.name %></h1>
+    <p class="lists-subtitle"><%= @games.length %> games found</p>
+  </header>
+
+  <div class="row row-cols-2 row-cols-md-4 g-3">
+    <% @games.each do |game| %>
+      <div class="col">
+        <div class="card h-100">
+          <% if game["background_image"] %>
+            <%= image_tag game["background_image"], class: "card-img-top", style: "height: 150px; object-fit: cover;" %>
+          <% end %>
+          <div class="card-body">
+            <h6 class="card-title"><%= game["name"] %></h6>
+            <p class="card-text text-muted">
+              <small>⭐ <%= game["metacritic"] || "N/A" %></small>
+            </p>
+          </div>
+          <div class="card-footer">
+            <% if @games_in_list.include?(game["id"]) %>
+              <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
+            <% else %>
+              <%= button_to "Add to list", list_list_games_path(@list),
+                    params: {
+                      rawg_id:   game["id"],
+                      genre:     params[:genre],
+                      platforms: params[:platforms],
+                      publisher: params[:publisher],
+                      game_mode: params[:game_mode],
+                      rating:    params[:rating],
+                      from:      params[:from],
+                      to:        params[:to]
+                    },
+                    class: "btn btn-primary btn-sm w-100" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= render "shared/navbar", active: :lists %>

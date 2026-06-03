@@ -23,6 +23,42 @@ class RawgService
     response.parsed_response
   end
 
+  def genres_discovery
+    response = HTTParty.get("#{BASE_URL}/genres", query: { key: @api_key })
+    response["results"].map { |g| { id: g["slug"], name: g["name"] } }
+  end
+
+  def platforms
+    response = HTTParty.get("#{BASE_URL}/platforms", query: { key: @api_key })
+    response["results"].map { |p| { id: p["id"], name: p["name"] } }
+  end
+
+  def publishers
+    response = HTTParty.get("#{BASE_URL}/publishers", query: { key: @api_key, page_size: 40 })
+    response["results"].map { |p| { id: p["slug"], name: p["name"] } }
+  end
+
+  def tags
+    game_mode_slugs = ["singleplayer", "multiplayer", "co-op", "split-screen", "online-multiplayer", "local-multiplayer"]
+    response = HTTParty.get("#{BASE_URL}/tags", query: { key: @api_key, page_size: 40 })
+    response["results"]
+      .select { |t| game_mode_slugs.include?(t["slug"]) }
+      .map { |t| { id: t["slug"], name: t["name"] } }
+  end
+
+  def search_games(filters = {})
+    query = { key: @api_key, page_size: 20 }
+    query[:genres]     = filters[:genre]                                          if filters[:genre].present?
+    query[:platforms]  = Array(filters[:platforms]).join(",")                       if filters[:platforms].present?
+    query[:publishers] = filters[:publisher]                                      if filters[:publisher].present?
+    query[:tags]       = filters[:game_mode]                                      if filters[:game_mode].present?
+    query[:metacritic] = "#{filters[:rating]},100"                               if filters[:rating].present?
+    query[:dates]      = "#{filters[:from]},#{filters[:to]}"                     if filters[:from].present? && filters[:to].present?
+
+    response = HTTParty.get("#{BASE_URL}/games", query: query)
+    response["results"] || []
+  end
+
   def by_genre(genre_name, exclude_rawg_id:, devices: [])
     genre_slug = genre_name.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/-+\z/, '')
     platform_ids = platform_ids_for(devices)

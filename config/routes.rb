@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
   devise_for :users
   root "pages#home"
+  get "discover", to: "pages#discover"
 
   resources :games, only: [:show]
 
   resources :lists do
     collection do
       get :search_games
+    member do
+      get :discover
     end
     resources :list_games, only: [:create]
   end
