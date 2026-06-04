@@ -8,7 +8,7 @@ class ListGamesController < ApplicationController
       g.cover_img    = rawg_data["background_image"]
       g.genre        = rawg_data["genres"]&.first&.dig("name")
       g.platforms    = rawg_data["platforms"]&.map { |p| p.dig("platform", "name") } || []
-      g.rating       = rawg_data["rating"]
+      g.rating       = rawg_data["metacritic"] # column holds the Metascore (0–100); see db/seeds.rb
       g.release_date = rawg_data["released"]
       g.publisher    = rawg_data["publishers"]&.first&.dig("name")
       g.developer    = rawg_data["developers"]&.first&.dig("name")
