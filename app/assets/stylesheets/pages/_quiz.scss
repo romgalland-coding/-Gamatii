@@ -160,6 +160,26 @@
 
   &:focus { box-shadow: 4px 4px 0 0 #000; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &.shake {
+    animation: quiz-shake 0.4s ease;
+    border-color: $mat-red-dark;
+  }
+}
+
+@keyframes quiz-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+
+// Wrong-guess message under the search bar
+.quiz-guess-feedback {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  color: $mat-red-dark;
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
 // Today picks
@@ -256,6 +276,209 @@
     font-weight: 700;
     color: rgba(0, 0, 0, 0.5);
     flex-shrink: 0;
+  }
+}
+
+// Score screen
+.quiz-results-trigger {
+  align-self: center;
+  background-color: #fff;
+  border: 2.5px solid #000;
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 0 #000;
+  padding: 0.5rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.quiz-score-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.45);
+  padding: 1.25rem;
+  overflow-y: auto;
+
+  &.is-open {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}
+
+.quiz-score-card {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 2rem;
+  border: 2.5px solid #000;
+  border-radius: 1.25rem;
+  box-shadow: 5px 5px 0 0 #000;
+  background-color: $mat-yellow-light;
+  overflow: hidden;
+
+  &__head {
+    position: relative;
+    background-color: $mat-yellow;
+    border-bottom: 2.5px solid #000;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin: 0;
+  }
+
+  &__value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: $headers-font;
+    margin: 0.25rem 0;
+    line-height: 1;
+  }
+
+  &__meta {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    background-color: #fff;
+    border: 2.5px solid #000;
+    border-radius: 0.6rem;
+    box-shadow: 2px 2px 0 0 #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__body {
+    padding: 1.25rem;
+  }
+
+  &__friends {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    opacity: 0.5;
+    margin: 0 0 0.75rem;
+  }
+}
+
+.quiz-leaderboard {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #fff;
+    border: 2.5px solid #000;
+    border-radius: 0.85rem;
+    box-shadow: 3px 3px 0 0 #000;
+    padding: 0.7rem 0.9rem;
+
+    &--me {
+      background-color: $mat-blue;
+    }
+  }
+
+  &__rank {
+    font-weight: 700;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1;
+    font-weight: 700;
+
+    small {
+      font-weight: 600;
+      opacity: 0.6;
+      margin-left: 0.15rem;
+    }
+  }
+
+  &__found {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+
+  &__pts {
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+}
+
+.quiz-score-share {
+  width: 100%;
+  background-color: $mat-blue;
+  border: 2.5px solid #000;
+  border-radius: 0.85rem;
+  box-shadow: 3px 3px 0 0 #000;
+  padding: 0.8rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+// Your picks from yesterday — reference list under the guesses
+.quiz-yesterday-picks {
+  margin-top: 0.5rem;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: rgba(0, 0, 0, 0.5);
+    margin: 0 0 0.5rem;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__row {
+    padding: 0.4rem 0.85rem;
+    background-color: $mat-blue-light;
+    border: 2.5px solid #000;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 }
 

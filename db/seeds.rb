@@ -191,6 +191,40 @@ Quiz::THEMES.each_with_index do |theme, position|
 end
 puts "  #{Quiz::THEMES.size} quizzes created (positions 0–#{Quiz::THEMES.size - 1})."
 
+# ── Leaderboard guesses for EVERY quiz ────────────────────────────────────────
+# In test mode the "yesterday" quiz changes each rotation window, so we seed the
+# 3 users guesses on all 14 quizzes — whatever the rotation lands on, the score
+# screen shows a populated leaderboard. The correct-count is varied per quiz (by
+# position) so different quizzes produce different rankings. Scoring matches by
+# title, so we point guesses at the real answer-pool games.
+
+puts "\nSeeding leaderboard guesses + reference picks on every quiz…"
+# Base correct-counts per user, rotated by quiz position so the order shuffles.
+base_counts = { "PixelKnight" => 4, "NeonByte" => 3, "VortexCaster" => 2 }
+seed_users  = base_counts.keys.map { |tag| User.find_by!(gamer_tag: tag) }
+
+Quiz.order(:position).each do |quiz|
+  answers = quiz.answer_pool(5)
+  next if answers.empty?
+
+  seed_users.each_with_index do |user, i|
+    # GUESS rows — drive the leaderboard. Rotate which user does best per quiz.
+    # Keyed on role too, so a pick and a guess for the same game stay separate.
+    correct_count = base_counts.values[(i + quiz.position) % seed_users.size]
+    answers.first(correct_count).each do |game|
+      QuizGame.find_or_create_by!(user: user, quiz: quiz, game: game, role: "guess")
+    end
+
+    # PICK rows — the user's own list-of-the-day, shown as reference on the
+    # "yesterday" tab. May overlap the answers; that's fine — a pick never counts
+    # as a guess, and we still want to remind the user what they picked.
+    answers.last(2).each do |game|
+      QuizGame.find_or_create_by!(user: user, quiz: quiz, game: game, role: "pick")
+    end
+  end
+end
+puts "  #{seed_users.size} users seeded across #{Quiz.count} quizzes."
+
 puts "\nSeed complete!"
 
 
