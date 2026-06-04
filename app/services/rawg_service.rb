@@ -14,7 +14,7 @@ class RawgService
       key: @api_key,
       search: query,
       search_precise: true,
-      page_size: 5
+      page_size: 15
     })
     response["results"]
   end
