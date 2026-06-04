@@ -1,16 +1,16 @@
 // app/javascript/controllers/quiz_autocomplete_controller.js
 import { Controller } from "@hotwired/stimulus"
 
-// Autocompletes the daily-quiz game field from games matching the quiz's
-// theme. Picking a suggestion fills the input and submits the quiz form.
+// Searches RAWG as you type and renders the matching games into the results
+// area. Each result carries its own submit form, so clicking one adds it to
+// the quiz — same pattern as the list search modal.
 export default class extends Controller {
-  static targets = ["input", "form"]
   static values = { url: String }
 
-  search() {
+  search(event) {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
-      const query = this.inputTarget.value
+      const query = event.target.value
       if (query.length < 2) return
 
       fetch(`${this.urlValue}?query=${encodeURIComponent(query)}`, {
@@ -19,10 +19,5 @@ export default class extends Controller {
         .then(r => r.text())
         .then(html => Turbo.renderStreamMessage(html))
     }, 200)
-  }
-
-  pick(event) {
-    this.inputTarget.value = event.currentTarget.dataset.gameTitle
-    this.formTarget.requestSubmit()
   }
 }

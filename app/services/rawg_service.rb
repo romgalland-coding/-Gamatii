@@ -8,10 +8,12 @@ class RawgService
   end
 
   def search(query)
+    # search_precise prioritizes strong title matches; we deliberately omit an
+    # explicit ordering so RAWG sorts by relevance rather than date added.
     response = HTTParty.get("#{BASE_URL}/games", query: {
       key: @api_key,
       search: query,
-      ordering: "-added",
+      search_precise: true,
       page_size: 5
     })
     response["results"]

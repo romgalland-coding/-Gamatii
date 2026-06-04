@@ -15,4 +15,11 @@ class Quiz < ApplicationRecord
     filter = ANSWER_FILTERS.fetch(name, ->(scope) { scope })
     filter.call(Game.all).order(rating: :desc)
   end
+
+  # The top `limit` distinct games for this quiz. De-dupes by title because
+  # picks imported from RAWG can create a second record for a game we already
+  # seeded; ordered highest-rated first, so uniq keeps the best-rated copy.
+  def answer_pool(limit)
+    answer_scope.uniq { |game| game.title.to_s.downcase.strip }.first(limit)
+  end
 end

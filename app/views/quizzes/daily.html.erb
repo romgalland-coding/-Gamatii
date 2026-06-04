@@ -36,25 +36,21 @@
       <div class="quiz-input-row"
            data-controller="quiz-autocomplete"
            data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(@yesterday_quiz) %>">
-        <%= form_with url: quiz_quiz_games_path(@yesterday_quiz), method: :post,
-              data: { turbo: false, quiz_autocomplete_target: "form" } do %>
-          <%= text_field_tag :game_title,
-                nil,
-                placeholder: "Guess a game…",
-                class: "quiz-input",
-                autocomplete: "off",
-                disabled: @guesses_remaining <= 0,
-                data: { quiz_autocomplete_target: "input", action: "input->quiz-autocomplete#search" } %>
-          <%= submit_tag "", class: "quiz-input-btn" %>
-        <% end %>
+        <%= text_field_tag :quiz_query,
+              nil,
+              placeholder: "Search a game to guess…",
+              class: "quiz-input",
+              autocomplete: "off",
+              disabled: @guesses_remaining <= 0,
+              data: { action: "input->quiz-autocomplete#search" } %>
         <div id="quiz_autocomplete_results" class="quiz-autocomplete-results"></div>
       </div>
     <% end %>
 
     <ol class="quiz-answers">
       <% @yesterday_answers.each_with_index do |game, i| %>
-        <% guessed = current_user && @my_guesses.any? { |qg| qg.game_id == game.id } %>
-        <li class="quiz-answer-row #{'quiz-answer-row--revealed' if guessed}">
+        <% guessed = current_user && @guessed_titles.include?(normalize_title(game.title)) %>
+        <li class="<%= "quiz-answer-row #{'quiz-answer-row--revealed' if guessed}" %>">
           <span class="quiz-answer-row__rank">#<%= i + 1 %></span>
           <span class="quiz-answer-row__title">
             <% if guessed %>
@@ -82,17 +78,13 @@
       <div class="quiz-input-row"
            data-controller="quiz-autocomplete"
            data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(@today_quiz) %>">
-        <%= form_with url: quiz_quiz_games_path(@today_quiz), method: :post,
-              data: { turbo: false, quiz_autocomplete_target: "form" } do %>
-          <%= text_field_tag :game_title,
-                nil,
-                placeholder: "Pick a game…",
-                class: "quiz-input",
-                autocomplete: "off",
-                disabled: @my_submissions.count >= 5,
-                data: { quiz_autocomplete_target: "input", action: "input->quiz-autocomplete#search" } %>
-          <%= submit_tag "", class: "quiz-input-btn" %>
-        <% end %>
+        <%= text_field_tag :quiz_query,
+              nil,
+              placeholder: "Search a game to pick…",
+              class: "quiz-input",
+              autocomplete: "off",
+              disabled: @my_submissions.count >= 5,
+              data: { action: "input->quiz-autocomplete#search" } %>
         <div id="quiz_autocomplete_results" class="quiz-autocomplete-results"></div>
       </div>
 
