@@ -1,7 +1,7 @@
 class QuizGamesController < ApplicationController
   def create
     @quiz = Quiz.find(params[:quiz_id])
-    game  = Game.find_by("LOWER(title) = ?", params[:game_title].to_s.downcase.strip)
+    game  = Game.import_from_rawg(params[:rawg_id])
 
     authorize QuizGame
 
