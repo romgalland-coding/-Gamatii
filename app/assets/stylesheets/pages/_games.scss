@@ -402,3 +402,14 @@
 .wishlist-section.editing .game-card__delete-btn {
   display: flex;
 }
+
+// ---------- Desktop ----------
+@include desktop {
+  .games-page {
+    max-width: 760px;
+  }
+
+  .games-title {
+    font-size: 2.5rem;
+  }
+}

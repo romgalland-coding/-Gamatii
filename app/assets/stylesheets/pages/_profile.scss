@@ -204,3 +204,14 @@
   flex-shrink: 0;
   cursor: pointer;
 }
+
+// ---------- Desktop ----------
+@include desktop {
+  .profile-page {
+    max-width: 760px;
+  }
+
+  .profile-title {
+    font-size: 2.25rem;
+  }
+}

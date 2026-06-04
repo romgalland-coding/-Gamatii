@@ -162,3 +162,22 @@
 .home-create-btn {
   border-radius: 2rem !important;
 }
+
+// ---------- Desktop ----------
+@include desktop {
+  .home-page {
+    max-width: 760px;
+    height: auto;          // no bottom nav on desktop; don't trap content in one viewport
+    min-height: 100vh;
+    padding-bottom: 2.5rem; // room for the Create-list button's drop shadow
+  }
+
+  // Top-align content on desktop instead of vertically centering the title.
+  .home-page > header {
+    flex: none;
+  }
+
+  .home-title__name {
+    font-size: 2.75rem;
+  }
+}

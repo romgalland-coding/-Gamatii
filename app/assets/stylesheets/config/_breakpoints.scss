@@ -1,0 +1,11 @@
+// Responsive breakpoints.
+// The app is mobile-first: base styles target phones, and desktop styles are
+// layered on top via the `desktop` mixin (min-width, progressive enhancement).
+
+$bp-desktop: 768px; // tablet/desktop — the side rail appears at/above this width
+
+@mixin desktop {
+  @media (min-width: $bp-desktop) {
+    @content;
+  }
+}

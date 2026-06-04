@@ -303,3 +303,14 @@
     padding: 0.25rem 0;
   }
 }
+
+// ---------- Desktop ----------
+@include desktop {
+  .game-show {
+    max-width: 760px;
+  }
+
+  .game-show__title {
+    font-size: 2.25rem;
+  }
+}
