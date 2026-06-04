@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_04_100753) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_04_144526) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,9 +56,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_04_100753) do
     t.datetime "created_at", null: false
     t.bigint "game_id", null: false
     t.bigint "quiz_id", null: false
+    t.string "role", default: "guess", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["game_id"], name: "index_quiz_games_on_game_id"
+    t.index ["quiz_id", "role"], name: "index_quiz_games_on_quiz_id_and_role"
     t.index ["quiz_id"], name: "index_quiz_games_on_quiz_id"
     t.index ["user_id"], name: "index_quiz_games_on_user_id"
   end

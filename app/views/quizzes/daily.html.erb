@@ -5,7 +5,11 @@
       <h1 class="quiz-title"><i class="fa-solid fa-trophy"></i> Daily Quiz</h1>
       <p class="quiz-subtitle">Build today's list, guess yesterday's.</p>
     </div>
-    <span class="quiz-timer">23:59:59</span>
+    <span class="quiz-timer"
+          data-controller="quiz-timer"
+          data-quiz-timer-seconds-value="<%= @seconds_remaining %>">
+      <%= format("%02d:%02d", @seconds_remaining / 60, @seconds_remaining % 60) %>
+    </span>
   </div>
 
   <div class="quiz-tabs">
@@ -35,16 +39,21 @@
     <% if current_user %>
       <div class="quiz-input-row"
            data-controller="quiz-autocomplete"
-           data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(@yesterday_quiz) %>">
+           data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(@yesterday_quiz) %>"
+           data-action="turbo:submit-end->quiz-autocomplete#reset">
         <%= text_field_tag :quiz_query,
               nil,
               placeholder: "Search a game to guess…",
               class: "quiz-input",
               autocomplete: "off",
               disabled: @guesses_remaining <= 0,
-              data: { action: "input->quiz-autocomplete#search" } %>
-        <div id="quiz_autocomplete_results" class="quiz-autocomplete-results"></div>
+              data: { action: "input->quiz-autocomplete#search",
+                      "quiz-autocomplete-target": "input" } %>
+        <div id="quiz_autocomplete_results" class="quiz-autocomplete-results"
+             data-quiz-autocomplete-target="results"></div>
       </div>
+      <%# Wrong-guess feedback target — filled by create.turbo_stream on a miss. %>
+      <div id="quiz_guess_feedback"></div>
     <% end %>
 
     <ol class="quiz-answers">
@@ -63,6 +72,83 @@
         </li>
       <% end %>
     </ol>
+
+    <%# ---- YOUR PICKS FROM YESTERDAY ---- a reference list of what this user
+        picked when this quiz was "today", so they can re-enter them as guesses.
+        Only appears if they made at least one pick. %>
+    <% if current_user && @my_yesterday_picks.any? %>
+      <div class="quiz-yesterday-picks">
+        <p class="quiz-yesterday-picks__label">YOUR PICKS</p>
+        <ul class="quiz-yesterday-picks__list">
+          <% @my_yesterday_picks.each do |qg| %>
+            <li class="quiz-yesterday-picks__row"><%= qg.game.title %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%# ---- SCORE SCREEN ---- shown automatically once all 5 guesses are used,
+        dismissable via X, re-openable via "View results". %>
+    <% if current_user %>
+      <%
+        share_text = "gamatii daily quiz #{Date.current.strftime('%-d %b %Y')}\n" \
+                     "My score: #{@score}\n" \
+                     "#{root_url}"
+        avatars = { "PixelKnight" => "🦊", "NeonByte" => "🌿", "VortexCaster" => "📖" }
+      %>
+
+      <div data-controller="quiz-score"
+           data-quiz-score-auto-value="<%= @guesses_remaining <= 0 %>"
+           data-quiz-score-share-text-value="<%= share_text %>">
+
+        <% if @guesses_remaining <= 0 %>
+          <button type="button" class="quiz-results-trigger"
+                  data-action="quiz-score#open">View results</button>
+        <% end %>
+
+        <div class="quiz-score-overlay" data-quiz-score-target="overlay">
+
+          <div class="quiz-score-card">
+          <div class="quiz-score-card__head">
+            <p class="quiz-score-card__label">YOUR SCORE</p>
+            <h2 class="quiz-score-card__value"><%= @score %></h2>
+            <p class="quiz-score-card__meta">
+              <%= @found %>/5 found · ranked #<%= @my_rank %> of <%= @total_players %>
+            </p>
+            <button type="button" class="quiz-score-card__close"
+                    data-action="quiz-score#close" aria-label="Close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="quiz-score-card__body">
+            <p class="quiz-score-card__friends">FRIENDS</p>
+            <ul class="quiz-leaderboard">
+              <% @leaderboard.each do |row| %>
+                <% me = row[:user] == current_user %>
+                <li class="quiz-leaderboard__row <%= 'quiz-leaderboard__row--me' if me %>">
+                  <span class="quiz-leaderboard__rank"><%= row[:rank] %></span>
+                  <span class="quiz-leaderboard__avatar">
+                    <%= me ? "🎮" : avatars.fetch(row[:user].gamer_tag, "🎮") %>
+                  </span>
+                  <span class="quiz-leaderboard__name">
+                    @<%= row[:user].gamer_tag %><% if me %><small>(you)</small><% end %>
+                  </span>
+                  <span class="quiz-leaderboard__found"><%= row[:found] %>/5</span>
+                  <span class="quiz-leaderboard__pts"><%= row[:score] %></span>
+                </li>
+              <% end %>
+            </ul>
+
+            <button type="button" class="quiz-score-share"
+                    data-action="quiz-score#share">
+              <i class="fa-solid fa-share-nodes"></i> Share score
+            </button>
+          </div>
+        </div><%# /quiz-score-card %>
+      </div><%# /quiz-score-overlay %>
+    </div><%# /quiz-score controller %>
+    <% end %>
 
   <% else %>
 

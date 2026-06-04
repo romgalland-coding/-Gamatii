@@ -1,0 +1,12 @@
+<%# Wrong-guess feedback: replace the feedback region with the red message and
+    a controller that shakes the search input on connect. Re-rendering the whole
+    region (not just appending text) re-runs the Stimulus connect each time, so
+    repeated wrong guesses shake again. %>
+<%= turbo_stream.replace "quiz_guess_feedback" do %>
+  <div id="quiz_guess_feedback"
+       class="quiz-guess-feedback"
+       data-controller="quiz-shake"
+       data-quiz-shake-target-selector-value=".quiz-input">
+    <%= @wrong_game.title %> is not on the list!
+  </div>
+<% end %>
