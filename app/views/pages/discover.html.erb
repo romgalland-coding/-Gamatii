@@ -1,28 +1,3 @@
-<div class="lists-page">
-  <header>
-    <h1 class="lists-title">Discover</h1>
-    <p class="lists-subtitle">Create a new list</p>
-  </header>
 
-  <%= render "lists/form" %>
-
-  <section class="mt-5">
-    <h2 class="lists-title">Recent lists</h2>
-    <div class="row row-cols-1 row-cols-md-3 g-3">
-      <% @recent_lists.each do |list| %>
-        <div class="col">
-          <%= link_to list, class: "text-decoration-none" do %>
-            <div class="card h-100">
-              <div class="card-body">
-                <h6 class="card-title"><%= list.name %></h6>
-                <p class="card-text text-muted"><small><%= list.games.count %> games</small></p>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  </section>
-</div>
 
 <%= render "shared/navbar", active: :discover %>

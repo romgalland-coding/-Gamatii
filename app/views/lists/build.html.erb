@@ -20,7 +20,7 @@
     <% @games.each do |game| %>
       <% added = @games_in_list.include?(game["id"]) %>
       <% add_params = {
-           origin:    "discover",
+           origin:    "build",
            rawg_id:   game["id"],
            genres:     params[:genres],
            platforms:  params[:platforms],
@@ -91,7 +91,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
 
-  <form method="GET" action="<%= discover_list_path(@list) %>"
+  <form method="GET" action="<%= build_list_path(@list) %>"
         class="d-flex flex-column overflow-hidden flex-grow-1">
     <div class="offcanvas-body discover-filters-canvas__body">
 
@@ -236,7 +236,7 @@
     </div>
 
     <div class="discover-filters-canvas__footer">
-      <%= link_to "Clear all", discover_list_path(@list),
+      <%= link_to "Clear all", build_list_path(@list),
             class: "btn btn-secondary flex-fill",
             data: { bs_dismiss: "offcanvas" } %>
       <button type="submit" class="btn btn-primary flex-fill">Apply</button>

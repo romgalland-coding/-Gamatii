@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :authenticate_user!, only: %i[new create edit update destroy discover]
+  before_action :authenticate_user!, only: %i[new create edit update destroy build]
   before_action :set_list, only: %i[show edit update destroy]
 
   def index
@@ -26,7 +26,7 @@ class ListsController < ApplicationController
     @list = current_user.lists.build(list_params.merge(list_type: "custom"))
     authorize @list
     if @list.save
-      redirect_to discover_list_path(@list,
+      redirect_to build_list_path(@list,
         genres:     params[:genres],
         platforms:  params[:platforms],
         publishers: params[:publishers],
@@ -41,7 +41,7 @@ class ListsController < ApplicationController
     end
   end
 
-  def discover
+  def build
     @list = List.find(params[:id])
     authorize @list
     load_rawg_filter_options
