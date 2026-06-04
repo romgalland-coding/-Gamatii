@@ -14,8 +14,9 @@
 
   &__items {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+    gap: 0.5rem;
     padding: 0.5rem 1rem;
   }
 
@@ -25,9 +26,9 @@
     justify-content: center;
     align-items: center;
     gap: 0.2rem;
-    width: 5rem;
-    min-height: 3.6rem;
-    padding: 0.3rem 0.45rem;
+    width: 4rem;
+    min-height: 3.4rem;
+    padding: 0.3rem 0.25rem;
     border-radius: 0.75rem;
     border: 2px solid #000;
     background-color: white;
