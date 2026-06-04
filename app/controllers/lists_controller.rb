@@ -41,22 +41,6 @@ class ListsController < ApplicationController
     end
   end
 
-  def discover
-    @list = List.find(params[:id])
-    authorize @list
-    rawg = RawgService.new
-    @games = rawg.search_games(
-      genres:     params[:genres],
-      platforms:  params[:platforms],
-      publishers: params[:publishers],
-      game_modes: params[:game_modes],
-      rating:     params[:rating],
-      from:       params[:from],
-      to:         params[:to]
-    )
-    @games_in_list = @list.games.pluck(:rawg_id)
-  end
-
   def edit
     authorize @list
   end

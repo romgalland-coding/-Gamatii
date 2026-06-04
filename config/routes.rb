@@ -16,9 +16,6 @@ Rails.application.routes.draw do
     collection do
       get :search_games
     end
-    member do
-      get :discover
-    end
     resources :list_games, only: [:create]
   end
 
