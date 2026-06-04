@@ -39,9 +39,9 @@ class RawgService
   end
 
   def platforms
-    Rails.cache.fetch("rawg/platforms", expires_in: FILTER_OPTIONS_TTL) do
+    Rails.cache.fetch("rawg/platforms_v2", expires_in: FILTER_OPTIONS_TTL) do
       response = HTTParty.get("#{BASE_URL}/platforms", query: { key: @api_key })
-      response["results"].map { |p| { id: p["id"], name: p["name"] } }
+      response["results"].map { |p| { id: p["id"], name: p["name"], year: p["year_start"].to_i } }
     end
   end
 
@@ -63,10 +63,10 @@ class RawgService
 
   def search_games(filters = {})
     query = { key: @api_key, page_size: 20 }
-    query[:genres]     = filters[:genre]                                          if filters[:genre].present?
-    query[:platforms]  = Array(filters[:platforms]).join(",")                       if filters[:platforms].present?
-    query[:publishers] = filters[:publisher]                                      if filters[:publisher].present?
-    query[:tags]       = filters[:game_mode]                                      if filters[:game_mode].present?
+    query[:genres]     = Array(filters[:genres]).join(",")     if filters[:genres].present?
+    query[:platforms]  = Array(filters[:platforms]).join(",")  if filters[:platforms].present?
+    query[:publishers] = Array(filters[:publishers]).join(",") if filters[:publishers].present?
+    query[:tags]       = Array(filters[:game_modes]).join(",") if filters[:game_modes].present?
     query[:metacritic] = "#{filters[:rating]},100"                               if filters[:rating].present?
     query[:dates]      = "#{filters[:from]},#{filters[:to]}"                     if filters[:from].present? && filters[:to].present?
 

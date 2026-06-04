@@ -1,32 +1,132 @@
 <%= simple_form_for @list do |f| %>
   <%= f.input :name,
         label: false,
-        placeholder: "e.g. Best Mario games, cozy rainy day picks…",
-        input_html: { class: "form-control" } %>
+        placeholder: "Add a title…",
+        wrapper_html: { class: "mb-4" },
+        input_html: { class: "list-title-input" } %>
 
-  <div class="mb-3">
+  <%# Genre filter %>
+  <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="genres[]">
     <label class="form-label">Genre</label>
-    <%= select_tag :genre, options_for_select(@genres.map { |g| [g[:name], g[:id]] }), include_blank: "All genres", class: "form-select" %>
+    <div class="filter-chips" data-multi-select-target="tags"></div>
+    <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add genres</button>
+    <div class="filter-panel" data-multi-select-target="panel">
+      <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+      <div class="filter-panel__sheet">
+        <div class="filter-panel__header">
+          <h3 class="filter-panel__title">Genres</h3>
+          <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+        </div>
+        <div class="filter-panel__list">
+          <% @genres.each do |g| %>
+            <label class="filter-panel__option">
+              <span><%= g[:name] %></span>
+              <input type="checkbox" class="filter-panel__checkbox"
+                     value="<%= g[:id] %>" data-name="<%= g[:name] %>"
+                     data-action="change->multi-select#toggle"
+                     data-multi-select-target="checkbox">
+            </label>
+          <% end %>
+        </div>
+        <div class="filter-panel__footer">
+          <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+        </div>
+      </div>
+    </div>
+    <div data-multi-select-target="inputs"></div>
   </div>
 
-  <div class="mb-3">
+  <%# Publisher filter %>
+  <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="publishers[]">
     <label class="form-label">Publisher</label>
-    <%= select_tag :publisher, options_for_select(@publishers.map { |p| [p[:name], p[:id]] }), include_blank: "All publishers", class: "form-select" %>
+    <div class="filter-chips" data-multi-select-target="tags"></div>
+    <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add publishers</button>
+    <div class="filter-panel" data-multi-select-target="panel">
+      <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+      <div class="filter-panel__sheet">
+        <div class="filter-panel__header">
+          <h3 class="filter-panel__title">Publishers</h3>
+          <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+        </div>
+        <div class="filter-panel__list">
+          <% @publishers.each do |p| %>
+            <label class="filter-panel__option">
+              <span><%= p[:name] %></span>
+              <input type="checkbox" class="filter-panel__checkbox"
+                     value="<%= p[:id] %>" data-name="<%= p[:name] %>"
+                     data-action="change->multi-select#toggle"
+                     data-multi-select-target="checkbox">
+            </label>
+          <% end %>
+        </div>
+        <div class="filter-panel__footer">
+          <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+        </div>
+      </div>
+    </div>
+    <div data-multi-select-target="inputs"></div>
   </div>
 
-  <div class="mb-3">
+  <%# Platforms filter (sorted most recent first) %>
+  <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="platforms[]">
     <label class="form-label">Platforms</label>
-    <%= select_tag "platforms[]", options_for_select(@platforms.map { |p| [p[:name], p[:id]] }), multiple: true, class: "form-select" %>
+    <div class="filter-chips" data-multi-select-target="tags"></div>
+    <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add platforms</button>
+    <div class="filter-panel" data-multi-select-target="panel">
+      <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+      <div class="filter-panel__sheet">
+        <div class="filter-panel__header">
+          <h3 class="filter-panel__title">Platforms</h3>
+          <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+        </div>
+        <div class="filter-panel__list">
+          <% @platforms.each do |p| %>
+            <label class="filter-panel__option">
+              <span><%= p[:name] %></span>
+              <input type="checkbox" class="filter-panel__checkbox"
+                     value="<%= p[:id] %>" data-name="<%= p[:name] %>"
+                     data-action="change->multi-select#toggle"
+                     data-multi-select-target="checkbox">
+            </label>
+          <% end %>
+        </div>
+        <div class="filter-panel__footer">
+          <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+        </div>
+      </div>
+    </div>
+    <div data-multi-select-target="inputs"></div>
   </div>
 
-  <div class="mb-3">
+  <%# Game mode filter %>
+  <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="game_modes[]">
     <label class="form-label">Game mode</label>
-    <%= select_tag :game_mode, options_for_select(@game_modes.map { |t| [t[:name], t[:id]] }), include_blank: "All modes", class: "form-select" %>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Minimum rating (Metacritic)</label>
-    <%= number_field_tag :rating, nil, min: 0, max: 100, class: "form-control" %>
+    <div class="filter-chips" data-multi-select-target="tags"></div>
+    <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add game modes</button>
+    <div class="filter-panel" data-multi-select-target="panel">
+      <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+      <div class="filter-panel__sheet">
+        <div class="filter-panel__header">
+          <h3 class="filter-panel__title">Game modes</h3>
+          <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+        </div>
+        <div class="filter-panel__list">
+          <% @game_modes.each do |m| %>
+            <label class="filter-panel__option">
+              <span><%= m[:name] %></span>
+              <input type="checkbox" class="filter-panel__checkbox"
+                     value="<%= m[:id] %>" data-name="<%= m[:name] %>"
+                     data-action="change->multi-select#toggle"
+                     data-multi-select-target="checkbox">
+            </label>
+          <% end %>
+        </div>
+        <div class="filter-panel__footer">
+          <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+        </div>
+      </div>
+    </div>
+    <div data-multi-select-target="inputs"></div>
   </div>
 
   <div class="mb-3">

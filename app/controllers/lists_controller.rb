@@ -27,10 +27,10 @@ class ListsController < ApplicationController
     authorize @list
     if @list.save
       redirect_to discover_list_path(@list,
-        genre:      params[:genre],
+        genres:     params[:genres],
         platforms:  params[:platforms],
-        publisher:  params[:publisher],
-        game_mode:  params[:game_mode],
+        publishers: params[:publishers],
+        game_modes: params[:game_modes],
         rating:     params[:rating],
         from:       params[:from],
         to:         params[:to]
@@ -46,13 +46,13 @@ class ListsController < ApplicationController
     authorize @list
     rawg = RawgService.new
     @games = rawg.search_games(
-      genre:     params[:genre],
-      platforms: params[:platforms],
-      publisher: params[:publisher],
-      game_mode: params[:game_mode],
-      rating:    params[:rating],
-      from:      params[:from],
-      to:        params[:to]
+      genres:     params[:genres],
+      platforms:  params[:platforms],
+      publishers: params[:publishers],
+      game_modes: params[:game_modes],
+      rating:     params[:rating],
+      from:       params[:from],
+      to:         params[:to]
     )
     @games_in_list = @list.games.pluck(:rawg_id)
   end
