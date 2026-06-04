@@ -56,6 +56,13 @@
     font-size: 16px;
     margin-bottom: 0.5rem;
   }
+
+  // Desktop: keep the overlay, blur, and centered box inside the app area
+  // (to the right of the 240px side rail), not behind it.
+  @include desktop {
+    left: 240px;
+    inset: 0 0 0 240px;
+  }
 }
 
 .search-autocomplete {

@@ -468,3 +468,19 @@
   color: #000;
   &:hover { color: #000; }
 }
+
+// ---------- Desktop ----------
+@include desktop {
+  .lists-page,
+  .list-show-page {
+    max-width: 760px;
+  }
+
+  .lists-title {
+    font-size: 2.5rem;
+  }
+
+  .list-show__name {
+    font-size: 2.25rem;
+  }
+}

@@ -258,3 +258,14 @@
     flex-shrink: 0;
   }
 }
+
+// ---------- Desktop ----------
+@include desktop {
+  .quiz-page {
+    max-width: 760px;
+  }
+
+  .quiz-title {
+    font-size: 2.25rem;
+  }
+}
