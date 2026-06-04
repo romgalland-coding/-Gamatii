@@ -25,6 +25,11 @@ class ListGamesController < ApplicationController
       filter_params = params.permit(:genre, :publisher, :game_mode, :rating, :from, :to, platforms: [])
       redirect_to discover_list_path(@list, **filter_params),
                   alert: (saved ? nil : "Could not add game to list.")
+    elsif params[:origin] == "game_show"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to game_path(@game) }
+      end
     else
       redirect_to list_path(@list),
                   alert: (saved ? nil : "Could not add game to list.")
@@ -34,8 +39,17 @@ class ListGamesController < ApplicationController
   def destroy
     @list_game = ListGame.find(params[:id])
     @list = @list_game.list
+    @game = @list_game.game
     authorize @list, :update?
     @list_game.destroy
-    redirect_to list_path(@list)
+
+    if params[:origin] == "game_show"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to game_path(@game) }
+      end
+    else
+      redirect_to list_path(@list)
+    end
   end
 end

@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "list-panel-item-#{@list.id}" do %>
+  <%= render "games/list_panel_item", list: @list, existing: @list_game, game: @game %>
+<% end %>
