@@ -57,9 +57,37 @@
   <% end %>
 
   <% if current_user == @list.user %>
-    <%= link_to "Delete list", list_path(@list),
-          class: "btn btn-danger w-100 list-show__delete",
-          data: { turbo_method: :delete, turbo_confirm: "Delete \"#{@list.name}\"? This can't be undone." } %>
+    <div data-controller="confirm-dialog">
+      <button class="btn btn-danger w-100 list-show__delete"
+              data-action="click->confirm-dialog#open">
+        Delete list
+      </button>
+
+      <dialog class="confirm-dialog"
+              data-confirm-dialog-target="dialog"
+              data-action="click->confirm-dialog#backdropClose">
+        <div class="confirm-dialog__box">
+          <% cover = @list_games.first&.game&.cover_img %>
+          <% if cover.present? %>
+            <div class="confirm-dialog__cover" style="background-image: url('<%= cover %>')"></div>
+          <% else %>
+            <div class="confirm-dialog__cover confirm-dialog__cover--placeholder"></div>
+          <% end %>
+          <p class="confirm-dialog__message">Do you want to delete <%= @list.name %>?</p>
+          <p class="confirm-dialog__hint">This action cannot be undone.</p>
+          <div class="confirm-dialog__actions">
+            <button type="button"
+                    class="confirm-dialog__btn confirm-dialog__btn--cancel"
+                    data-action="click->confirm-dialog#close">
+              Cancel
+            </button>
+            <%= form_with url: list_path(@list), method: :delete do |f| %>
+              <%= f.submit "Delete", class: "confirm-dialog__btn confirm-dialog__btn--remove" %>
+            <% end %>
+          </div>
+        </div>
+      </dialog>
+    </div>
   <% end %>
 
 </div>
