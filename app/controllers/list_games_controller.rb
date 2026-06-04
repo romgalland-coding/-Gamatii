@@ -22,7 +22,7 @@ class ListGamesController < ApplicationController
     saved = @list_game.save
 
     if params[:origin] == "discover"
-      filter_params = params.permit(:genre, :publisher, :game_mode, :rating, :from, :to, platforms: [])
+      filter_params = params.permit(:rating, :from, :to, genres: [], platforms: [], publishers: [], game_modes: [])
       redirect_to discover_list_path(@list, **filter_params),
                   alert: (saved ? nil : "Could not add game to list.")
     elsif params[:origin] == "game_show"
