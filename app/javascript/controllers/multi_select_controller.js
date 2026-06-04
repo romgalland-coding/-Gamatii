@@ -6,6 +6,13 @@ export default class extends Controller {
 
   selected = {}
 
+  connect() {
+    this.checkboxTargets.forEach(cb => {
+      if (cb.checked) this.selected[cb.value] = cb.dataset.name
+    })
+    this._render()
+  }
+
   open(e) {
     e.preventDefault()
     this.panelTarget.classList.add("is-open")

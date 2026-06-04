@@ -6,7 +6,14 @@
       <h1 class="lists-title"><%= @list.name %></h1>
       <p class="lists-subtitle"><%= @games.length %> games found</p>
     </div>
-    <%= link_to "Save", list_path(@list), class: "btn btn-primary btn-sm" %>
+    <div class="d-flex gap-2 align-items-center">
+      <button type="button" class="btn btn-secondary btn-sm"
+              data-bs-toggle="offcanvas" data-bs-target="#discoverFilters"
+              aria-controls="discoverFilters">
+        <i class="fa-solid fa-sliders"></i>
+      </button>
+      <%= link_to "Save", list_path(@list), class: "btn btn-primary btn-sm" %>
+    </div>
   </header>
 
   <div class="row row-cols-2 g-3">
@@ -72,6 +79,169 @@
       </div>
     <% end %>
   </div>
+</div>
+
+<%# Filter offcanvas — games reload only when Apply is submitted %>
+<div class="offcanvas offcanvas-bottom discover-filters-canvas"
+     id="discoverFilters" tabindex="-1"
+     aria-labelledby="discoverFiltersLabel">
+
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="discoverFiltersLabel">Filters</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <form method="GET" action="<%= discover_list_path(@list) %>"
+        class="d-flex flex-column overflow-hidden flex-grow-1">
+    <div class="offcanvas-body discover-filters-canvas__body">
+
+      <%# Genre %>
+      <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="genres[]">
+        <label class="form-label">Genre</label>
+        <div class="filter-chips" data-multi-select-target="tags"></div>
+        <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add genres</button>
+        <div class="filter-panel" data-multi-select-target="panel">
+          <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+          <div class="filter-panel__sheet">
+            <div class="filter-panel__header">
+              <h3 class="filter-panel__title">Genres</h3>
+              <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+            </div>
+            <div class="filter-panel__list">
+              <% @genres.each do |g| %>
+                <label class="filter-panel__option">
+                  <span><%= g[:name] %></span>
+                  <input type="checkbox" class="filter-panel__checkbox"
+                         value="<%= g[:id] %>" data-name="<%= g[:name] %>"
+                         data-action="change->multi-select#toggle"
+                         data-multi-select-target="checkbox"
+                         <% if Array(params[:genres]).include?(g[:id].to_s) %>checked<% end %>>
+                </label>
+              <% end %>
+            </div>
+            <div class="filter-panel__footer">
+              <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+            </div>
+          </div>
+        </div>
+        <div data-multi-select-target="inputs"></div>
+      </div>
+
+      <%# Platform %>
+      <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="platforms[]">
+        <label class="form-label">Platform</label>
+        <div class="filter-chips" data-multi-select-target="tags"></div>
+        <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add platforms</button>
+        <div class="filter-panel" data-multi-select-target="panel">
+          <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+          <div class="filter-panel__sheet">
+            <div class="filter-panel__header">
+              <h3 class="filter-panel__title">Platforms</h3>
+              <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+            </div>
+            <div class="filter-panel__list">
+              <% @platforms.each do |p| %>
+                <label class="filter-panel__option">
+                  <span><%= p[:name] %></span>
+                  <input type="checkbox" class="filter-panel__checkbox"
+                         value="<%= p[:id] %>" data-name="<%= p[:name] %>"
+                         data-action="change->multi-select#toggle"
+                         data-multi-select-target="checkbox"
+                         <% if Array(params[:platforms]).include?(p[:id].to_s) %>checked<% end %>>
+                </label>
+              <% end %>
+            </div>
+            <div class="filter-panel__footer">
+              <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+            </div>
+          </div>
+        </div>
+        <div data-multi-select-target="inputs"></div>
+      </div>
+
+      <%# Publisher %>
+      <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="publishers[]">
+        <label class="form-label">Publisher</label>
+        <div class="filter-chips" data-multi-select-target="tags"></div>
+        <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add publishers</button>
+        <div class="filter-panel" data-multi-select-target="panel">
+          <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+          <div class="filter-panel__sheet">
+            <div class="filter-panel__header">
+              <h3 class="filter-panel__title">Publishers</h3>
+              <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+            </div>
+            <div class="filter-panel__list">
+              <% @publishers.each do |p| %>
+                <label class="filter-panel__option">
+                  <span><%= p[:name] %></span>
+                  <input type="checkbox" class="filter-panel__checkbox"
+                         value="<%= p[:id] %>" data-name="<%= p[:name] %>"
+                         data-action="change->multi-select#toggle"
+                         data-multi-select-target="checkbox"
+                         <% if Array(params[:publishers]).include?(p[:id].to_s) %>checked<% end %>>
+                </label>
+              <% end %>
+            </div>
+            <div class="filter-panel__footer">
+              <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+            </div>
+          </div>
+        </div>
+        <div data-multi-select-target="inputs"></div>
+      </div>
+
+      <%# Game mode %>
+      <div class="mb-3" data-controller="multi-select" data-multi-select-name-value="game_modes[]">
+        <label class="form-label">Game mode</label>
+        <div class="filter-chips" data-multi-select-target="tags"></div>
+        <button type="button" class="filter-add-btn" data-action="click->multi-select#open">+ Add game modes</button>
+        <div class="filter-panel" data-multi-select-target="panel">
+          <div class="filter-panel__backdrop" data-action="click->multi-select#close"></div>
+          <div class="filter-panel__sheet">
+            <div class="filter-panel__header">
+              <h3 class="filter-panel__title">Game modes</h3>
+              <button type="button" class="filter-panel__close" data-action="click->multi-select#close">✕</button>
+            </div>
+            <div class="filter-panel__list">
+              <% @game_modes.each do |m| %>
+                <label class="filter-panel__option">
+                  <span><%= m[:name] %></span>
+                  <input type="checkbox" class="filter-panel__checkbox"
+                         value="<%= m[:id] %>" data-name="<%= m[:name] %>"
+                         data-action="change->multi-select#toggle"
+                         data-multi-select-target="checkbox"
+                         <% if Array(params[:game_modes]).include?(m[:id].to_s) %>checked<% end %>>
+                </label>
+              <% end %>
+            </div>
+            <div class="filter-panel__footer">
+              <button type="button" class="filter-panel__done" data-action="click->multi-select#close">Done</button>
+            </div>
+          </div>
+        </div>
+        <div data-multi-select-target="inputs"></div>
+      </div>
+
+      <%# Date range %>
+      <div class="mb-3">
+        <label class="form-label">Release date from</label>
+        <%= date_field_tag :from, params[:from], class: "form-control" %>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Release date to</label>
+        <%= date_field_tag :to, params[:to], class: "form-control" %>
+      </div>
+
+    </div>
+
+    <div class="discover-filters-canvas__footer">
+      <%= link_to "Clear all", discover_list_path(@list),
+            class: "btn btn-secondary flex-fill",
+            data: { bs_dismiss: "offcanvas" } %>
+      <button type="submit" class="btn btn-primary flex-fill">Apply</button>
+    </div>
+  </form>
 </div>
 
 <%= render "shared/navbar", active: :lists %>

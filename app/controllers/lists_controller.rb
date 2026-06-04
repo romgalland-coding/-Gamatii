@@ -44,6 +44,7 @@ class ListsController < ApplicationController
   def discover
     @list = List.find(params[:id])
     authorize @list
+    load_rawg_filter_options
     rawg = RawgService.new
     @games = rawg.search_games(
       genres:     params[:genres],
