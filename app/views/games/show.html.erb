@@ -1,4 +1,4 @@
-<div class="game-show">
+<div class="game-show" data-controller="add-to-list">
 
   <div class="game-show__header">
     <%= link_to :back, class: "game-show__back" do %>
@@ -31,11 +31,7 @@
            data-action="click->lightbox#open"
            data-lightbox-index-param="<%= i %>"></div>
     <% end %>
-    <% (3 - shots.size).times do %>
-      <div class="game-show__thumb"></div>
-    <% end %>
-
-    <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
+      <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
       <div class="lightbox__backdrop" data-action="click->lightbox#close"></div>
       <div class="lightbox__box">
         <button class="lightbox__close" data-action="click->lightbox#close">✕</button>
@@ -86,7 +82,10 @@
   </div>
 
   <% if current_user %>
-    <%= link_to "+ Add to a list", "#", class: "btn btn-primary w-100 game-show__cta" %>
+    <%= link_to "+ Add to a list", "#",
+        class: "btn btn-primary w-100 game-show__cta",
+        data: { action: "click->add-to-list#open" } %>
+    <%= render "add_to_list_panel", game: @game, lists: @all_user_lists, game_list_games: @game_list_games %>
   <% end %>
 
 </div>
