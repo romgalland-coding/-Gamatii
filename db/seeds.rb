@@ -19,6 +19,73 @@ def game_modes_from_tags(tags)
   (tags || []).filter_map { |t| mapping[t["slug"]] }.uniq
 end
 
+# RAWG platform name → numeric id (mirrors RawgService#platform_ids_for).
+PLATFORM_IDS = {
+  "PC" => 4, "PlayStation 5" => 187, "PlayStation 4" => 18,
+  "Xbox Series S/X" => 186, "Xbox One" => 1, "Nintendo Switch" => 7
+}.freeze
+
+# Fetch a theme's candidate games from RAWG.
+#
+# RAWG's "-rating" sort is driven by its user rating, which a handful of votes
+# can inflate — so it surfaces obscure junk (a 4.8-rated game with 6 ratings and
+# no Metascore) above famous titles. We avoid it two ways:
+#   * filter themes (genre/platform/publisher) sort by "-added" (library adds, a
+#     reliable popularity signal) and require a Metascore, dropping unreviewed junk.
+#   * search themes (franchises) can't be server-sorted under search_precise, so
+#     we fetch wide and clean locally: keep only Metascored games, most-added first.
+def fetch_for_theme(fetch_spec)
+  if fetch_spec[:search]
+    results = rawg_get("/games", search: fetch_spec[:search], search_precise: true, page_size: 40)["results"] || []
+    return results.select { |g| g["metacritic"] }.sort_by { |g| -(g["added"] || 0) }.first(12)
+  end
+
+  query = { ordering: "-added", metacritic: "1,100", page_size: 12 }
+  if fetch_spec[:publisher]
+    query[:publishers] = fetch_spec[:publisher]
+  elsif fetch_spec[:platform]
+    query[:platforms] = PLATFORM_IDS.fetch(fetch_spec[:platform])
+  elsif fetch_spec[:genre]
+    query[:genres] = fetch_spec[:genre]
+  end
+  (rawg_get("/games", query)["results"] || [])
+end
+
+# Create (or reuse) a Game record from a RAWG list entry, fetching detail for
+# the fields the list endpoint omits. Returns the Game or nil on failure.
+def upsert_game(g)
+  existing = Game.find_by(rawg_id: g["id"])
+  return existing if existing
+
+  detail = rawg_get("/games/#{g['id']}")
+  sleep 0.2
+  platforms_arr = g["platforms"]&.map { |p| p.dig("platform", "name") } || []
+
+  Game.create!(
+    rawg_id:      g["id"],
+    title:        g["name"],
+    cover_img:    g["background_image"],
+    in_game_img:  g.dig("short_screenshots", 1, "image"),
+    screenshots:  (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
+    genre:        g.dig("genres", 0, "name"),
+    platforms:    platforms_arr,
+    # `rating` stores the Metascore (0–100), not RAWG's user rating — the UI
+    # already labels this column "Metacritic" (lists filter) and the quiz ranks
+    # the top 5 by it. RAWG's user rating is too easily inflated by a few votes.
+    rating:       g["metacritic"] || detail["metacritic"],
+    release_date: g["released"],
+    description:  detail["description_raw"]&.slice(0, 2000),
+    developer:    detail.dig("developers", 0, "name"),
+    publisher:    detail.dig("publishers", 0, "name"),
+    game_mode:    game_modes_from_tags(detail["tags"])
+  )
+rescue ActiveRecord::RecordNotUnique
+  Game.find_by(rawg_id: g["id"]) || Game.find_by(title: g["name"])
+rescue StandardError => e
+  puts "\n  [skip] #{g['name']}: #{e.message}"
+  nil
+end
+
 # ── Clean slate ───────────────────────────────────────────────────────────────
 
 puts "Cleaning previous seed data…"
@@ -30,50 +97,33 @@ User.where(email: seed_emails).each do |u|
 end
 Game.destroy_all
 
-# ── Fetch ~50 games from RAWG ─────────────────────────────────────────────────
+# ── Fetch games for each of the 14 quiz themes ────────────────────────────────
+# Drive seeding from Quiz::THEMES so every quiz has a full answer pool. Each
+# theme contributes ~12 candidates; the union becomes the catalogue the rest of
+# the seed (users' lists) draws from too.
 
-puts "Fetching game catalogue from RAWG…"
-rawg_list = []
-[1, 2].each do |page|
-  result = rawg_get("/games", ordering: "-metacritic", page_size: 25, page: page)
-  rawg_list += (result["results"] || [])
+puts "Fetching games for each quiz theme from RAWG…"
+games = []
+Quiz::THEMES.each do |theme|
+  candidates = fetch_for_theme(theme[:fetch])
   sleep 0.3
+  created = candidates.filter_map { |g| upsert_game(g) }
+  games.concat(created)
+  print "  #{theme[:name]}: #{created.size} games\n"
 end
-puts "  #{rawg_list.size} games fetched from catalogue."
+games.uniq!(&:id)
+puts "  #{games.size} distinct Game records created."
 
-# ── Fetch detail + create Game records ────────────────────────────────────────
+# ── Verify every theme can fill a top-5 ───────────────────────────────────────
 
-puts "Fetching game details and creating records…"
-games = rawg_list.filter_map do |g|
-  detail = rawg_get("/games/#{g['id']}")
-  sleep 0.2
-
-  platforms_arr = g["platforms"]&.map { |p| p.dig("platform", "name") } || []
-  modes         = game_modes_from_tags(detail["tags"])
-
-  print "."
-  Game.create!(
-    rawg_id:      g["id"],
-    title:        g["name"],
-    cover_img:    g["background_image"],
-    in_game_img:  g.dig("short_screenshots", 1, "image"),
-    screenshots:  (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
-    genre:        g.dig("genres", 0, "name"),
-    platforms:    platforms_arr,
-    rating:       g["rating"],
-    release_date: g["released"],
-    description:  detail["description_raw"]&.slice(0, 2000),
-    developer:    detail.dig("developers", 0, "name"),
-    publisher:    detail.dig("publishers", 0, "name"),
-    game_mode:    modes
-  )
-rescue ActiveRecord::RecordNotUnique
-  Game.find_by(title: g["name"])
-rescue StandardError => e
-  puts "\n  [skip] #{g['name']}: #{e.message}"
-  nil
-end.compact
-puts "\n  #{games.size} Game records created."
+puts "\nVerifying answer pools…"
+shortfalls = Quiz::THEMES.filter_map do |theme|
+  count = Quiz.new(name: theme[:name]).answer_scope.count
+  status = count >= 5 ? "ok" : "SHORT"
+  puts "  [#{status}] #{theme[:name]}: #{count} eligible"
+  theme[:name] if count < 5
+end
+puts "  ⚠️  Under-filled themes: #{shortfalls.join(', ')}" if shortfalls.any?
 
 # ── Users + Lists ─────────────────────────────────────────────────────────────
 
@@ -130,13 +180,16 @@ SEED_USERS.each do |data|
   end
 end
 
-# ── Daily Quizzes ─────────────────────────────────────────────────────────────
+# ── Daily Quizzes (14-day rotation) ───────────────────────────────────────────
+# One quiz per theme, positioned by its index in Quiz::THEMES — that index is
+# the rotation order the daily job walks through.
 
 puts "\nCreating daily quizzes…"
-Quiz.where(name: ["Top 5 Zelda games", "Top 5 PC games"]).destroy_all
-Quiz.create!(name: "Top 5 Zelda games")   # yesterday
-Quiz.create!(name: "Top 5 PC games")      # today
-puts "  2 quizzes created."
+Quiz.destroy_all
+Quiz::THEMES.each_with_index do |theme, position|
+  Quiz.create!(name: theme[:name], position: position)
+end
+puts "  #{Quiz::THEMES.size} quizzes created (positions 0–#{Quiz::THEMES.size - 1})."
 
 puts "\nSeed complete!"
 

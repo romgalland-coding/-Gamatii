@@ -2,8 +2,9 @@ class QuizzesController < ApplicationController
   POINTS_BY_RANK = [50, 40, 30, 20, 10].freeze
 
   def daily
-    @today_quiz     = Quiz.find_by!(name: "Top 5 PC games")
-    @yesterday_quiz = Quiz.find_by!(name: "Top 5 Zelda games")
+    schedule        = QuizSchedule.instance
+    @today_quiz     = schedule.today_quiz
+    @yesterday_quiz = schedule.yesterday_quiz
 
     authorize @today_quiz
     authorize @yesterday_quiz
@@ -14,14 +15,7 @@ class QuizzesController < ApplicationController
 
     return unless current_user
 
-    @my_submissions = current_user.quiz_games.where(quiz: @today_quiz).includes(:game)
-    @my_guesses     = current_user.quiz_games.where(quiz: @yesterday_quiz).includes(:game)
-    @guesses_remaining = 5 - @my_guesses.count
-
-    # Guesses are matched to answers by title: picks are imported fresh from
-    # RAWG, so they are different Game records than the seeded answer pool.
-    @guessed_titles = @my_guesses.to_set { |qg| normalize_title(qg.game.title) }
-    @score = score_for(@yesterday_answers, @guessed_titles)
+    load_user_progress
   end
 
   def autocomplete_games
@@ -39,6 +33,17 @@ class QuizzesController < ApplicationController
   end
 
   private
+
+  def load_user_progress
+    @my_submissions = current_user.quiz_games.where(quiz: @today_quiz).includes(:game)
+    @my_guesses     = current_user.quiz_games.where(quiz: @yesterday_quiz).includes(:game)
+    @guesses_remaining = 5 - @my_guesses.count
+
+    # Guesses are matched to answers by title: picks are imported fresh from
+    # RAWG, so they are different Game records than the seeded answer pool.
+    @guessed_titles = @my_guesses.to_set { |qg| normalize_title(qg.game.title) }
+    @score = score_for(@yesterday_answers, @guessed_titles)
+  end
 
   def score_for(answers, guessed_titles)
     answers.each_with_index.sum do |game, rank|

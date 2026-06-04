@@ -107,10 +107,6 @@
         <div class="quiz-picks-empty">Add games to get started.</div>
       <% end %>
 
-      <%= button_tag class: "btn btn-primary w-100 quiz-submit",
-            disabled: @my_submissions.count == 0 do %>
-        <i class="fa-solid fa-paper-plane"></i> Submit picks
-      <% end %>
     <% else %>
       <div class="quiz-picks-empty">
         <%= link_to "Sign in", new_user_session_path %> to submit your picks.

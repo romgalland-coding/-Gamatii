@@ -34,6 +34,6 @@ class QuizGamesController < ApplicationController
   private
 
   def tab_for(quiz)
-    quiz.name == "Top 5 Zelda games" ? "yesterday" : nil
+    quiz == QuizSchedule.instance.yesterday_quiz ? "yesterday" : nil
   end
 end
