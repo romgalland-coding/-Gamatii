@@ -1,0 +1,17 @@
+<div class="add-list-panel" data-add-to-list-target="panel">
+  <div class="add-list-panel__backdrop" data-action="click->add-to-list#close"></div>
+  <div class="add-list-panel__sheet">
+    <div class="add-list-panel__header">
+      <h3 class="add-list-panel__title">Add to a list</h3>
+      <button class="add-list-panel__close" data-action="click->add-to-list#close">✕</button>
+    </div>
+
+    <div class="add-list-panel__list">
+      <% lists.each do |list| %>
+        <%= render "list_panel_item", list: list, existing: game_list_games[list.id], game: game %>
+      <% end %>
+    </div>
+
+    <%= link_to "Create a new list", new_list_path, class: "add-list-panel__new-list" %>
+  </div>
+</div>
