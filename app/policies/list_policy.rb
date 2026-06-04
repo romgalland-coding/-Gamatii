@@ -16,7 +16,7 @@ class ListPolicy < ApplicationPolicy
     true
   end
 
-  def discover?
+  def build?
     user.present? && record.user == user
   end
 
