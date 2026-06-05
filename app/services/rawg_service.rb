@@ -3,6 +3,63 @@ class RawgService
   BASE_URL = "https://api.rawg.io/api"
   GAME_MODE_SLUGS = ["singleplayer", "multiplayer", "co-op", "split-screen", "online-multiplayer", "local-multiplayer"]
 
+  CURATED_PUBLISHERS = [
+    { id: "nintendo",                                                      name: "Nintendo" },
+    { id: "sony-computer-entertainment,sony-interactive-entertainment",    name: "Sony" },
+    { id: "microsoft-studios",                                             name: "Microsoft" },
+    { id: "2k-games",                                                      name: "2K Games" },
+    { id: "electronic-arts",                                               name: "Electronic Arts" },
+    { id: "ubisoft-entertainment",                                         name: "Ubisoft" },
+    { id: "activision-blizzard,activision",                                name: "Activision Blizzard" },
+    { id: "bandai-namco-entertainment-us,bandai-namco-entertainment",      name: "Bandai Namco" },
+    { id: "bethesda-softworks",                                            name: "Bethesda Softworks" },
+    { id: "capcom",                                                        name: "Capcom" },
+    { id: "cd-projekt-red",                                                name: "CD PROJEKT RED" },
+    { id: "square-enix",                                                   name: "Square Enix" },
+    { id: "eidos-interactive",                                             name: "Eidos Interactive" },
+    { id: "konami",                                                        name: "Konami" },
+    { id: "rockstar-games",                                                name: "Rockstar Games" },
+    { id: "warner-bros-interactive",                                       name: "Warner Bros" },
+    { id: "valve",                                                         name: "Valve" },
+    { id: "thq,thq-nordic",                                                name: "THQ" },
+    { id: "team17-digital",                                                name: "Team17" },
+    { id: "telltale-games",                                                name: "Telltale Games" },
+    { id: "disney-interactive",                                            name: "Disney Interactive" },
+    { id: "devolver-digital",                                              name: "Devolver Digital" },
+    { id: "505-games",                                                     name: "505 Games" },
+    { id: "daedalic-entertainment",                                        name: "Daedalic Entertainment" },
+    { id: "deep-silver",                                                   name: "Deep Silver" },
+    { id: "paradox-interactive",                                           name: "Paradox Interactive" },
+    { id: "1c-company,1c-softclub,aspyr,codemasters,feral-interactive,focus-home-interactive,kiss,lucasarts-entertainment,plug-in-digital,sega", name: "Other" },
+  ].freeze
+
+  CURATED_PLATFORMS = [
+    { id: 187,    name: "PS5" },
+    { id: 186,    name: "Xbox Series" },
+    { id: 7,      name: "Nintendo Switch" },
+    { id: 4,      name: "PC" },
+    { id: "3,21", name: "Mobile" },
+    { id: 18,     name: "PS4" },
+    { id: 1,      name: "Xbox One" },
+    { id: 8,      name: "3DS" },
+    { id: 16,     name: "PS3" },
+    { id: 14,     name: "Xbox 360" },
+    { id: 10,     name: "Wii U" },
+    { id: 19,     name: "PS Vita" },
+    { id: 11,     name: "Wii" },
+    { id: 9,      name: "DS" },
+    { id: 15,     name: "PS2" },
+    { id: 80,     name: "Xbox" },
+    { id: 24,     name: "Game Boy Advance" },
+    { id: 105,    name: "Gamecube" },
+    { id: 17,     name: "PSP" },
+    { id: 27,     name: "PS1" },
+    { id: 83,     name: "Nintendo 64" },
+    { id: 26,     name: "Game Boy" },
+    { id: 79,     name: "SNES" },
+    { id: 49,     name: "NES" },
+  ].freeze
+
   def initialize
     @api_key = ENV["RAWG_API_KEY"]
   end
@@ -64,8 +121,8 @@ class RawgService
   def search_games(filters = {})
     query = { key: @api_key, page_size: 20 }
     query[:genres]     = Array(filters[:genres]).join(",")     if filters[:genres].present?
-    query[:platforms]  = Array(filters[:platforms]).join(",")  if filters[:platforms].present?
-    query[:publishers] = Array(filters[:publishers]).join(",") if filters[:publishers].present?
+    query[:platforms]  = Array(filters[:platforms]).flat_map { |id| id.to_s.split(",") }.join(",") if filters[:platforms].present?
+    query[:publishers] = Array(filters[:publishers]).flat_map { |id| id.to_s.split(",") }.join(",") if filters[:publishers].present?
     query[:tags]       = Array(filters[:game_modes]).join(",") if filters[:game_modes].present?
     query[:metacritic] = "#{filters[:rating]},100"                               if filters[:rating].present?
     query[:dates]      = "#{filters[:from]},#{filters[:to]}"                     if filters[:from].present? && filters[:to].present?
