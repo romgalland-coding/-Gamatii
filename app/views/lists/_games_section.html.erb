@@ -1,0 +1,23 @@
+<% if list_games.any? %>
+  <ol class="list-show__games">
+    <% list_games.each_with_index do |lg, index| %>
+      <li class="list-game-row card">
+        <span class="list-game-row__rank"><%= index + 1 %></span>
+        <%= link_to game_path(lg.game), class: "list-game-row__link" do %>
+          <div class="list-game-row__cover" style="background-image: url('<%= lg.game.cover_img %>')"></div>
+          <div class="list-game-row__info">
+            <span class="list-game-row__title"><%= lg.game.title %></span>
+            <span class="list-game-row__genre"><%= lg.game.genre %></span>
+          </div>
+        <% end %>
+        <% if current_user == list.user %>
+          <%= link_to list_game_path(lg),
+                class: "list-game-row__remove",
+                data: { turbo_method: :delete, turbo_confirm: "Remove #{lg.game.title} from this list?" } do %>
+            <i class="fa-solid fa-trash"></i>
+          <% end %>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

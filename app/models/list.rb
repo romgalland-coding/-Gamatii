@@ -4,6 +4,7 @@ class List < ApplicationRecord
   belongs_to :user
   has_many :list_games, dependent: :destroy
   has_many :games, through: :list_games
+  has_many :list_likes, dependent: :destroy
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :user_id, message: "You already have a list with this name" }

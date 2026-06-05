@@ -16,6 +16,10 @@ class ListPolicy < ApplicationPolicy
     true
   end
 
+  def like?
+    true
+  end
+
   def build?
     user.present? && record.user == user
   end

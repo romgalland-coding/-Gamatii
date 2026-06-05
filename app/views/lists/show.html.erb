@@ -1,63 +1,47 @@
-<div class="list-show-page">
+<div class="list-show-page" data-controller="list-edit">
 
   <div class="list-show__topbar">
     <%= link_to "‹ Lists", lists_path, class: "list-show__back" %>
-
-    <% if current_user == @list.user %>
-      <%= render "shared/search_modal", list_id: @list.id %>
-    <% end %>
   </div>
 
-  <div class="card list-show__header">
-    <div class="list-show__title-row">
-      <h1 class="list-show__name"><%= @list.name %></h1>
-      <% if current_user == @list.user %>
-        <%= link_to edit_list_path(@list), class: "list-show__edit", "aria-label": "Edit list" do %>
-          <i class="fa-solid fa-pen"></i>
-        <% end %>
-      <% end %>
-    </div>
-    <p class="list-show__meta">by <%= @list.user.gamer_tag %> · <%= pluralize(@list_games.size, "game") %></p>
-  </div>
-
-  <div class="list-show__actions"
+  <div class="card list-show__header"
        data-controller="share"
        data-share-url-value="<%= list_url(@list) %>"
        data-share-title-value="<%= @list.name %>">
-    <span class="list-show__likes">
-      <i class="fa-solid fa-heart"></i> <%= @list.votes_count || 0 %>
-    </span>
-    <button class="list-show__share" data-action="click->share#share">
-      <i class="fa-solid fa-share"></i> Share
-    </button>
+    <div class="list-show__header-cover" id="list-header-cover-<%= @list.id %>">
+      <%= render "header_cover", list_games: @list_games %>
+    </div>
+    <div class="list-show__header-info">
+      <h1 class="list-show__name"><%= @list.name %></h1>
+      <p class="list-show__meta" id="list-games-count-<%= @list.id %>"><%= pluralize(@list_games.size, "game") %></p>
+      <p class="list-show__meta">by <%= @list.user.gamer_tag %></p>
+      <div class="list-show__stats">
+          <button class="list-show__share" data-action="click->share#share">
+          <i class="fa-solid fa-share-nodes"></i> share
+        </button>
+        <%= turbo_frame_tag "list-likes-#{@list.id}" do %>
+          <%= render "likes_button", list: @list %>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <% if @list_games.any? %>
-    <ol class="list-show__games">
-      <% @list_games.each_with_index do |lg, index| %>
-        <li class="list-game-row card">
-          <span class="list-game-row__rank"><%= index + 1 %></span>
-          <%= link_to game_path(lg.game), class: "list-game-row__link" do %>
-            <div class="list-game-row__cover" style="background-image: url('<%= lg.game.cover_img %>')"></div>
-            <div class="list-game-row__info">
-              <span class="list-game-row__title"><%= lg.game.title %></span>
-              <span class="list-game-row__genre"><%= lg.game.genre %></span>
-            </div>
-          <% end %>
-          <% if current_user == @list.user %>
-            <%= link_to list_game_path(lg),
-                  class: "list-game-row__remove",
-                  data: { turbo_method: :delete, turbo_confirm: "Remove #{lg.game.title} from this list?" } do %>
-              <i class="fa-solid fa-trash"></i>
-            <% end %>
-          <% end %>
-        </li>
-      <% end %>
-    </ol>
+  <% if current_user == @list.user %>
+    <div class="list-show__cta">
+      <button class="list-show__edit-btn"
+              data-action="click->list-edit#toggle">
+        <i class="fa-solid fa-pen"></i> Edit
+      </button>
+      <%= render "shared/search_modal", list_id: @list.id %>
+    </div>
   <% end %>
 
+  <div id="list-games-section-<%= @list.id %>">
+    <%= render "games_section", list: @list, list_games: @list_games %>
+  </div>
+
   <% if current_user == @list.user %>
-    <div data-controller="confirm-dialog">
+    <div class="list-show__delete-zone" data-controller="confirm-dialog">
       <button class="btn btn-danger w-100 list-show__delete"
               data-action="click->confirm-dialog#open">
         Delete list
