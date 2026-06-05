@@ -1,3 +1,9 @@
-<%= turbo_stream.replace list_panel_item_id(@list, params[:scope]) do %>
-  <%= render "games/list_panel_item", list: @list, existing: @list_game, game: @game, scope: params[:scope], origin: params[:origin] %>
+<% if params[:origin] == "swipe" %>
+  <%= turbo_stream.replace "grid-card-#{@game.rawg_id}" do %>
+    <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace list_panel_item_id(@list, params[:scope]) do %>
+    <%= render "games/list_panel_item", list: @list, existing: @list_game, game: @game, scope: params[:scope], origin: params[:origin] %>
+  <% end %>
 <% end %>

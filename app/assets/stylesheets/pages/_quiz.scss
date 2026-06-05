@@ -28,12 +28,134 @@
   margin: 0.15rem 0 0;
 }
 
-.quiz-timer {
-  font-size: 1rem;
+// Top-right column: How-to-play button above the countdown timer
+.quiz-header__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.quiz-howto-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: $mat-yellow;
+  border: 2.5px solid #000;
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 0 #000;
+  padding: 0.4rem 0.8rem;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.85rem;
   white-space: nowrap;
-  padding-top: 0.25rem;
+  cursor: pointer;
+}
+
+// How-to-play modal
+.quiz-howto-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.45);
+  padding: 1.25rem;
+  overflow-y: auto;
+
+  &.is-open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.quiz-howto-card {
+  width: 100%;
+  max-width: 420px;
+  border: 2.5px solid #000;
+  border-radius: 1.25rem;
+  box-shadow: 5px 5px 0 0 #000;
+  background-color: $mat-yellow-light;
+  overflow: hidden;
+  text-align: left;
+
+  &__head {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: $mat-yellow;
+    border-bottom: 2.5px solid #000;
+    padding: 1.1rem 1.25rem;
+  }
+
+  &__icon {
+    font-size: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: $headers-font;
+    margin: 0;
+  }
+
+  &__close {
+    position: absolute;
+    top: 0.85rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    background-color: #fff;
+    border: 2.5px solid #000;
+    border-radius: 0.6rem;
+    box-shadow: 2px 2px 0 0 #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__body {
+    padding: 1.25rem;
+  }
+}
+
+.quiz-howto-rule {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  p { margin: 0; font-size: 0.95rem; line-height: 1.4; }
+
+  &__num {
+    flex-shrink: 0;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 2.5px solid #000;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+
+    &--yellow { background-color: $mat-yellow; }
+    &--green  { background-color: $mat-green; }
+  }
+}
+
+.quiz-howto-got-it {
+  width: 100%;
+  background-color: $mat-blue;
+  border: 2.5px solid #000;
+  border-radius: 0.85rem;
+  box-shadow: 3px 3px 0 0 #000;
+  padding: 0.85rem;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.25rem;
 }
 
 // Tab switcher
@@ -83,6 +205,14 @@
   &--blue   { background-color: $mat-blue; }
 }
 
+// Label + countdown on one line: label left, timer right-aligned.
+.quiz-prompt__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .quiz-prompt__label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -90,6 +220,16 @@
   letter-spacing: 0.07em;
   opacity: 0.6;
   margin: 0;
+}
+
+// Countdown shares the label's treatment, just right-aligned on the same line.
+.quiz-prompt__timer {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.6;
+  white-space: nowrap;
 }
 
 .quiz-prompt__title {
@@ -106,10 +246,44 @@
   margin: 0;
 }
 
-.quiz-prompt__score {
-  font-size: 0.875rem;
-  font-weight: 700;
-  margin: 0.25rem 0 0;
+// Prominent SCORE | LEFT stat cards inside the prompt
+.quiz-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.quiz-stat {
+  background-color: #fff;
+  border: 2.5px solid #000;
+  border-radius: 0.9rem;
+  box-shadow: 3px 3px 0 0 #000;
+  padding: 0.85rem 0.5rem;
+  text-align: center;
+
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(0, 0, 0, 0.45);
+    margin: 0;
+  }
+
+  &__value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: $headers-font;
+    line-height: 1.05;
+    margin: 0.1rem 0;
+  }
+
+  &__unit {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.45);
+    margin: 0;
+  }
 }
 
 // Search input row
@@ -171,6 +345,22 @@
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-7px); }
   40%, 80% { transform: translateX(7px); }
+}
+
+@keyframes quiz-fill-sweep {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes quiz-row-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@keyframes quiz-title-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 // Wrong-guess message under the search bar
@@ -252,6 +442,38 @@
 
   &--revealed {
     background-color: $mat-green;
+  }
+
+  // Correct-guess reveal: a green layer sweeps L→R under the content, the row
+  // gives a little pop, and the title fades in. The row starts white (no
+  // --revealed bg yet) so the sweep is visible, settling on green.
+  &--revealing {
+    position: relative;
+    overflow: hidden;
+    background-color: #fff;
+    animation: quiz-row-pop 0.45s ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: $mat-green;
+      transform-origin: left center;
+      transform: scaleX(0);
+      animation: quiz-fill-sweep 0.5s ease forwards;
+      z-index: 0;
+    }
+
+    .quiz-answer-row__rank,
+    .quiz-answer-row__title,
+    .quiz-answer-row__pct {
+      position: relative;
+      z-index: 1;
+    }
+
+    .quiz-answer-row__title {
+      animation: quiz-title-fade 0.5s ease 0.2s both;
+    }
   }
 
   &__rank {

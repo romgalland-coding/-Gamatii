@@ -1,0 +1,22 @@
+<%# Search input + wrong-guess feedback target. Wrapped in a stable id so a
+    correct-guess turbo_stream can re-render it (e.g. to disable the box once
+    no guesses remain). %>
+<div id="quiz_input_region">
+  <div class="quiz-input-row"
+       data-controller="quiz-autocomplete"
+       data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(quiz) %>"
+       data-action="turbo:submit-end->quiz-autocomplete#reset">
+    <%= text_field_tag :quiz_query,
+          nil,
+          placeholder: "Search a game to guess…",
+          class: "quiz-input",
+          autocomplete: "off",
+          disabled: guesses_remaining <= 0,
+          data: { action: "input->quiz-autocomplete#search",
+                  "quiz-autocomplete-target": "input" } %>
+    <div id="quiz_autocomplete_results" class="quiz-autocomplete-results"
+         data-quiz-autocomplete-target="results"></div>
+  </div>
+  <%# Wrong-guess feedback target — filled by create.turbo_stream on a miss. %>
+  <div id="quiz_guess_feedback"></div>
+</div>

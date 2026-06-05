@@ -10,26 +10,39 @@ export default class extends Controller {
 
   disconnect() {
     clearTimeout(this.timeout)
+    this.abortInFlight()
   }
 
   search(event) {
     clearTimeout(this.timeout)
     const query = event.target.value
 
-    // Erasing the box (or fewer than 2 chars) clears the dropdown instead of
-    // leaving stale results open.
+    // Erasing the box (or fewer than 2 chars) clears the dropdown. We also abort
+    // any in-flight request so a late response can't re-populate the cleared box.
     if (query.length < 2) {
+      this.abortInFlight()
       this.clearResults()
       return
     }
 
     this.timeout = setTimeout(() => {
+      this.abortInFlight()
+      this.controller = new AbortController()
       fetch(`${this.urlValue}?query=${encodeURIComponent(query)}`, {
-        headers: { "Accept": "text/vnd.turbo-stream.html" }
+        headers: { "Accept": "text/vnd.turbo-stream.html" },
+        signal: this.controller.signal
       })
         .then(r => r.text())
         .then(html => Turbo.renderStreamMessage(html))
+        .catch(e => { if (e.name !== "AbortError") throw e })
     }, 200)
+  }
+
+  abortInFlight() {
+    if (this.controller) {
+      this.controller.abort()
+      this.controller = null
+    }
   }
 
   // After a guess submits, empty the search box and close the dropdown.
