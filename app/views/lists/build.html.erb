@@ -16,7 +16,26 @@
     </div>
   </header>
 
-  <div class="row row-cols-2 g-3">
+  <ul class="nav nav-pills mb-3" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="grid-tab"
+              data-bs-toggle="tab" data-bs-target="#grid-view"
+              type="button" role="tab">
+        <i class="fa-solid fa-grip"></i> Grid
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="swipe-tab"
+              data-bs-toggle="tab" data-bs-target="#swipe-view"
+              type="button" role="tab">
+        <i class="fa-solid fa-hand-pointer"></i> Swipe
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="grid-view" role="tabpanel">
+      <div class="row row-cols-2 g-3">
     <% @games.each do |game| %>
       <% added = @games_in_list.include?(game["id"]) %>
       <% add_params = {
@@ -44,7 +63,7 @@
               </p>
             </div>
           </div>
-          <div class="card-footer">
+          <div class="card-footer" id="grid-card-<%= game["id"] %>">
             <% if added %>
               <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
             <% else %>
@@ -78,6 +97,74 @@
         </div>
       </div>
     <% end %>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="swipe-view" role="tabpanel">
+      <div class="swipe-stack" data-controller="swipe">
+
+        <div class="swipe-stack__empty" data-swipe-target="empty" style="display:none;">
+          <p>You've seen all <%= @games.length %> games!</p>
+          <%= link_to "Back to grid", "#grid-view",
+                data: { "bs-toggle": "tab", "bs-target": "#grid-view" },
+                class: "btn btn-secondary btn-sm" %>
+        </div>
+
+        <div class="swipe-stack__cards" data-swipe-target="stack">
+          <% @games.reverse_each do |game| %>
+            <% added = @games_in_list.include?(game["id"]) %>
+            <% add_params = {
+                 origin:     "swipe",
+                 rawg_id:    game["id"],
+                 genres:      params[:genres],
+                 platforms:   params[:platforms],
+                 publishers:  params[:publishers],
+                 game_modes:  params[:game_modes],
+                 rating:     params[:rating],
+                 from:       params[:from],
+                 to:         params[:to]
+               } %>
+
+            <div class="card swipe-card"
+                 data-swipe-target="card"
+                 data-rawg-id="<%= game["id"] %>"
+                 data-add-url="<%= list_list_games_path(@list) %>"
+                 data-add-params="<%= add_params.to_json %>"
+                 data-added="<%= added %>"
+                 data-action="pointerdown->swipe#dragstart pointermove->swipe#dragmove pointerup->swipe#dragend pointercancel->swipe#dragend">
+
+              <div class="swipe-card__overlay swipe-card__overlay--add">ADD</div>
+              <div class="swipe-card__overlay swipe-card__overlay--skip">SKIP</div>
+
+              <% if game["background_image"] %>
+                <%= image_tag game["background_image"], class: "swipe-card__img" %>
+              <% else %>
+                <div class="swipe-card__img swipe-card__img--placeholder"></div>
+              <% end %>
+
+              <div class="swipe-card__body">
+                <h5 class="swipe-card__title"><%= game["name"] %></h5>
+                <p class="swipe-card__meta">⭐ <%= game["metacritic"] || "N/A" %></p>
+                <% if added %>
+                  <span class="badge bg-secondary">Already in list</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="swipe-stack__actions" data-swipe-target="actions">
+          <button class="btn btn-outline-danger swipe-btn" data-action="click->swipe#skip">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <span class="swipe-stack__progress" data-swipe-target="progress"></span>
+          <button class="btn btn-outline-success swipe-btn" data-action="click->swipe#add">
+            <i class="fa-solid fa-check"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
