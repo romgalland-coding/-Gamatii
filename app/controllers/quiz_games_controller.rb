@@ -1,4 +1,7 @@
 class QuizGamesController < ApplicationController
+  include QuizScoring
+  helper_method :normalize_title
+
   def create
     @quiz = Quiz.find(params[:quiz_id])
     game  = Game.import_from_rawg(params[:rawg_id])
@@ -22,17 +25,19 @@ class QuizGamesController < ApplicationController
 
     current_user.quiz_games.create!(quiz: @quiz, game: game, role: role)
 
-    # A wrong guess still counts, but we give inline feedback (shake + message)
-    # without a reload. A correct guess reloads so the answer reveals and the
-    # score/score-screen update through the existing daily flow.
-    if role == "guess" && !correct_guess?(@quiz, game)
-      @wrong_game = game
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to daily_quizzes_path(tab: "yesterday") }
-      end
-    else
-      redirect_to daily_quizzes_path(tab: tab_for(@quiz))
+    # Picks (today tab) just redirect. Guesses respond inline via turbo_stream so
+    # both right and wrong feel smooth: a wrong guess shakes + shows a message; a
+    # right one reveals the row (green fill), counts up the score, and opens the
+    # score screen on the 5th. See create.turbo_stream.erb.
+    return redirect_to daily_quizzes_path(tab: tab_for(@quiz)) unless role == "guess"
+
+    @game = game
+    @correct = correct_guess?(@quiz, game)
+    load_guess_state(previous_score: @correct ? score_before(@quiz, game) : nil)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to daily_quizzes_path }
     end
   end
 
@@ -47,8 +52,9 @@ class QuizGamesController < ApplicationController
 
   private
 
+  # The guess quiz is the default tab (nil); the pick quiz is the "pick" tab.
   def tab_for(quiz)
-    quiz == QuizSchedule.instance.yesterday_quiz ? "yesterday" : nil
+    quiz == QuizSchedule.instance.yesterday_quiz ? nil : "pick"
   end
 
   # A game added on the "yesterday" quiz is a guess; on today's quiz it's a pick.
@@ -60,7 +66,36 @@ class QuizGamesController < ApplicationController
   # normalized title, the same way scoring does (picks are fresh RAWG imports,
   # so they're different Game records than the seeded answers).
   def correct_guess?(quiz, game)
-    target = game.title.to_s.downcase.strip
-    quiz.answer_pool(5).any? { |answer| answer.title.to_s.downcase.strip == target }
+    target = normalize_title(game.title)
+    quiz.answer_pool(5).any? { |answer| normalize_title(answer.title) == target }
+  end
+
+  # Loads everything the create.turbo_stream partials need: the answer pool, the
+  # user's guesses, score/found, remaining count, and the leaderboard.
+  # `previous_score` (when given) lets the score line animate a count-up.
+  def load_guess_state(previous_score: nil)
+    @yesterday_quiz    = @quiz
+    @yesterday_answers = @quiz.answer_pool(5)
+    @guesses           = current_user.quiz_games.guesses.where(quiz: @quiz).includes(:game)
+    @guessed_titles    = @guesses.to_set { |qg| normalize_title(qg.game.title) }
+    @guesses_remaining = 5 - @guesses.count
+    @score             = score_for(@yesterday_answers, @guessed_titles)
+    @found             = found_count(@yesterday_answers, @guessed_titles)
+    @previous_score    = previous_score || @score
+
+    board = leaderboard_for(@quiz, @yesterday_answers)
+    @leaderboard   = board[:rows]
+    @my_rank       = board[:my_rank]
+    @total_players = board[:total_players]
+  end
+
+  # The score the user had BEFORE the just-created guess, so the count-up starts
+  # from the old total. Recomputes excluding the new game's title.
+  def score_before(quiz, game)
+    answers = quiz.answer_pool(5)
+    titles  = current_user.quiz_games.guesses.where(quiz: quiz)
+                          .reject { |qg| qg.game_id == game.id }
+                          .to_set { |qg| normalize_title(qg.game.title) }
+    score_for(answers, titles)
   end
 end

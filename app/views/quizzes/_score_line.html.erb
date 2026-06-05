@@ -1,0 +1,19 @@
+<%# Prominent SCORE | LEFT cards inside the prompt. `animate_from` (optional) is
+    the previous score; when present the quiz-count-up controller animates the
+    number up to the new value. The wrapper keeps id="quiz_score_line" so the
+    correct-guess turbo_stream can replace it. %>
+<div id="quiz_score_line" class="quiz-stats"
+     data-controller="quiz-count-up"
+     data-quiz-count-up-from-value="<%= local_assigns.fetch(:animate_from, score) %>"
+     data-quiz-count-up-to-value="<%= score %>">
+  <div class="quiz-stat">
+    <p class="quiz-stat__label">SCORE</p>
+    <p class="quiz-stat__value" data-quiz-count-up-target="number"><%= local_assigns.fetch(:animate_from, score) %></p>
+    <p class="quiz-stat__unit">points</p>
+  </div>
+  <div class="quiz-stat">
+    <p class="quiz-stat__label">LEFT</p>
+    <p class="quiz-stat__value"><%= guesses_remaining %></p>
+    <p class="quiz-stat__unit">guesses remaining</p>
+  </div>
+</div>

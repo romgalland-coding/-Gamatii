@@ -1,0 +1,62 @@
+<%# The score screen + leaderboard. Wrapped in a stable id so a correct-guess
+    turbo_stream can re-render it. `auto_open` opens the overlay on connect
+    (true once all guesses are used). %>
+<%
+  share_text = "gamatii daily quiz #{Date.current.strftime('%-d %b %Y')}\n" \
+               "My score: #{score}\n" \
+               "#{root_url}"
+  avatars = { "PixelKnight" => "🦊", "NeonByte" => "🌿", "VortexCaster" => "📖" }
+  auto = local_assigns.fetch(:auto_open, guesses_remaining <= 0)
+%>
+<div id="quiz_score_region">
+  <div data-controller="quiz-score"
+       data-quiz-score-auto-value="<%= auto %>"
+       data-quiz-score-share-text-value="<%= share_text %>">
+
+    <% if guesses_remaining <= 0 %>
+      <button type="button" class="quiz-results-trigger"
+              data-action="quiz-score#open">View results</button>
+    <% end %>
+
+    <div class="quiz-score-overlay" data-quiz-score-target="overlay">
+      <div class="quiz-score-card">
+        <div class="quiz-score-card__head">
+          <p class="quiz-score-card__label">YOUR SCORE</p>
+          <h2 class="quiz-score-card__value"><%= score %></h2>
+          <p class="quiz-score-card__meta">
+            <%= found %>/5 found · ranked #<%= my_rank %> of <%= total_players %>
+          </p>
+          <button type="button" class="quiz-score-card__close"
+                  data-action="quiz-score#close" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="quiz-score-card__body">
+          <p class="quiz-score-card__friends">FRIENDS</p>
+          <ul class="quiz-leaderboard">
+            <% leaderboard.each do |row| %>
+              <% me = row[:user] == current_user %>
+              <li class="quiz-leaderboard__row <%= 'quiz-leaderboard__row--me' if me %>">
+                <span class="quiz-leaderboard__rank"><%= row[:rank] %></span>
+                <span class="quiz-leaderboard__avatar">
+                  <%= me ? "🎮" : avatars.fetch(row[:user].gamer_tag, "🎮") %>
+                </span>
+                <span class="quiz-leaderboard__name">
+                  @<%= row[:user].gamer_tag %><% if me %><small>(you)</small><% end %>
+                </span>
+                <span class="quiz-leaderboard__found"><%= row[:found] %>/5</span>
+                <span class="quiz-leaderboard__pts"><%= row[:score] %></span>
+              </li>
+            <% end %>
+          </ul>
+
+          <button type="button" class="quiz-score-share"
+                  data-action="quiz-score#share">
+            <i class="fa-solid fa-share-nodes"></i> Share score
+          </button>
+        </div>
+      </div><%# /quiz-score-card %>
+    </div><%# /quiz-score-overlay %>
+  </div><%# /quiz-score controller %>
+</div>
