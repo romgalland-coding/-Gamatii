@@ -7,7 +7,7 @@ import { Controller } from "@hotwired/stimulus"
 // away — the interval is cleared there, so the reload can never fire on another
 // page (e.g. while you're building a list).
 export default class extends Controller {
-  static values = { seconds: Number }
+  static values = { seconds: Number, endedUrl: String }
 
   connect() {
     this.remaining = this.secondsValue
@@ -25,7 +25,13 @@ export default class extends Controller {
     this.remaining -= 1
     if (this.remaining <= 0) {
       this.stop()
-      window.location.reload()
+      // On the guess tab, reload to the just-ended quiz's results (?ended=<id>);
+      // elsewhere just reload to the new window.
+      if (this.hasEndedUrlValue) {
+        window.location.href = this.endedUrlValue
+      } else {
+        window.location.reload()
+      }
       return
     }
     this.render()

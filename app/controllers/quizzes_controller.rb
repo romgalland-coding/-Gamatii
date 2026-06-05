@@ -12,6 +12,14 @@ class QuizzesController < ApplicationController
     @yesterday_quiz = schedule.yesterday_quiz(now: now)
     @seconds_remaining = schedule.seconds_until_next_rotation(now: now)
 
+    # When the timer hits zero it reloads with ?ended=<quiz_id> to freeze on the
+    # quiz that just closed (rotation is time-derived, so it would otherwise show
+    # the new window). We show that quiz's results until the user moves on.
+    if params[:ended].present? && (ended = Quiz.find_by(id: params[:ended]))
+      @yesterday_quiz = ended
+      @round_ended = true
+    end
+
     authorize @today_quiz
     authorize @yesterday_quiz
 
@@ -22,6 +30,7 @@ class QuizzesController < ApplicationController
     return unless current_user
 
     load_user_progress
+    @guesses_remaining = 0 if @round_ended # force reveal-all + score screen
   end
 
   def autocomplete_games

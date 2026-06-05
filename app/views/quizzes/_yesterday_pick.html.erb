@@ -1,0 +1,12 @@
+<%# A pick the user made when this quiz was "tomorrow's list". Clicking it
+    submits that game as a guess (same path as the search bar), then the row is
+    removed from the list whether the guess was right or wrong. `from_pick_id`
+    tells create.turbo_stream which row to remove. %>
+<li id="yesterday_pick_<%= qg.id %>" class="quiz-yesterday-picks__row">
+  <%= button_to quiz_quiz_games_path(quiz),
+        class: "quiz-yesterday-picks__btn",
+        disabled: disabled,
+        params: { rawg_id: qg.game.rawg_id, from_pick_id: qg.id } do %>
+    <%= qg.game.title %>
+  <% end %>
+</li>

@@ -1,7 +1,13 @@
 <%# Countdown to the next rotation, shown on the label row of each prompt card.
-    Matches the prompt label's treatment (see .quiz-prompt__timer). %>
-<span class="quiz-prompt__timer"
-      data-controller="quiz-timer"
-      data-quiz-timer-seconds-value="<%= @seconds_remaining %>">
+    On the guess tab we pass `ended_quiz_id`: at zero the timer reloads with
+    ?ended=<id> so the page freezes on the quiz that just closed (results +
+    leaderboard). On the pick tab it's omitted, so zero just reloads normally. %>
+<% ended_id = local_assigns.fetch(:ended_quiz_id, nil) %>
+<%= tag.span class: "quiz-prompt__timer",
+      data: {
+        controller: "quiz-timer",
+        "quiz-timer-seconds-value": @seconds_remaining,
+        "quiz-timer-ended-url-value": (daily_quizzes_path(ended: ended_id) if ended_id)
+      }.compact do %>
   <%= format("%02d:%02d", @seconds_remaining / 60, @seconds_remaining % 60) %>
-</span>
+<% end %>

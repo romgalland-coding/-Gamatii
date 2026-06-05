@@ -12,7 +12,7 @@ class QuizSchedule < ApplicationRecord
   #
   # To go back to the real midnight rotation: set TEST_MODE = false and re-enable
   # the recurring DailyRotationJob in config/recurring.yml.
-  TEST_MODE = true
+  TEST_MODE = false
   TEST_ROTATION_SECONDS = 120
   # Fixed anchor so window boundaries are stable across requests/processes.
   TEST_EPOCH = Time.utc(2026, 1, 1).freeze

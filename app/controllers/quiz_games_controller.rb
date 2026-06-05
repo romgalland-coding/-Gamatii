@@ -33,6 +33,9 @@ class QuizGamesController < ApplicationController
 
     @game = game
     @correct = correct_guess?(@quiz, game)
+    # If the guess came from clicking a yesterday-pick, remember its id so the
+    # stream can remove that row from the reference list.
+    @from_pick_id = params[:from_pick_id].presence
     load_guess_state(previous_score: @correct ? score_before(@quiz, game) : nil)
 
     respond_to do |format|
