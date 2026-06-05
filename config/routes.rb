@@ -3,6 +3,11 @@ Rails.application.routes.draw do
   root "pages#home"
   get "discover", to: "pages#discover"
 
+  # Recommendation chatbot hosted on the Discover page
+  resources :chats, only: [:show, :create] do
+    resources :messages, only: [:create]
+  end
+
   resources :games, only: [:show]
 
   # road for the game show using the rawg id, used for the discover page

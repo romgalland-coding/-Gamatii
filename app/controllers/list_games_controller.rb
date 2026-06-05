@@ -25,7 +25,7 @@ class ListGamesController < ApplicationController
       filter_params = params.permit(:rating, :from, :to, genres: [], platforms: [], publishers: [], game_modes: [])
       redirect_to build_list_path(@list, **filter_params),
                   alert: (saved ? nil : "Could not add game to list.")
-    elsif params[:origin] == "game_show"
+    elsif params[:origin].in?(%w[game_show chat])
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to game_path(@game) }
@@ -43,7 +43,7 @@ class ListGamesController < ApplicationController
     authorize @list, :update?
     @list_game.destroy
 
-    if params[:origin] == "game_show"
+    if params[:origin].in?(%w[game_show chat])
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to game_path(@game) }

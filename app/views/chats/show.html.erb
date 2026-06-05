@@ -1,0 +1,37 @@
+<div class="chat-page">
+  <header class="chat-header">
+    <%= link_to discover_path, class: "chat-header__back" do %>
+      <i class="fa-solid fa-chevron-left"></i>
+    <% end %>
+    <div class="chat-header__titles">
+      <span class="chat-header__app-name">matia</span>
+      <span id="chat_title" class="chat-header__chat-title"><%= @chat.title %></span>
+    </div>
+    <%= button_to chats_path, method: :post, class: "chat-header__new", form: { style: "display:contents" } do %>
+      <i class="fa-solid fa-plus"></i>
+    <% end %>
+  </header>
+
+  <%= turbo_stream_from @chat %>
+
+  <div class="chat-messages" id="chat-messages" data-controller="autoscroll">
+    <% @messages.each do |message| %>
+      <%= render "messages/message", message: message %>
+    <% end %>
+  </div>
+
+  <div class="chat-input-bar">
+    <div id="new_message_container">
+      <% if @limit_reached %>
+        <p class="chat-limit-notice">🔒 Message limit reached</p>
+        <%= button_to chats_path, method: :post, class: "btn btn-primary w-100" do %>
+          <i class="fa-solid fa-message me-2"></i>Start a new chat
+        <% end %>
+      <% else %>
+        <%= render "messages/form", chat: @chat, message: Message.new %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= render "shared/navbar", active: :discover %>

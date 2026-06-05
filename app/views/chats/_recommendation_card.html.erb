@@ -1,0 +1,70 @@
+<%# Rendered for assistant messages that carry a recommendation. Runs in
+    broadcast contexts too, so it derives everything from chat.user rather than
+    current_user. `scope` namespaces this card's add-to-list panel rows. %>
+<% user = chat.user %>
+<% lists = user.lists.to_a %>
+<% game_list_games = ListGame.joins(:list)
+                             .where(lists: { user_id: user.id }, game_id: game.id)
+                             .index_by(&:list_id) %>
+
+<div class="rec-card" data-controller="rec-card add-to-list">
+  <% if game.cover_img.present? %>
+    <div class="rec-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+  <% else %>
+    <div class="rec-card__cover rec-card__cover--placeholder">
+      <i class="fa-solid fa-gamepad"></i>
+    </div>
+  <% end %>
+
+  <div class="rec-card__body">
+    <p class="rec-card__title"><%= game.title %></p>
+    <div class="rec-card__meta">
+      <% if game.genre.present? %>
+        <span class="rec-card__tag"><%= game.genre %></span>
+      <% end %>
+      <% if game.release_date.present? %>
+        <span class="rec-card__tag rec-card__tag--muted"><%= game.release_date.year %></span>
+      <% end %>
+    </div>
+    <% if game.description.present? %>
+      <p class="rec-card__desc"><%= truncate(game.description, length: 120) %></p>
+    <% end %>
+  </div>
+
+  <div class="rec-card__actions">
+    <button type="button" class="btn btn-primary rec-card__btn" data-action="click->rec-card#openNewList">
+      <i class="fa-solid fa-plus"></i> New list
+    </button>
+    <button type="button" class="btn btn-secondary rec-card__btn" data-action="click->add-to-list#open">
+      <i class="fa-solid fa-list"></i> Existing list
+    </button>
+    <button type="button" class="btn btn-danger rec-card__btn" data-action="click->rec-card#skip">
+      <i class="fa-solid fa-forward"></i> Skip
+    </button>
+  </div>
+
+  <%# Inline "add to a new list" — submitted via fetch, then chains the next recommendation. %>
+  <%= form_with url: lists_path, class: "rec-card__new-list-form d-none", data: { rec_card_target: "newListForm" } do %>
+    <input type="hidden" name="origin" value="chat">
+    <input type="hidden" name="game_id" value="<%= game.id %>">
+    <input type="text" name="list[name]" class="rec-card__new-list-input"
+           placeholder="New list name" maxlength="25" required>
+    <button type="submit" class="btn btn-primary rec-card__new-list-submit"
+            data-action="click->rec-card#submitNewList">Create &amp; add</button>
+  <% end %>
+
+  <%# Reused add-to-list panel (multi-select existing lists), with a Done button. %>
+  <%= render "games/add_to_list_panel",
+      game: game,
+      lists: lists,
+      game_list_games: game_list_games,
+      scope: scope,
+      origin: "chat",
+      confirm_action: "click->rec-card#confirmAdd",
+      show_new_list_link: false %>
+
+  <%# Hidden form whose submission asks the assistant for the next recommendation. %>
+  <%= form_with url: chat_messages_path(chat), class: "d-none", data: { rec_card_target: "nextRecForm" } do %>
+    <input type="hidden" name="message[content]" value="">
+  <% end %>
+</div>

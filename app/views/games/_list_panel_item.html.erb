@@ -1,4 +1,6 @@
-<div class="add-list-panel__item" id="list-panel-item-<%= list.id %>">
+<% scope  = local_assigns.fetch(:scope, nil) %>
+<% origin = local_assigns.fetch(:origin, "game_show") %>
+<div class="add-list-panel__item" id="<%= list_panel_item_id(list, scope) %>">
   <div class="add-list-panel__item-info">
     <i class="fa-solid fa-<%= list.list_type == 'wishlist' ? 'star' : list.list_type == 'played' ? 'gamepad' : 'list' %>"></i>
     <span><%= list.list_type.in?(%w[wishlist played]) ? list.list_type.capitalize : list.name %></span>
@@ -6,14 +8,14 @@
   <% if existing %>
     <%= button_to list_game_path(existing),
         method: :delete,
-        params: { origin: "game_show" },
+        params: { origin: origin, scope: scope },
         class: "add-list-panel__add-btn add-list-panel__add-btn--done",
         form_class: "add-list-panel__add-form" do %>
       <i class="fa-solid fa-check"></i>
     <% end %>
   <% else %>
     <%= button_to "+", list_list_games_path(list),
-        params: { rawg_id: game.rawg_id, origin: "game_show" },
+        params: { rawg_id: game.rawg_id, origin: origin, scope: scope },
         class: "add-list-panel__add-btn",
         form_class: "add-list-panel__add-form" %>
   <% end %>

@@ -1,3 +1,3 @@
-<%= turbo_stream.replace "list-panel-item-#{@list.id}" do %>
-  <%= render "games/list_panel_item", list: @list, existing: @list_game, game: @game %>
+<%= turbo_stream.replace list_panel_item_id(@list, params[:scope]) do %>
+  <%= render "games/list_panel_item", list: @list, existing: @list_game, game: @game, scope: params[:scope], origin: params[:origin] %>
 <% end %>
