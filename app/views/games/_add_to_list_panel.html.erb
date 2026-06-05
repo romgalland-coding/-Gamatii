@@ -1,17 +1,26 @@
+<% scope              = local_assigns.fetch(:scope, nil) %>
+<% origin             = local_assigns.fetch(:origin, "game_show") %>
+<% confirm_action     = local_assigns.fetch(:confirm_action, "click->add-to-list#close") %>
+<% show_new_list_link = local_assigns.fetch(:show_new_list_link, true) %>
 <div class="add-list-panel" data-add-to-list-target="panel">
   <div class="add-list-panel__backdrop" data-action="click->add-to-list#close"></div>
   <div class="add-list-panel__sheet">
     <div class="add-list-panel__header">
       <h3 class="add-list-panel__title">Add to a list</h3>
-      <button class="add-list-panel__close" data-action="click->add-to-list#close">✕</button>
+      <button type="button" class="add-list-panel__close" data-action="click->add-to-list#close">✕</button>
     </div>
 
     <div class="add-list-panel__list">
       <% lists.each do |list| %>
-        <%= render "list_panel_item", list: list, existing: game_list_games[list.id], game: game %>
+        <%= render "games/list_panel_item", list: list, existing: game_list_games[list.id], game: game, scope: scope, origin: origin %>
       <% end %>
     </div>
 
-    <%= link_to "Create a new list", new_list_path, class: "add-list-panel__new-list" %>
+    <div class="add-list-panel__footer">
+      <% if show_new_list_link %>
+        <%= link_to "Create a new list", new_list_path, class: "add-list-panel__new-list" %>
+      <% end %>
+      <button type="button" class="add-list-panel__done" data-action="<%= confirm_action %>">Done</button>
+    </div>
   </div>
 </div>

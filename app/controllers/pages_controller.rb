@@ -13,4 +13,10 @@ class PagesController < ApplicationController
     @popular_lists = List.includes(:user).order(votes_count: :desc).limit(4)
   end
 
+  def discover
+    # Past chats for the recommendation assistant. The history UI is a later
+    # step; for now this backs the "Create a new chat" entry point.
+    @chats = current_user.chats.order(updated_at: :desc)
+  end
+
 end

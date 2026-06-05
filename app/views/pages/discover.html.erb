@@ -1,3 +1,14 @@
+<div class="discover">
+  <header class="discover__header">
+    <h1 class="discover__title">Discover</h1>
+    <p class="discover__subtitle">Let <strong>matia</strong> find your next game.</p>
+  </header>
 
+  <%= button_to chats_path, method: :post, class: "btn btn-primary discover__new-chat" do %>
+    <i class="fa-solid fa-plus me-2"></i>Create a new chat
+  <% end %>
+
+  <%# Chat history will be rendered here in a later step (@chats is loaded). %>
+</div>
 
 <%= render "shared/navbar", active: :discover %>

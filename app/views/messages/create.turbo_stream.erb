@@ -1,0 +1,23 @@
+<%# Text-only replies are finalised here over HTTP. Replies that carry a
+    recommendation card are handled by the ActionCable broadcast instead
+    (broadcast_full_replace), so we skip them to avoid a double render. %>
+<% unless @assistant_message.game.present? %>
+  <%= turbo_stream.replace dom_id(@assistant_message) do %>
+    <%= render "messages/message", message: @assistant_message %>
+  <% end %>
+<% end %>
+
+<% if @chat.title_previously_changed? %>
+  <%= turbo_stream.update "chat_title", @chat.title %>
+<% end %>
+
+<%= turbo_stream.update "new_message_container" do %>
+  <% if @limit_reached %>
+    <p class="chat-limit-notice">🔒 Message limit reached</p>
+    <%= button_to chats_path, method: :post, class: "btn btn-primary w-100" do %>
+      <i class="fa-solid fa-message me-2"></i>Start a new chat
+    <% end %>
+  <% else %>
+    <%= render "messages/form", chat: @chat, message: Message.new %>
+  <% end %>
+<% end %>
