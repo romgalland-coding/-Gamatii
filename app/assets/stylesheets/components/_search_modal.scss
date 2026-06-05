@@ -82,7 +82,8 @@
     &:hover { background-color: #f5f5f5; border-radius: 8px; }
   }
 
-  &__item form {
+  &__item form,
+  &__item-action {
     flex-shrink: 0;
     margin-left: auto;
   }

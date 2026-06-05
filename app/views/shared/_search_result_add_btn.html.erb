@@ -1,0 +1,17 @@
+<div id="search-result-btn-<%= rawg_id %>" class="search-autocomplete__item-action">
+  <% if list_game %>
+    <%= button_to list_game_path(list_game),
+        method: :delete,
+        params: { origin: origin },
+        class: "add-list-panel__add-btn add-list-panel__add-btn--done",
+        form_class: "add-list-panel__add-form" do %>
+      <i class="fa-solid fa-check"></i>
+    <% end %>
+  <% else %>
+    <%= form_with url: list_list_games_path(list_id), method: :post, html: { class: "add-list-panel__add-form" } do |f| %>
+      <%= f.hidden_field :rawg_id, value: rawg_id %>
+      <%= f.hidden_field :origin, value: origin %>
+      <button type="submit" class="add-list-panel__add-btn">+</button>
+    <% end %>
+  <% end %>
+</div>

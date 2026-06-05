@@ -25,6 +25,17 @@ class ListGamesController < ApplicationController
       filter_params = params.permit(:rating, :from, :to, genres: [], platforms: [], publishers: [], game_modes: [])
       redirect_to build_list_path(@list, **filter_params),
                   alert: (saved ? nil : "Could not add game to list.")
+    elsif params[:origin] == "list_show_search"
+      unless saved
+        redirect_to list_path(@list), alert: "Could not add game to list."
+        return
+      end
+      @list.reload
+      @list_games = @list.list_games.includes(:game)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to list_path(@list) }
+      end
     elsif params[:origin].in?(%w[game_show chat swipe])
       respond_to do |format|
         format.turbo_stream
@@ -55,6 +66,13 @@ class ListGamesController < ApplicationController
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to game_path(@game) }
+      end
+    elsif params[:origin] == "list_show_search"
+      @list.reload
+      @list_games = @list.list_games.includes(:game)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to list_path(@list) }
       end
     else
       redirect_to list_path(@list)

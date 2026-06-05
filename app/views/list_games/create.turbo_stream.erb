@@ -2,6 +2,15 @@
   <%= turbo_stream.replace "grid-card-#{@game.rawg_id}" do %>
     <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
   <% end %>
+<% elsif params[:origin] == "list_show_search" %>
+  <%= turbo_stream.replace "search-result-btn-#{@game.rawg_id}" do %>
+    <%= render "shared/search_result_add_btn",
+          rawg_id: @game.rawg_id,
+          list_id: @list.id,
+          origin: "list_show_search",
+          list_game: @list_game %>
+  <% end %>
+  <%= render template: "list_games/list_show_update" %>
 <% else %>
   <%= turbo_stream.replace list_panel_item_id(@list, params[:scope]) do %>
     <%= render "games/list_panel_item", list: @list, existing: @list_game, game: @game, scope: params[:scope], origin: params[:origin] %>

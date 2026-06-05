@@ -1,6 +1,11 @@
 <%= turbo_stream.update "search_results" do %>
   <% if @results.present? %>
-    <%= render partial: "shared/search_game_results", locals: { results: @results } %>
+    <%= render partial: "shared/search_game_results", locals: {
+          results: @results,
+          existing_by_rawg_id: @existing_by_rawg_id,
+          list_id: @list_id,
+          origin: "list_show_search"
+        } %>
   <% else %>
     <p class="search-autocomplete__empty">No games found.</p>
   <% end %>

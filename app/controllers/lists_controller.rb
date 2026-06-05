@@ -79,6 +79,8 @@ class ListsController < ApplicationController
     skip_authorization
     @query = params[:query]
     @list_id = params[:list_id]
+    list = List.includes(list_games: :game).find(@list_id)
+    @existing_by_rawg_id = list.list_games.to_h { |lg| [lg.game.rawg_id, lg] }
     @results = RawgService.new.search(@query)
 
     respond_to do |format|
