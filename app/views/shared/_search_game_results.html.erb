@@ -1,3 +1,5 @@
+<% existing_by_rawg_id = local_assigns.fetch(:existing_by_rawg_id, {}) %>
+<% origin = local_assigns.fetch(:origin, nil) %>
 <ul class="search-autocomplete">
   <% results.each do |game| %>
     <li class="search-autocomplete__item">
@@ -9,10 +11,18 @@
           <%= [game.dig("genres", 0, "name"), game["released"]&.split("-")&.first].compact.join(" · ") %>
         </span>
       </div>
-      <%= form_with url: local_assigns.fetch(:form_url) { list_list_games_path(@list_id) }, method: :post do |f| %>
-        <%= f.hidden_field :rawg_id, value: game["id"] %>
-        <%= f.hidden_field :game_title, value: game["name"] %>
-        <button type="submit" class="btn btn-primary search-autocomplete__add">+<span class="search-autocomplete__add-label"> <%= local_assigns.fetch(:button_label, "Add to my list") %></span></button>
+      <% if origin == "list_show_search" %>
+        <%= render "shared/search_result_add_btn",
+              rawg_id: game["id"],
+              list_id: local_assigns.fetch(:list_id, @list_id),
+              origin: origin,
+              list_game: existing_by_rawg_id[game["id"]] %>
+      <% else %>
+        <%= form_with url: local_assigns.fetch(:form_url) { list_list_games_path(@list_id) }, method: :post do |f| %>
+          <%= f.hidden_field :rawg_id, value: game["id"] %>
+          <%= f.hidden_field :game_title, value: game["name"] %>
+          <button type="submit" class="btn btn-primary search-autocomplete__add">+<span class="search-autocomplete__add-label"> <%= local_assigns.fetch(:button_label, "Add to my list") %></span></button>
+        <% end %>
       <% end %>
     </li>
   <% end %>
