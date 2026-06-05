@@ -1,0 +1,7 @@
+<%# Countdown to the next rotation, shown on the label row of each prompt card.
+    Matches the prompt label's treatment (see .quiz-prompt__timer). %>
+<span class="quiz-prompt__timer"
+      data-controller="quiz-timer"
+      data-quiz-timer-seconds-value="<%= @seconds_remaining %>">
+  <%= format("%02d:%02d", @seconds_remaining / 60, @seconds_remaining % 60) %>
+</span>

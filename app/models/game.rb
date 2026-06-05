@@ -5,6 +5,21 @@ class Game < ApplicationRecord
   has_many :quiz_games, dependent: :destroy
   has_many :quizzes, through: :quiz_games
 
+  # Strip edition/version suffixes so "Ghost of Tsushima Director's Cut" and
+  # "Ghost of Tsushima" compare as the same game. Used by the recommendation
+  # tool to pick the closest RAWG result to a requested title.
+  EDITION_SUFFIXES = /
+    \s*[:\-–]\s*
+    (director'?s\ cut|definitive\ edition|complete\ edition|
+     game\ of\ the\ year|goty|remastered|enhanced\ edition|
+     ultimate\ edition|anniversary\ edition|\w+\ edition)
+    \s*$
+  /xi
+
+  def self.normalize_title(title)
+    title.to_s.sub(EDITION_SUFFIXES, "").strip
+  end
+
   # Find the game with this RAWG id, or fetch it from RAWG and save it.
   # Returns the local Game record. Used when a user picks a game that may
   # not be in our DB yet (quiz picks, list adds).

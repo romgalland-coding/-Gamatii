@@ -89,8 +89,10 @@ end
 # ── Clean slate ───────────────────────────────────────────────────────────────
 
 puts "Cleaning previous seed data…"
-seed_emails = %w[pixelknight@gmail.com neonbyte@gmail.com vortexcaster@gmail.com]
-User.where(email: seed_emails).each do |u|
+curated_emails = %w[pixelknight@gmail.com neonbyte@gmail.com vortexcaster@gmail.com]
+# Generated users all share the @seed.gamatii domain so we can wipe them by pattern,
+# however many there are this run.
+User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii")).each do |u|
   u.lists.each { |l| l.list_games.destroy_all }
   u.lists.destroy_all
   u.destroy
@@ -126,57 +128,59 @@ end
 puts "  ⚠️  Under-filled themes: #{shortfalls.join(', ')}" if shortfalls.any?
 
 # ── Users + Lists ─────────────────────────────────────────────────────────────
+# Every user draws their lists from the *same* shared `games` array fetched above —
+# no per-user API calls. Lists are filled with seeded-random samples so the home
+# page looks varied while staying reproducible across re-seeds.
 
-SEED_USERS = [
-  {
-    email:    "pixelknight@gmail.com",
-    password: "password",
-    gamer_tag: "PixelKnight",
-    platform: ["PC", "Nintendo Switch"],
-    lists: [
-      { name: "Wishlist",       list_type: "wishlist", range: 0..9  },
-      { name: "Played",         list_type: "played",   range: 10..24 },
-      { name: "Indie Gems",     list_type: "custom",   range: 25..33 }
-    ]
-  },
-  {
-    email:    "neonbyte@gmail.com",
-    password: "password",
-    gamer_tag: "NeonByte",
-    platform: ["PlayStation 5", "PlayStation 4"],
-    lists: [
-      { name: "Wishlist",         list_type: "wishlist", range: 4..13  },
-      { name: "Played",           list_type: "played",   range: 14..28 },
-      { name: "Open World Picks", list_type: "custom",   range: 29..37 }
-    ]
-  },
-  {
-    email:    "vortexcaster@gmail.com",
-    password: "password",
-    gamer_tag: "VortexCaster",
-    platform: ["Xbox Series S/X", "Xbox One", "PC"],
-    lists: [
-      { name: "Wishlist",          list_type: "wishlist", range: 2..11  },
-      { name: "Played",            list_type: "played",   range: 12..26 },
-      { name: "Multiplayer Favs",  list_type: "custom",   range: 27..35 }
-    ]
-  }
+# Deterministic RNG: same seed in → same roster out, every time.
+rng = Random.new(20_260_605)
+
+# Each list spec gives a name, type, and how many games to sample for it.
+LIST_SPECS = [
+  { name: "Wishlist", list_type: "wishlist", count: 10 },
+  { name: "Played",   list_type: "played",   count: 15 },
+  { name: "Favorites", list_type: "custom",  count: 9 }
+].freeze
+
+# The 3 curated users keep their identities (handy for demoing a known login).
+CURATED_USERS = [
+  { email: "pixelknight@gmail.com",  gamer_tag: "PixelKnight",  platform: ["PC", "Nintendo Switch"] },
+  { email: "neonbyte@gmail.com",     gamer_tag: "NeonByte",     platform: ["PlayStation 5", "PlayStation 4"] },
+  { email: "vortexcaster@gmail.com", gamer_tag: "VortexCaster", platform: ["Xbox Series S/X", "Xbox One", "PC"] }
+].freeze
+
+# Generate the rest of the roster up to 15 total. Tags are picked from a pool so
+# every user reads like a real gamer handle.
+TAG_POOL = %w[
+  ShadowFox GlitchWizard ByteRunner CrimsonAce FrostByte
+  TurboNova PhantomDrift QuasarKid EmberWolf StarlitHex
+  RogueCircuit ApexRaven LunarSpecter VoidStriker NitroGhost
 ]
+generated_count = 15 - CURATED_USERS.size
+generated_users = TAG_POOL.first(generated_count).map do |tag|
+  {
+    email:    "#{tag.downcase}@seed.gamatii",
+    gamer_tag: tag,
+    platform: User::PLATFORMS.sample(rng.rand(1..3), random: rng)
+  }
+end
 
-puts "\nCreating users and lists…"
-SEED_USERS.each do |data|
+ALL_USERS = CURATED_USERS + generated_users
+
+puts "\nCreating #{ALL_USERS.size} users and their lists…"
+ALL_USERS.each do |data|
   user = User.create!(
     email:    data[:email],
-    password: data[:password],
+    password: "password",
     gamer_tag: data[:gamer_tag],
     platform: data[:platform]
   )
 
-  data[:lists].each do |ldata|
+  LIST_SPECS.each do |ldata|
     list = user.lists.create!(name: ldata[:name], list_type: ldata[:list_type])
-    slice = games[ldata[:range]] || []
-    slice.each { |game| list.list_games.create!(game: game) }
-    puts "  #{user.gamer_tag} › #{list.name} (#{ldata[:list_type].first}): #{slice.size} games"
+    sample = games.sample(ldata[:count], random: rng)
+    sample.each { |game| list.list_games.create!(game: game) }
+    puts "  #{user.gamer_tag} › #{list.name} (#{ldata[:list_type]}): #{sample.size} games"
   end
 end
 
@@ -199,9 +203,11 @@ puts "  #{Quiz::THEMES.size} quizzes created (positions 0–#{Quiz::THEMES.size 
 # title, so we point guesses at the real answer-pool games.
 
 puts "\nSeeding leaderboard guesses + reference picks on every quiz…"
-# Base correct-counts per user, rotated by quiz position so the order shuffles.
-base_counts = { "PixelKnight" => 4, "NeonByte" => 3, "VortexCaster" => 2 }
-seed_users  = base_counts.keys.map { |tag| User.find_by!(gamer_tag: tag) }
+# Seed guesses for the whole roster so every leaderboard is full. Each user gets a
+# base correct-count (0–5, spread across the roster), rotated by quiz position so
+# the ranking shuffles from one quiz to the next.
+seed_users  = User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii")).to_a
+base_counts = seed_users.each_index.map { |i| (i % 6) }  # cycles 0..5 across users
 
 Quiz.order(:position).each do |quiz|
   answers = quiz.answer_pool(5)
@@ -210,7 +216,7 @@ Quiz.order(:position).each do |quiz|
   seed_users.each_with_index do |user, i|
     # GUESS rows — drive the leaderboard. Rotate which user does best per quiz.
     # Keyed on role too, so a pick and a guess for the same game stay separate.
-    correct_count = base_counts.values[(i + quiz.position) % seed_users.size]
+    correct_count = base_counts[(i + quiz.position) % seed_users.size]
     answers.first(correct_count).each do |game|
       QuizGame.find_or_create_by!(user: user, quiz: quiz, game: game, role: "guess")
     end

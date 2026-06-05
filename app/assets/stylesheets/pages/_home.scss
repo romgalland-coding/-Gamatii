@@ -99,6 +99,11 @@
     color: rgba(0, 0, 0, 0.5);
     margin: -0.4rem 0 0;
   }
+
+  // Extra breathing room above a section to separate it from the one before.
+  &--spaced {
+    margin-top: 1.25rem;
+  }
 }
 
 // ---------- Popular Games (2-col) ----------

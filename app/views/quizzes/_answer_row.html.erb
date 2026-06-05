@@ -1,0 +1,15 @@
+<%# One answer row. `just_revealed` (optional) marks the row the user just
+    matched, adding the class that plays the green fill-sweep animation. %>
+<% revealing = local_assigns.fetch(:just_revealed, false) %>
+<li id="answer_row_<%= index %>"
+    class="quiz-answer-row<%= ' quiz-answer-row--revealed' if guessed %><%= ' quiz-answer-row--revealing' if revealing %>">
+  <span class="quiz-answer-row__rank">#<%= index + 1 %></span>
+  <span class="quiz-answer-row__title">
+    <% if guessed %>
+      <%= game.title %>
+    <% else %>
+      <span class="quiz-answer-row__hidden">– – – – –</span>
+    <% end %>
+  </span>
+  <span class="quiz-answer-row__pct"><%= [92, 78, 54, 41, 33][index] %>%</span>
+</li>

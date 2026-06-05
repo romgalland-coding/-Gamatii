@@ -17,6 +17,10 @@ gem "stimulus-rails"
 gem "jbuilder"
 gem 'devise'
 gem 'httparty'
+# LLM chat for the Discover recommendation assistant
+gem "ruby_llm", "~> 1.15"
+# Render the assistant's markdown replies as HTML
+gem "redcarpet"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 

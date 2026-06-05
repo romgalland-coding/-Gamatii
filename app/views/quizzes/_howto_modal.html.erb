@@ -1,0 +1,32 @@
+<%# How-to-play rules modal. Opened by the header button; closes on X, "Got it",
+    or backdrop click (all wired in quiz_howto_controller). Lives inside the
+    quiz-howto controller element (see daily.html.erb header). %>
+<div class="quiz-howto-overlay"
+     data-quiz-howto-target="overlay"
+     data-action="click->quiz-howto#backdrop">
+  <div class="quiz-howto-card">
+    <div class="quiz-howto-card__head">
+      <span class="quiz-howto-card__icon"><i class="fa-regular fa-circle-question"></i></span>
+      <h2 class="quiz-howto-card__title">How to play</h2>
+      <button type="button" class="quiz-howto-card__close"
+              data-action="quiz-howto#close" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="quiz-howto-card__body">
+      <div class="quiz-howto-rule">
+        <span class="quiz-howto-rule__num quiz-howto-rule__num--yellow">1</span>
+        <p>Every day, everyone gets the same <strong>List of the Day</strong> to create. You have until <strong>midnight CET</strong> to enter up to 5 games of your choice.</p>
+      </div>
+      <div class="quiz-howto-rule">
+        <span class="quiz-howto-rule__num quiz-howto-rule__num--green">2</span>
+        <p>The next day, everyone has the chance to guess what were the most popular picks, and <strong>earn points</strong> if they guessed correctly!</p>
+      </div>
+
+      <button type="button" class="quiz-howto-got-it" data-action="quiz-howto#close">
+        Got it
+      </button>
+    </div>
+  </div>
+</div>

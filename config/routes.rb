@@ -3,11 +3,12 @@ Rails.application.routes.draw do
   root "pages#home"
   get "discover", to: "pages#discover"
 
-  resources :games, only: [:show] do
-    collection do
-      get :search
-    end
+  # Recommendation chatbot hosted on the Discover page
+  resources :chats, only: [:show, :create] do
+    resources :messages, only: [:create]
   end
+
+  resources :games, only: [:show]
 
   # road for the game show using the rawg id, used for the discover page
   get "rawg_games/:rawg_id/preview", to: "games#rawg_preview", as: :rawg_game_preview
@@ -25,7 +26,7 @@ Rails.application.routes.draw do
 
   resources :list_games, only: [:destroy]
 
-  resources :quizzes, only: [:show] do
+  resources :quizzes, only: [] do
     member do
       get :autocomplete_games
     end

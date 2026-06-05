@@ -25,6 +25,19 @@ class ListsController < ApplicationController
   def create
     @list = current_user.lists.build(list_params.merge(list_type: "custom"))
     authorize @list
+
+    # From the Discover chatbot: create the list and drop the recommended game
+    # into it in one shot. The card's JS then asks for the next recommendation.
+    if params[:origin] == "chat"
+      if @list.save
+        ListGame.find_or_create_by(list: @list, game: Game.find(params[:game_id]))
+        head :ok
+      else
+        head :unprocessable_entity
+      end
+      return
+    end
+
     if @list.save
       redirect_to build_list_path(@list,
         genres:     params[:genres],
