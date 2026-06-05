@@ -1,8 +1,14 @@
+<% revealed_i = @yesterday_answers.index { |a| normalize_title(a.title) == normalize_title(@game.title) } %>
+<% round_over = @guesses_remaining <= 0 %>
+
+<%# If this guess came from clicking a yesterday-pick, remove that row from the
+    reference list (it's been "used", right or wrong). %>
+<% if @from_pick_id %>
+  <%= turbo_stream.remove "yesterday_pick_#{@from_pick_id}" %>
+<% end %>
+
 <% if @correct %>
-  <%# Reveal the matched row with a green fill-sweep. Find its index in the pool
-      by normalized title (the guessed game is a fresh RAWG import, so it's a
-      different record than the seeded answer). %>
-  <% revealed_i = @yesterday_answers.index { |a| normalize_title(a.title) == normalize_title(@game.title) } %>
+  <%# Reveal the matched row with a green fill-sweep. %>
   <%= turbo_stream.replace "answer_row_#{revealed_i}" do %>
     <%= render "quizzes/answer_row", game: @yesterday_answers[revealed_i],
           index: revealed_i, guessed: true, just_revealed: true %>
@@ -14,26 +20,10 @@
           guesses_remaining: @guesses_remaining, animate_from: @previous_score %>
   <% end %>
 
-  <%# Clear the searched text + dropdown (reset also fires client-side; this is
-      a server-side belt-and-suspenders since there's no reload). %>
   <%= turbo_stream.update "quiz_guess_feedback", "" %>
 
-  <%# Disable the input + open the score screen once the 5th guess lands. %>
-  <% if @guesses_remaining <= 0 %>
-    <%= turbo_stream.replace "quiz_input_region" do %>
-      <%= render "quizzes/input_region", quiz: @yesterday_quiz, guesses_remaining: @guesses_remaining %>
-    <% end %>
-    <%= turbo_stream.replace "quiz_score_region" do %>
-      <%= render "quizzes/score_region",
-            score: @score, guesses_remaining: @guesses_remaining,
-            found: @found, my_rank: @my_rank, total_players: @total_players,
-            leaderboard: @leaderboard, auto_open: true %>
-    <% end %>
-  <% end %>
-
 <% else %>
-  <%# Wrong guess: shake the search bar and show the red message. Re-rendering
-      the whole region re-runs the quiz-shake controller's connect each time. %>
+  <%# Wrong guess: shake the search bar and show the red message. %>
   <%= turbo_stream.replace "quiz_guess_feedback" do %>
     <div id="quiz_guess_feedback"
          class="quiz-guess-feedback"
@@ -43,22 +33,32 @@
     </div>
   <% end %>
 
-  <%# A wrong guess still costs a slot, so refresh the score/LEFT cards. The
-      score is unchanged (miss = 0 pts), so no count-up — animate_from == score. %>
+  <%# A wrong guess still costs a slot, so refresh the score/LEFT cards (no
+      count-up — a miss scores 0). %>
   <%= turbo_stream.replace "quiz_score_line" do %>
     <%= render "quizzes/score_line", score: @score, guesses_remaining: @guesses_remaining %>
   <% end %>
+<% end %>
 
-  <%# If the miss was the 5th guess, disable the input and open the score screen. %>
-  <% if @guesses_remaining <= 0 %>
-    <%= turbo_stream.replace "quiz_input_region" do %>
-      <%= render "quizzes/input_region", quiz: @yesterday_quiz, guesses_remaining: @guesses_remaining %>
+<% if round_over %>
+  <%# Round over: reveal every answer (correct→green, missed→red). Skip the row
+      the user just matched on a correct guess so its fill-sweep isn't clobbered. %>
+  <% @yesterday_answers.each_with_index do |game, i| %>
+    <% next if @correct && i == revealed_i %>
+    <%= turbo_stream.replace "answer_row_#{i}" do %>
+      <%= render "quizzes/answer_row", game: game, index: i,
+            guessed: @guessed_titles.include?(normalize_title(game.title)), reveal_all: true %>
     <% end %>
-    <%= turbo_stream.replace "quiz_score_region" do %>
-      <%= render "quizzes/score_region",
-            score: @score, guesses_remaining: @guesses_remaining,
-            found: @found, my_rank: @my_rank, total_players: @total_players,
-            leaderboard: @leaderboard, auto_open: true %>
-    <% end %>
+  <% end %>
+
+  <%# Disable the input and open the score screen. %>
+  <%= turbo_stream.replace "quiz_input_region" do %>
+    <%= render "quizzes/input_region", quiz: @yesterday_quiz, guesses_remaining: @guesses_remaining %>
+  <% end %>
+  <%= turbo_stream.replace "quiz_score_region" do %>
+    <%= render "quizzes/score_region",
+          score: @score, guesses_remaining: @guesses_remaining,
+          found: @found, my_rank: @my_rank, total_players: @total_players,
+          leaderboard: @leaderboard, auto_open: true %>
   <% end %>
 <% end %>

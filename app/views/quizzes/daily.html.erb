@@ -30,7 +30,7 @@
     <div class="quiz-prompt quiz-prompt--blue">
       <div class="quiz-prompt__label-row">
         <p class="quiz-prompt__label">TODAY'S QUIZ</p>
-        <%= render "quizzes/timer" %>
+        <%= render "quizzes/timer", ended_quiz_id: @yesterday_quiz.id %>
       </div>
       <h2 class="quiz-prompt__title"><%= @yesterday_quiz.name %></h2>
       <p class="quiz-prompt__desc">Guess what the gamatii community selected</p>
@@ -44,9 +44,11 @@
     <% end %>
 
     <ol class="quiz-answers">
+      <% reveal_all = current_user && @guesses_remaining <= 0 %>
       <% @yesterday_answers.each_with_index do |game, i| %>
         <%= render "quizzes/answer_row", game: game, index: i,
-              guessed: current_user && @guessed_titles.include?(normalize_title(game.title)) %>
+              guessed: current_user && @guessed_titles.include?(normalize_title(game.title)),
+              reveal_all: reveal_all %>
       <% end %>
     </ol>
 
@@ -54,11 +56,12 @@
         picked when this quiz was "today", so they can re-enter them as guesses.
         Only appears if they made at least one pick. %>
     <% if current_user && @my_yesterday_picks.any? %>
-      <div class="quiz-yesterday-picks">
+      <div id="quiz_yesterday_picks" class="quiz-yesterday-picks">
         <p class="quiz-yesterday-picks__label">YOUR PICKS</p>
         <ul class="quiz-yesterday-picks__list">
           <% @my_yesterday_picks.each do |qg| %>
-            <li class="quiz-yesterday-picks__row"><%= qg.game.title %></li>
+            <%= render "quizzes/yesterday_pick", qg: qg, quiz: @yesterday_quiz,
+                  disabled: @guesses_remaining <= 0 %>
           <% end %>
         </ul>
       </div>
@@ -70,7 +73,7 @@
       <%= render "quizzes/score_region",
             score: @score, guesses_remaining: @guesses_remaining,
             found: @found, my_rank: @my_rank, total_players: @total_players,
-            leaderboard: @leaderboard %>
+            leaderboard: @leaderboard, round_ended: @round_ended %>
     <% end %>
 
   <% else %>

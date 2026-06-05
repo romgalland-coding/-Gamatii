@@ -35,7 +35,20 @@ module QuizScoring
     ranked = rows.sort_by { |r| [-r[:score], -r[:found]] }
                  .each_with_index.map { |r, i| r.merge(rank: i + 1) }
     me = ranked.find { |r| r[:user] == current_user }
-    { rows: ranked, my_rank: me[:rank], total_players: ranked.size }
+    { rows: window_around(ranked, me), my_rank: me[:rank], total_players: ranked.size }
+  end
+
+  # Keep the leaderboard a fixed size: show `me` plus up to 2 above and 2 below.
+  # Near an edge we extend the other way so the window is always ~5 rows (or
+  # fewer when there aren't enough players total).
+  WINDOW_RADIUS = 2
+
+  def window_around(ranked, me)
+    size = WINDOW_RADIUS * 2 + 1
+    idx  = ranked.index(me)
+    first = [idx - WINDOW_RADIUS, 0].max
+    first = [ranked.size - size, 0].max if first + size > ranked.size
+    ranked[first, size]
   end
 
   def leaderboard_row(user, quiz_games, answers)

@@ -7,6 +7,7 @@
                "#{root_url}"
   avatars = { "PixelKnight" => "🦊", "NeonByte" => "🌿", "VortexCaster" => "📖" }
   auto = local_assigns.fetch(:auto_open, guesses_remaining <= 0)
+  round_ended = local_assigns.fetch(:round_ended, false)
 %>
 <div id="quiz_score_region">
   <div data-controller="quiz-score"
@@ -55,6 +56,11 @@
                   data-action="quiz-score#share">
             <i class="fa-solid fa-share-nodes"></i> Share score
           </button>
+
+          <% if round_ended %>
+            <%# Time's up: move on to the new day's quiz (drops the ?ended pin). %>
+            <%= link_to "Next quiz →", daily_quizzes_path, class: "quiz-next-quiz" %>
+          <% end %>
         </div>
       </div><%# /quiz-score-card %>
     </div><%# /quiz-score-overlay %>
