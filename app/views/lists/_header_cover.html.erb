@@ -1,0 +1,11 @@
+<% list_games.each_with_index do |lg, i| %>
+  <%
+    col  = i % 3
+    row  = i / 3
+    left = col * 55 - 18
+    top  = row * 68 + col * 6 - 12
+    rot  = -19 + col * 2
+  %>
+  <div class="list-show__cover-item"
+       style="background-image: url('<%= lg.game.cover_img %>'); top: <%= top %>px; left: <%= left %>px; transform: rotate(<%= rot %>deg);"></div>
+<% end %>

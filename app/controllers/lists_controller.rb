@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
-  before_action :authenticate_user!, only: %i[new create edit update destroy build]
-  before_action :set_list, only: %i[show edit update destroy]
+  before_action :authenticate_user!, only: %i[new create edit update destroy build like]
+  before_action :set_list, only: %i[show edit update destroy like]
 
   def index
     @lists = policy_scope(List)
@@ -86,6 +86,19 @@ class ListsController < ApplicationController
     authorize @list
     @list.destroy
     redirect_to lists_path
+  end
+
+  def like
+    authorize @list
+    like = current_user.list_likes.find_by(list: @list)
+    if like
+      like.destroy
+      @list.decrement!(:votes_count)
+    else
+      current_user.list_likes.create!(list: @list)
+      @list.increment!(:votes_count)
+    end
+    respond_to { |f| f.turbo_stream }
   end
 
   private

@@ -1,0 +1,5 @@
+<% liked = current_user&.list_likes&.exists?(list: list) %>
+<%= button_to like_list_path(list),
+      class: "list-show__likes #{'list-show__likes--active' if liked}" do %>
+  <i class="fa-solid fa-heart"></i> <%= list.votes_count || 0 %>
+<% end %>

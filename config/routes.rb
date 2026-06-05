@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     end
     member do
       get :build
+      post :like
     end
     resources :list_games, only: [:create]
   end

@@ -31,8 +31,16 @@ class ListGamesController < ApplicationController
         format.html { redirect_to game_path(@game) }
       end
     else
-      redirect_to list_path(@list),
-                  alert: (saved ? nil : "Could not add game to list.")
+      unless saved
+        redirect_to list_path(@list), alert: "Could not add game to list."
+        return
+      end
+      @list.reload
+      @list_games = @list.list_games.includes(:game)
+      respond_to do |format|
+        format.turbo_stream { render "list_games/list_show_update" }
+        format.html { redirect_to list_path(@list) }
+      end
     end
   end
 

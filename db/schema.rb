@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_04_144526) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_05_084517) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,7 +39,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_04_144526) do
     t.bigint "list_id", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_list_games_on_game_id"
+    t.index ["list_id", "game_id"], name: "index_list_games_on_list_id_and_game_id", unique: true
     t.index ["list_id"], name: "index_list_games_on_list_id"
+  end
+
+  create_table "list_likes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "list_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["list_id"], name: "index_list_likes_on_list_id"
+    t.index ["user_id"], name: "index_list_likes_on_user_id"
   end
 
   create_table "lists", force: :cascade do |t|
@@ -237,6 +247,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_04_144526) do
 
   add_foreign_key "list_games", "games"
   add_foreign_key "list_games", "lists"
+  add_foreign_key "list_likes", "lists"
+  add_foreign_key "list_likes", "users"
   add_foreign_key "lists", "users"
   add_foreign_key "quiz_games", "games"
   add_foreign_key "quiz_games", "quizzes"

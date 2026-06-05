@@ -1,0 +1,15 @@
+<%= turbo_stream.replace "list-header-cover-#{@list.id}" do %>
+  <div class="list-show__header-cover" id="list-header-cover-<%= @list.id %>">
+    <%= render "lists/header_cover", list_games: @list_games %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "list-games-count-#{@list.id}" do %>
+  <p class="list-show__meta" id="list-games-count-<%= @list.id %>"><%= pluralize(@list_games.size, "game") %></p>
+<% end %>
+
+<%= turbo_stream.replace "list-games-section-#{@list.id}" do %>
+  <div id="list-games-section-<%= @list.id %>">
+    <%= render "lists/games_section", list: @list, list_games: @list_games %>
+  </div>
+<% end %>

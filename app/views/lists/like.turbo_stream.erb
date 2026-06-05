@@ -1,0 +1,3 @@
+<%= turbo_stream.update "list-likes-#{@list.id}" do %>
+  <%= render "likes_button", list: @list %>
+<% end %>

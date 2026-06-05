@@ -23,6 +23,8 @@ class User < ApplicationRecord
   has_many :lists, dependent: :destroy
   has_many :quiz_games, dependent: :destroy
   has_many :quizzes, through: :quiz_games
+  has_many :list_likes, dependent: :destroy
+  has_many :liked_lists, through: :list_likes, source: :list
 
   validates :gamer_tag, presence: true, uniqueness: true, length: { maximum: 20 }
 end
