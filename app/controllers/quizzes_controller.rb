@@ -34,9 +34,6 @@ class QuizzesController < ApplicationController
     end
   end
 
-  def show
-  end
-
   private
 
   def load_user_progress
