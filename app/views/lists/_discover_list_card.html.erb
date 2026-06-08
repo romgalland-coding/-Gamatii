@@ -1,0 +1,22 @@
+<% rank ||= nil %>
+<%= link_to list_path(list), class: "discover-list-card" do %>
+  <% if rank %>
+    <span class="discover-list-card__rank">#<%= rank %></span>
+  <% end %>
+  <div class="discover-list-card__covers">
+    <% list.games.first(4).each do |game| %>
+      <div class="discover-list-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+    <% end %>
+    <% (4 - list.games.size).clamp(0, 4).times do %>
+      <div class="discover-list-card__cover discover-list-card__cover--empty"></div>
+    <% end %>
+  </div>
+  <div class="discover-list-card__body">
+    <h3 class="discover-list-card__name"><%= list.name %></h3>
+    <p class="discover-list-card__author">by <%= list.user.gamer_tag %></p>
+    <div class="discover-list-card__meta">
+      <span><%= pluralize(list.games.size, "game") %></span>
+      <span class="discover-list-card__likes"><i class="fa-solid fa-heart"></i> <%= list.votes_count || 0 %></span>
+    </div>
+  </div>
+<% end %>
