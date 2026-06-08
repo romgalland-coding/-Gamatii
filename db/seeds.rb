@@ -383,7 +383,7 @@ POST_SPECS = [
   {
     author: neon_byte,
     body: "Obsessing over this game's soundtrack. Found the full OST on YouTube — link below. Absolute cinema.",
-    url: "https://www.youtube.com",
+    url: "https://www.youtube.com/watch?v=3JtDLDmvSZY&list=RD3JtDLDmvSZY&start_radio=1",
     list: nil,
     photo_game: cover_games[6]
   },
@@ -422,20 +422,21 @@ POST_SPECS.each_with_index do |spec, i|
   attach_cover(post, spec[:photo_game]) if spec[:photo_game]
   post.save!
 
-  # 2–4 comments from random users (not the author)
+  # Spread posts over ~14 days (index 0 = oldest, last index = most recent)
+  post_time = ((POST_SPECS.size - 1 - i) * 36 + rng.rand(0..12)).hours.ago
+  post.update_columns(created_at: post_time, updated_at: post_time)
+
+  # 2–4 comments from random users (not the author), each after the post
   commenters = (all_commenters - [spec[:author]]).sample(rng.rand(2..4), random: rng)
   commenters.each do |commenter|
-    post.comments.create!(
-      user: commenter,
-      body: COMMENTS_POOL.sample(random: rng)
-    )
+    comment = post.comments.create!(user: commenter, body: COMMENTS_POOL.sample(random: rng))
+    comment_time = post_time + rng.rand(10..120).minutes
+    comment.update_columns(created_at: comment_time, updated_at: comment_time)
   end
 
   # 1–5 likes from random users (not the author)
   likers = (all_likers - [spec[:author]]).sample(rng.rand(1..5), random: rng)
-  likers.each do |liker|
-    post.likes.find_or_create_by!(user: liker)
-  end
+  likers.each { |liker| post.likes.find_or_create_by!(user: liker) }
 
   puts "  Post #{i + 1}/#{POST_SPECS.size} by #{spec[:author].gamer_tag} — #{post.comments.count} comments, #{post.likes.count} likes"
 end
