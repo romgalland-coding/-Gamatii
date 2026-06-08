@@ -48,10 +48,8 @@
     </div>
   </header>
 
-  <%# Bio %>
-  <% if user.bio.present? %>
-    <p class="user-profile__bio"><%= user.bio %></p>
-  <% end %>
+  <%# Bio (inline-editable for the owner, read-only otherwise) %>
+  <%= render "users/bio", user: user, owner: owner %>
 
   <%# Action: follow button for other users, nothing for the owner %>
   <% unless owner %>
