@@ -168,6 +168,28 @@
                 <% end %>
               </div>
             </div>
+
+            <div class="modal fade" id="swipeModal<%= game["id"] %>" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="background-color: #FAF3E3;">
+                  <div class="modal-header d-flex justify-content-between align-items-center" style="border-bottom: none;">
+                    <% if added %>
+                      <button class="btn btn-secondary btn-sm" disabled>Added</button>
+                    <% else %>
+                      <%= button_to "Add to list", list_list_games_path(@list), params: add_params,
+                            class: "btn btn-primary btn-sm m-0" %>
+                    <% end %>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <%= turbo_frame_tag "game_preview_#{game["id"]}",
+                          src: rawg_game_preview_path(game["id"]), loading: "lazy" do %>
+                      <p class="text-center text-muted py-4">Loading…</p>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
           <% end %>
         </div>
 

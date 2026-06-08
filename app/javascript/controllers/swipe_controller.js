@@ -54,6 +54,13 @@ export default class extends Controller {
     if (!this.dragging) return
     this.dragging = false
 
+    if (Math.abs(this.deltaX) < 5) {
+      const modalEl = document.querySelector(`#swipeModal${this.currentCard.dataset.rawgId}`)
+      if (modalEl) bootstrap.Modal.getOrCreateInstance(modalEl).show()
+      this.snapBack()
+      return
+    }
+
     if (Math.abs(this.deltaX) >= THRESHOLD) {
       this.deltaX > 0 ? this.add() : this.skip()
     } else {
