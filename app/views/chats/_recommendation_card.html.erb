@@ -8,27 +8,31 @@
                              .index_by(&:list_id) %>
 
 <div class="rec-card" data-controller="rec-card add-to-list">
-  <% if game.cover_img.present? %>
-    <div class="rec-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
-  <% else %>
-    <div class="rec-card__cover rec-card__cover--placeholder">
-      <i class="fa-solid fa-gamepad"></i>
-    </div>
-  <% end %>
-
-  <div class="rec-card__body">
-    <p class="rec-card__title"><%= game.title %></p>
-    <div class="rec-card__meta">
-      <% if game.genre.present? %>
-        <span class="rec-card__tag"><%= game.genre %></span>
-      <% end %>
-      <% if game.release_date.present? %>
-        <span class="rec-card__tag rec-card__tag--muted"><%= game.release_date.year %></span>
-      <% end %>
-    </div>
-    <% if game.description.present? %>
-      <p class="rec-card__desc"><%= truncate(game.description, length: 120) %></p>
+  <div role="button"
+       data-bs-toggle="modal"
+       data-bs-target="#gameModal<%= game.id %>">
+    <% if game.cover_img.present? %>
+      <div class="rec-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+    <% else %>
+      <div class="rec-card__cover rec-card__cover--placeholder">
+        <i class="fa-solid fa-gamepad"></i>
+      </div>
     <% end %>
+
+    <div class="rec-card__body">
+      <p class="rec-card__title"><%= game.title %></p>
+      <div class="rec-card__meta">
+        <% if game.genre.present? %>
+          <span class="rec-card__tag"><%= game.genre %></span>
+        <% end %>
+        <% if game.release_date.present? %>
+          <span class="rec-card__tag rec-card__tag--muted"><%= game.release_date.year %></span>
+        <% end %>
+      </div>
+      <% if game.description.present? %>
+        <p class="rec-card__desc"><%= truncate(game.description, length: 120) %></p>
+      <% end %>
+    </div>
   </div>
 
   <div class="rec-card__actions">
@@ -67,4 +71,20 @@
   <%= form_with url: chat_messages_path(chat), class: "d-none", data: { rec_card_target: "nextRecForm" } do %>
     <input type="hidden" name="message[content]" value="">
   <% end %>
+
+  <div class="modal fade" id="gameModal<%= game.id %>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="background-color: #FAF3E3;">
+        <div class="modal-header justify-content-end" style="border-bottom: none;">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <%= turbo_frame_tag "game_preview_#{game.rawg_id}",
+                src: rawg_game_preview_path(game.rawg_id), loading: "lazy" do %>
+            <p class="text-center text-muted py-4">Loading…</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

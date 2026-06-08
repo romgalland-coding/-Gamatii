@@ -11,10 +11,15 @@ class ChatsController < ApplicationController
     authorize @chat
 
     if @chat.save
+      opening = RubyLLM.chat
+                       .with_instructions(MessagesController::SYSTEM_PROMPT)
+                       .ask("start") rescue nil
+
       @chat.messages.create!(
         role: "assistant",
-        content: "Hey **#{current_user.gamer_tag}**! 3 questions and I'll find your next game. Let's go? 🚀"
+        content: opening&.content.presence || "What are you in the mood for today?"
       )
+
       redirect_to chat_path(@chat)
     else
       redirect_to discover_path, alert: "Could not start a new chat."
