@@ -22,7 +22,7 @@ class ListGamesController < ApplicationController
     saved = @list_game.save
 
     if params[:origin] == "build"
-      filter_params = params.permit(:rating, :from, :to, genres: [], platforms: [], publishers: [], game_modes: [])
+      filter_params = params.permit(:rating, :from, :to, :limit, genres: [], platforms: [], publishers: [], game_modes: [])
       redirect_to build_list_path(@list, **filter_params),
                   alert: (saved ? nil : "Could not add game to list.")
     elsif params[:origin] == "list_show_search"
