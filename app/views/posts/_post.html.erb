@@ -1,0 +1,61 @@
+<div id="post-<%= post.id %>" class="post-card" data-controller="toggle">
+  <div class="post-card__header">
+    <div class="post-card__avatar"><%= post.user.gamer_tag.first(2).upcase %></div>
+    <div class="post-card__meta">
+      <span class="post-card__name"><%= post.user.gamer_tag %></span>
+      <span class="post-card__time"><%= time_ago_in_words(post.created_at) %> ago</span>
+    </div>
+    <% if current_user == post.user %>
+      <%= button_to post_path(post), method: :delete,
+            form: { data: { turbo_confirm: "Delete this post?" } },
+            class: "post-card__delete" do %>
+        <i class="fa-solid fa-trash-can"></i>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if post.body.present? %>
+    <p class="post-card__body"><%= post.body %></p>
+  <% end %>
+
+  <% if post.photo.attached? %>
+    <div class="post-card__photo">
+      <%= image_tag post.photo, class: "post-card__img" %>
+    </div>
+  <% end %>
+
+  <% if post.list.present? %>
+    <%= render "posts/list_preview", list: post.list %>
+  <% end %>
+
+  <% if post.url.present? %>
+    <%= link_to post.url, target: "_blank", rel: "noopener noreferrer", class: "post-card__url" do %>
+      <i class="fa-solid fa-link"></i>
+      <span><%= post.url.truncate(60) %></span>
+    <% end %>
+  <% end %>
+
+  <div class="post-card__footer">
+    <div id="post-likes-<%= post.id %>">
+      <%= render "posts/like_button", post: post %>
+    </div>
+    <button class="post-card__stat" data-action="click->toggle#toggle">
+      <i class="fa-regular fa-comment"></i>
+      <span id="post-comment-count-<%= post.id %>"><%= post.comments.size %></span>
+    </button>
+  </div>
+
+  <div data-toggle-target="content" class="post-card__comments-section d-none">
+    <div id="post-comments-<%= post.id %>" class="post-comments-list">
+      <% comments = post.comments.loaded? ? post.comments.sort_by(&:created_at) : post.comments.includes(:user).order(:created_at) %>
+      <%= render partial: "comments/comment", collection: comments, as: :comment,
+            locals: { post: post } %>
+    </div>
+
+    <% if current_user %>
+      <div id="post-comment-form-<%= post.id %>" class="post-comment-form-wrap">
+        <%= render "comments/form", post: post %>
+      </div>
+    <% end %>
+  </div>
+</div>

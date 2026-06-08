@@ -29,6 +29,9 @@ class User < ApplicationRecord
   has_many :lists, dependent: :destroy
   has_many :list_likes, dependent: :destroy
   has_many :quiz_games, dependent: :destroy
+  has_many :posts, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
   has_many :quizzes, through: :quiz_games
   has_many :chats, dependent: :destroy
   has_many :messages, through: :chats

@@ -11,6 +11,14 @@ class PagesController < ApplicationController
                          .limit(4)
 
     @popular_lists = List.includes(:user).order(votes_count: :desc).limit(4)
+
+    if current_user
+      followed_ids = current_user.following.pluck(:id) + [current_user.id]
+      @feed_posts = Post.where(user_id: followed_ids)
+                        .includes(:user, { list: :games }, { comments: :user }, :likes)
+                        .order(created_at: :desc)
+                        .limit(30)
+    end
   end
 
   def discover

@@ -1,0 +1,22 @@
+<% user_like = if post.likes.loaded?
+                  post.likes.detect { |l| l.user_id == current_user&.id }
+                else
+                  current_user && post.likes.find_by(user: current_user)
+                end %>
+<% likes_count = post.likes.size %>
+
+<% if user_like %>
+  <%= button_to post_like_path(post, user_like), method: :delete,
+        class: "post-card__like post-card__like--active" do %>
+    <i class="fa-solid fa-heart"></i> <span><%= likes_count %></span>
+  <% end %>
+<% elsif current_user %>
+  <%= button_to post_likes_path(post), method: :post,
+        class: "post-card__like" do %>
+    <i class="fa-regular fa-heart"></i> <span><%= likes_count %></span>
+  <% end %>
+<% else %>
+  <span class="post-card__like post-card__like--static">
+    <i class="fa-regular fa-heart"></i> <span><%= likes_count %></span>
+  </span>
+<% end %>

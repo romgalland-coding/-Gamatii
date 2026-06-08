@@ -1,0 +1,9 @@
+<%= simple_form_for [post, Comment.new], url: post_comments_path(post) do |f| %>
+  <div id="comment-form-errors-<%= post.id %>"></div>
+  <div class="post-comment-form">
+    <%= f.input :body, label: false, as: :text,
+          input_html: { rows: 2, placeholder: "Add a comment...", class: "post-comment-form__input" },
+          wrapper_class: "flex-1 mb-0" %>
+    <%= f.submit "Reply", class: "btn btn-sm btn-primary post-comment-form__submit" %>
+  </div>
+<% end %>

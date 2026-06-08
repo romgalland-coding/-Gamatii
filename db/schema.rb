@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_08_093201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
 
+  create_table "comments", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.bigint "post_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
   create_table "follows", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "followed_id", null: false
@@ -79,12 +89,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
     t.index ["rawg_id"], name: "index_games_on_rawg_id", unique: true
   end
 
+  create_table "likes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "likeable_id", null: false
+    t.string "likeable_type", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
   create_table "list_games", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "game_id", null: false
     t.bigint "list_id", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_list_games_on_game_id"
+    t.index ["list_id", "game_id"], name: "index_list_games_on_list_id_and_game_id", unique: true
     t.index ["list_id"], name: "index_list_games_on_list_id"
   end
 
@@ -94,7 +115,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["list_id"], name: "index_list_likes_on_list_id"
-    t.index ["user_id", "list_id"], name: "index_list_likes_on_user_id_and_list_id", unique: true
     t.index ["user_id"], name: "index_list_likes_on_user_id"
   end
 
@@ -117,6 +137,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
     t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_messages_on_chat_id"
     t.index ["game_id"], name: "index_messages_on_game_id"
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.bigint "list_id"
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.bigint "user_id", null: false
+    t.index ["list_id"], name: "index_posts_on_list_id"
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "quiz_games", force: :cascade do |t|
@@ -308,8 +339,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chats", "users"
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "users"
   add_foreign_key "follows", "users", column: "followed_id"
   add_foreign_key "follows", "users", column: "follower_id"
+  add_foreign_key "likes", "users"
   add_foreign_key "list_games", "games"
   add_foreign_key "list_games", "lists"
   add_foreign_key "list_likes", "lists"
@@ -317,6 +351,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_084307) do
   add_foreign_key "lists", "users"
   add_foreign_key "messages", "chats"
   add_foreign_key "messages", "games"
+  add_foreign_key "posts", "lists"
+  add_foreign_key "posts", "users"
   add_foreign_key "quiz_games", "games"
   add_foreign_key "quiz_games", "quizzes"
   add_foreign_key "quiz_games", "users"

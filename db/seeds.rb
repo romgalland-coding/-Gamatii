@@ -90,6 +90,9 @@ end
 
 puts "Cleaning previous seed data…"
 curated_emails = %w[pixelknight@gmail.com neonbyte@gmail.com vortexcaster@gmail.com]
+# Nullify list references on posts before lists are destroyed to avoid FK violations
+# (posts from user A may reference lists owned by user B, which gets destroyed first).
+Post.update_all(list_id: nil)
 # Generated users all share the @seed.gamatii domain so we can wipe them by pattern,
 # however many there are this run.
 User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii")).each do |u|
@@ -277,8 +280,176 @@ Quiz.order(:position).each do |quiz|
 end
 puts "  #{seed_users.size} users seeded across #{Quiz.count} quizzes."
 
-puts "\nSeed complete!"
-
 # ── Random vote counts (placeholder until likes exist) ───────────────────────
 puts "\nAssigning random vote counts to lists…"
 List.find_each { |list| list.update_column(:votes_count, rand(0..200)) }
+
+# ── Activity Feed: follows + posts + comments + likes ────────────────────────
+require "open-uri"
+
+puts "\nSeeding activity feed (follows, posts, comments, likes)…"
+
+pixel_knight  = User.find_by!(gamer_tag: "PixelKnight")
+neon_byte     = User.find_by!(gamer_tag: "NeonByte")
+vortex_caster = User.find_by!(gamer_tag: "VortexCaster")
+shadow_fox    = User.find_by!(gamer_tag: "ShadowFox")
+glitch_wizard = User.find_by!(gamer_tag: "GlitchWizard")
+turbo_nova    = User.find_by!(gamer_tag: "TurboNova")
+
+# PixelKnight follows these 4
+[neon_byte, vortex_caster, shadow_fox, glitch_wizard].each do |u|
+  pixel_knight.follow(u)
+end
+puts "  PixelKnight now follows 4 users."
+
+# Grab a few seeded games for photo attachments and list linking
+cover_games = Game.where.not(cover_img: nil).limit(12).to_a
+
+def attach_cover(post, game)
+  return unless game&.cover_img.present?
+
+  data = URI.open(game.cover_img, &:read)
+  post.photo.attach(
+    io: StringIO.new(data),
+    filename: "#{game.title.parameterize}.jpg",
+    content_type: "image/jpeg"
+  )
+rescue StandardError => e
+  puts "  [photo skip] #{e.message}"
+end
+
+# Lists belonging to the followed users (for sharing)
+nb_played   = neon_byte.lists.find_by(list_type: "played")
+vc_wishlist = vortex_caster.lists.find_by(list_type: "wishlist")
+sf_custom   = shadow_fox.lists.find_by(list_type: "custom")
+gw_played   = glitch_wizard.lists.find_by(list_type: "played")
+
+POST_SPECS = [
+  # 1 — text only
+  {
+    author: neon_byte,
+    body: "Just finished The Last of Us for the third time. Every single playthrough hits differently. Ellie's arc in Part II is criminally underrated storytelling.",
+    url: nil, list: nil, photo_game: nil
+  },
+  # 2 — text + URL
+  {
+    author: vortex_caster,
+    body: "Hot take: Battle Royale is officially dead. This article sums up why the genre peaked in 2019 and hasn't recovered since.",
+    url: "https://www.ign.com/articles/the-rise-and-fall-of-battle-royale",
+    list: nil, photo_game: nil
+  },
+  # 3 — list share only
+  {
+    author: shadow_fox,
+    body: nil, url: nil,
+    list: sf_custom, photo_game: nil
+  },
+  # 4 — text + list
+  {
+    author: glitch_wizard,
+    body: "Wrapped these up this year. My taste is immaculate, don't @ me.",
+    url: nil,
+    list: gw_played, photo_game: nil
+  },
+  # 5 — photo only
+  {
+    author: neon_byte,
+    body: nil, url: nil, list: nil,
+    photo_game: cover_games[0]
+  },
+  # 6 — text + photo
+  {
+    author: vortex_caster,
+    body: "Late night session going deep on this one 🌙 The art direction is next level.",
+    url: nil, list: nil,
+    photo_game: cover_games[2]
+  },
+  # 7 — text + URL + list
+  {
+    author: shadow_fox,
+    body: "This indie dev just dropped a free demo — it's genuinely incredible. Added it to my wishlist already.",
+    url: "https://store.steampowered.com",
+    list: vc_wishlist, photo_game: nil
+  },
+  # 8 — photo + list
+  {
+    author: glitch_wizard,
+    body: "Screenshot dump from last week. Also sharing my played list for context 👇",
+    url: nil,
+    list: gw_played,
+    photo_game: cover_games[4]
+  },
+  # 9 — text + photo + URL
+  {
+    author: neon_byte,
+    body: "Obsessing over this game's soundtrack. Found the full OST on YouTube — link below. Absolute cinema.",
+    url: "https://www.youtube.com",
+    list: nil,
+    photo_game: cover_games[6]
+  },
+  # 10 — long text + list
+  {
+    author: vortex_caster,
+    body: "Gaming confession: I have a backlog of 200+ games and I keep buying more. Every sale on Steam I tell myself 'just one more'. My played list is embarrassingly short compared to my wishlist. Anyone else living this nightmare?",
+    url: nil,
+    list: nb_played, photo_game: nil
+  }
+].freeze
+
+COMMENTS_POOL = [
+  "This is so real 😭",
+  "100% agree with this take.",
+  "No way, I disagree completely. Counter-argument: skill issue.",
+  "I've been meaning to play this for ages, thanks for the reminder!",
+  "The list is 🔥🔥🔥",
+  "Bro same, I have like 300 in my backlog and I keep adding more.",
+  "That URL goes hard, thanks for sharing.",
+  "The photo is insane, what game is this?",
+  "Your taste is unreal fr.",
+  "Adding this to my wishlist right now.",
+  "I finished that yesterday actually, what a ride.",
+  "The music in that game is genuinely one of the best OSTs ever.",
+  "Controversial opinion but I liked Part I more honestly.",
+  "Peak gaming moment.",
+  "How many hours do you have in this? Because same."
+].freeze
+
+all_commenters = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wizard, turbo_nova]
+all_likers     = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wizard, turbo_nova]
+
+POST_SPECS.each_with_index do |spec, i|
+  post = spec[:author].posts.build(body: spec[:body], url: spec[:url], list: spec[:list])
+  attach_cover(post, spec[:photo_game]) if spec[:photo_game]
+  post.save!
+
+  # 2–4 comments from random users (not the author)
+  commenters = (all_commenters - [spec[:author]]).sample(rng.rand(2..4), random: rng)
+  commenters.each do |commenter|
+    post.comments.create!(
+      user: commenter,
+      body: COMMENTS_POOL.sample(random: rng)
+    )
+  end
+
+  # 1–5 likes from random users (not the author)
+  likers = (all_likers - [spec[:author]]).sample(rng.rand(1..5), random: rng)
+  likers.each do |liker|
+    post.likes.find_or_create_by!(user: liker)
+  end
+
+  puts "  Post #{i + 1}/#{POST_SPECS.size} by #{spec[:author].gamer_tag} — #{post.comments.count} comments, #{post.likes.count} likes"
+end
+
+# Any real (non-seed) account in the DB gets auto-followed to the 4 content
+# creators so their activity feed is populated immediately after seeding.
+content_creators = [neon_byte, vortex_caster, shadow_fox, glitch_wizard]
+seed_emails = curated_emails + TAG_POOL.map { |t| "#{t.downcase}@seed.gamatii" }
+external_users = User.where.not(email: seed_emails)
+if external_users.any?
+  external_users.each do |user|
+    content_creators.each { |creator| user.follow(creator) }
+  end
+  puts "  Auto-followed content creators for #{external_users.count} external user(s): #{external_users.pluck(:gamer_tag).join(', ')}"
+end
+
+puts "\nSeed complete!"
