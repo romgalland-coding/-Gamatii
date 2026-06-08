@@ -302,8 +302,13 @@ turbo_nova    = User.find_by!(gamer_tag: "TurboNova")
 end
 puts "  PixelKnight now follows 4 users."
 
-# Grab a few seeded games for photo attachments and list linking
-cover_games = Game.where.not(cover_img: nil).limit(12).to_a
+# Grab specific games for photo attachments — matched to their post's content
+hollow_knight_game  = Game.where("title ILIKE ?", "%hollow knight%").where.not(cover_img: nil).first
+clair_obscur_game   = Game.where("title ILIKE ?", "%clair obscur%").where.not(cover_img: nil).first
+tlou_game           = Game.where("title ILIKE ?", "%last of us%").where.not(cover_img: nil).first
+fallback_games      = Game.where.not(cover_img: nil)
+                          .where("title NOT ILIKE ?", "%zelda%")
+                          .limit(12).to_a
 
 def attach_cover(post, game)
   return unless game&.cover_img.present?
@@ -334,8 +339,8 @@ POST_SPECS = [
   # 2 — text + URL
   {
     author: vortex_caster,
-    body: "Hot take: Battle Royale is officially dead. This article sums up why the genre peaked in 2019 and hasn't recovered since.",
-    url: "https://www.ign.com/articles/the-rise-and-fall-of-battle-royale",
+    body: "Clair Obscur: Expedition 33 is the most interesting JRPG in years. French studio, Belle Époque aesthetic, real-time parry mechanics — it has no right being this good. Review below.",
+    url: "https://www.ign.com/articles/clair-obscur-expedition-33-review",
     list: nil, photo_game: nil
   },
   # 3 — list share only
@@ -355,37 +360,37 @@ POST_SPECS = [
   {
     author: neon_byte,
     body: nil, url: nil, list: nil,
-    photo_game: cover_games[0]
+    photo_game: tlou_game || fallback_games[0]
   },
   # 6 — text + photo
   {
     author: vortex_caster,
-    body: "Late night session going deep on this one 🌙 The art direction is next level.",
+    body: "Hollow Knight: Silksong watch begins again. Replaying the original to cope. No notes, the atmosphere is untouchable.",
     url: nil, list: nil,
-    photo_game: cover_games[2]
+    photo_game: hollow_knight_game || fallback_games[1]
   },
   # 7 — text + URL + list
   {
     author: shadow_fox,
-    body: "This indie dev just dropped a free demo — it's genuinely incredible. Added it to my wishlist already.",
-    url: "https://store.steampowered.com",
+    body: "007: First Light — open world Bond game confirmed. IO Interactive might actually pull this off. Already on my wishlist, link has all the details.",
+    url: "https://www.ign.com/articles/007-first-light-everything-we-know",
     list: vc_wishlist, photo_game: nil
   },
   # 8 — photo + list
   {
     author: glitch_wizard,
-    body: "Screenshot dump from last week. Also sharing my played list for context 👇",
+    body: "Clair Obscur: Expedition 33 visuals are something else. Screenshots don't do it justice — sharing my played list while I wait for a sequel.",
     url: nil,
     list: gw_played,
-    photo_game: cover_games[4]
+    photo_game: clair_obscur_game || fallback_games[2]
   },
   # 9 — text + photo + URL
   {
     author: neon_byte,
-    body: "Obsessing over this game's soundtrack. Found the full OST on YouTube — link below. Absolute cinema.",
-    url: "https://www.youtube.com/watch?v=3JtDLDmvSZY&list=RD3JtDLDmvSZY&start_radio=1",
+    body: "The Clair Obscur: Expedition 33 OST has been on loop for days. Lorien Testard composed something genuinely special — link below. The combat theme alone is insane.",
+    url: "https://www.youtube.com/watch?v=0TqPMFHqiGo",
     list: nil,
-    photo_game: cover_games[6]
+    photo_game: clair_obscur_game || fallback_games[3]
   },
   # 10 — long text + list
   {
@@ -404,13 +409,15 @@ COMMENTS_POOL = [
   "The list is 🔥🔥🔥",
   "Bro same, I have like 300 in my backlog and I keep adding more.",
   "That URL goes hard, thanks for sharing.",
-  "The photo is insane, what game is this?",
+  "The visuals are insane, what game is this?",
   "Your taste is unreal fr.",
   "Adding this to my wishlist right now.",
   "I finished that yesterday actually, what a ride.",
-  "The music in that game is genuinely one of the best OSTs ever.",
+  "Silksong will drop when we least expect it. I believe.",
   "Controversial opinion but I liked Part I more honestly.",
   "Peak gaming moment.",
+  "007: First Light has so much potential, IO Interactive won't miss.",
+  "Expedition 33 OST is genuinely one of the best in years.",
   "How many hours do you have in this? Because same."
 ].freeze
 
