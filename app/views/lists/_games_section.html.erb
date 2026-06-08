@@ -1,19 +1,31 @@
 <% if list_games.any? %>
-  <ol class="list-show__games">
+  <ol class="list-game-grid">
     <% list_games.each_with_index do |lg, index| %>
-      <li class="list-game-row card">
-        <span class="list-game-row__rank"><%= index + 1 %></span>
-        <%= link_to game_path(lg.game), class: "list-game-row__link" do %>
-          <div class="list-game-row__cover" style="background-image: url('<%= lg.game.cover_img %>')"></div>
-          <div class="list-game-row__info">
-            <span class="list-game-row__title"><%= lg.game.title %></span>
-            <span class="list-game-row__genre"><%= lg.game.genre %></span>
+      <% game = lg.game %>
+      <li class="list-game-card card card-clickable">
+        <%= link_to game_path(game), class: "list-game-card__link" do %>
+          <div class="list-game-card__cover" style="background-image: url('<%= game.cover_img %>')">
+            <span class="list-game-card__rank">#<%= index + 1 %></span>
+            <% if (rating = display_rating(game.rating)) %>
+              <span class="list-game-card__rating">
+                <i class="fa-solid fa-star"></i> <%= rating %>
+              </span>
+            <% end %>
+          </div>
+          <div class="list-game-card__body">
+            <div class="list-game-card__info">
+              <span class="list-game-card__title"><%= game.title %></span>
+              <span class="list-game-card__meta">
+                <%= [game.genre, game.release_date&.year, short_platforms(game.platforms)].select(&:present?).join(" · ") %>
+              </span>
+            </div>
+            <i class="fa-solid fa-chevron-right list-game-card__chevron"></i>
           </div>
         <% end %>
         <% if current_user == list.user %>
           <%= link_to list_game_path(lg),
-                class: "list-game-row__remove",
-                data: { turbo_method: :delete, turbo_confirm: "Remove #{lg.game.title} from this list?" } do %>
+                class: "list-game-card__remove",
+                data: { turbo_method: :delete, turbo_confirm: "Remove #{game.title} from this list?" } do %>
             <i class="fa-solid fa-trash"></i>
           <% end %>
         <% end %>

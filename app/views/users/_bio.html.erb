@@ -1,0 +1,54 @@
+<%# Profile bio. For other users it's read-only text (or nothing when blank).
+    For the owner it's inline-editable: a display view with an edit affordance,
+    and a hidden form that swaps in via the bio-edit Stimulus controller.
+
+    Locals: user, owner. %>
+<% owner = local_assigns.fetch(:owner, false) %>
+<% editing = owner && user.errors[:bio].any? %>
+
+<div id="profile-bio" class="user-profile__bio-wrap">
+  <% if owner %>
+    <div data-controller="bio-edit">
+      <%# Display / empty state %>
+      <div data-bio-edit-target="display" <%= "hidden" if editing %>>
+        <% if user.bio.present? %>
+          <p class="user-profile__bio">
+            <%= user.bio %>
+            <button type="button" class="user-profile__bio-edit"
+                    data-action="bio-edit#edit" aria-label="Edit bio">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </p>
+        <% else %>
+          <button type="button" class="user-profile__bio-empty"
+                  data-action="bio-edit#edit">
+            <i class="fa-solid fa-plus"></i> Add a bio
+          </button>
+        <% end %>
+      </div>
+
+      <%# Edit form (hidden until the edit button is clicked) %>
+      <div data-bio-edit-target="form" <%= "hidden" unless editing %>>
+        <%= form_with model: user, url: profile_path, method: :patch,
+              data: { turbo: true } do |f| %>
+          <%= f.text_area :bio,
+                class: "user-profile__bio-input",
+                rows: 3,
+                maxlength: 500,
+                placeholder: "Tell people about your gaming style…",
+                data: { bio_edit_target: "input" } %>
+          <% if user.errors[:bio].any? %>
+            <p class="user-profile__bio-error"><%= user.errors[:bio].to_sentence %></p>
+          <% end %>
+          <div class="user-profile__bio-actions">
+            <button type="button" class="user-profile__bio-cancel"
+                    data-action="bio-edit#cancel">Cancel</button>
+            <%= f.submit "Save", class: "user-profile__bio-save" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% elsif user.bio.present? %>
+    <p class="user-profile__bio"><%= user.bio %></p>
+  <% end %>
+</div>

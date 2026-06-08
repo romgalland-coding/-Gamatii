@@ -80,6 +80,87 @@
     margin: 0;
   }
 
+  &__bio-wrap {
+    margin: 0;
+  }
+
+  // Small inline pen next to an existing bio.
+  &__bio-edit {
+    background: none;
+    border: none;
+    padding: 0 0 0 0.4rem;
+    color: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    font-size: 0.8rem;
+
+    &:hover { color: #000; }
+  }
+
+  // Empty-state "Add a bio" chip.
+  &__bio-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.5);
+    background: none;
+    border: 1.5px dashed rgba(0, 0, 0, 0.3);
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+
+    &:hover {
+      color: #000;
+      border-color: #000;
+      background-color: $mat-yellow-light;
+    }
+  }
+
+  &__bio-input {
+    width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    padding: 0.6rem 0.75rem;
+    border: 2px solid #000;
+    border-radius: 0.6rem;
+    resize: vertical;
+
+    &:focus {
+      outline: none;
+      box-shadow: 2px 2px 0 0 #000;
+    }
+  }
+
+  &__bio-error {
+    font-size: 0.8rem;
+    color: $mat-red-dark;
+    margin: 0.35rem 0 0;
+  }
+
+  &__bio-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__bio-save,
+  &__bio-cancel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.4rem 0.9rem;
+    border: 2px solid #000;
+    border-radius: 999px;
+    box-shadow: 2px 2px 0 0 #000;
+    cursor: pointer;
+
+    &:active { transform: translate(2px, 2px); box-shadow: none; }
+  }
+
+  &__bio-save { background-color: $mat-blue; color: #000; }
+  &__bio-cancel { background-color: #fff; color: #000; }
+
   // Matches .lists-title (the "… lists" page heading scale).
   &__lists-title {
     font-size: 2rem;
