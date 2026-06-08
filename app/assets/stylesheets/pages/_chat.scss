@@ -10,7 +10,18 @@
 }
 
 @include desktop {
-  .chat-page { height: 100dvh; } // nav becomes a left rail, no bottom offset
+  .chat-page {
+    height: 100dvh;
+    max-width: 760px;
+  }
+
+  .chat-bubble {
+    max-width: 60%; // 78% of 760px is too wide; cap for readability
+  }
+
+  .rec-card {
+    max-width: 340px;
+  }
 }
 
 // Header
