@@ -187,6 +187,14 @@
   margin: 0 0 0.25rem;
 }
 
+.list-show__author-link {
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
 .list-show-page {
   .list-game-row__remove,
   .list-show__delete-zone {

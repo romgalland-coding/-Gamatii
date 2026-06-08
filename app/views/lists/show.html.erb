@@ -14,7 +14,7 @@
     <div class="list-show__header-info">
       <h1 class="list-show__name"><%= @list.name %></h1>
       <p class="list-show__meta" id="list-games-count-<%= @list.id %>"><%= pluralize(@list_games.size, "game") %></p>
-      <p class="list-show__meta">by <%= @list.user.gamer_tag %></p>
+      <p class="list-show__meta">by <%= link_to @list.user.gamer_tag, user_path(@list.user), class: "list-show__author-link" %></p>
       <div class="list-show__stats">
           <button class="list-show__share" data-action="click->share#share">
           <i class="fa-solid fa-share-nodes"></i> share

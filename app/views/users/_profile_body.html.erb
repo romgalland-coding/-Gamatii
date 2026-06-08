@@ -1,0 +1,95 @@
+<%# Shared profile layout for both a public user (users#show) and the current
+    user's own profile (profiles#show).
+
+    Locals:
+      user  - the User being displayed
+      owner - true when `user` is the current_user (shows the settings gear
+              instead of a Follow button, and a back-less header). %>
+<% owner = local_assigns.fetch(:owner, false) %>
+
+<div class="user-profile" data-controller="profile-modal">
+
+  <%# Top bar: back link (public) or nothing, plus settings gear (owner) %>
+  <div class="user-profile__topbar">
+    <% if owner %>
+      <span></span>
+      <%= link_to settings_profile_path, class: "user-profile__settings", aria: { label: "Settings" } do %>
+        <i class="fa-solid fa-gear"></i>
+      <% end %>
+    <% else %>
+      <%= link_to lists_path, class: "user-profile__back",
+            data: { controller: "back", action: "back#back" } do %>
+        <i class="fa-solid fa-chevron-left"></i> Back
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Header: avatar + name + counts %>
+  <header class="user-profile__header">
+    <%= render "users/avatar", user: user, size: "lg" %>
+
+    <div class="user-profile__id">
+      <h1 class="user-profile__name"><%= user.gamer_tag %></h1>
+    </div>
+
+    <div class="user-profile__stats">
+      <button class="user-stat" type="button"
+              data-action="profile-modal#open"
+              data-profile-modal-url-param="<%= followers_user_path(user) %>">
+        <span class="user-stat__count"><%= number_with_delimiter(user.followers.count) %></span>
+        <span class="user-stat__label">Followers</span>
+      </button>
+      <button class="user-stat" type="button"
+              data-action="profile-modal#open"
+              data-profile-modal-url-param="<%= following_user_path(user) %>">
+        <span class="user-stat__count"><%= number_with_delimiter(user.following.count) %></span>
+        <span class="user-stat__label">Following</span>
+      </button>
+    </div>
+  </header>
+
+  <%# Bio %>
+  <% if user.bio.present? %>
+    <p class="user-profile__bio"><%= user.bio %></p>
+  <% end %>
+
+  <%# Action: follow button for other users, nothing for the owner %>
+  <% unless owner %>
+    <%= render "users/follow_button", user: user %>
+  <% end %>
+
+  <%# Lists grid %>
+  <section class="user-profile__lists">
+    <h2 class="user-profile__lists-title">
+      <%= owner ? "Your lists" : "#{user.gamer_tag}'s lists" %>
+    </h2>
+
+    <% if lists.any? %>
+      <div class="lists-grid">
+        <% lists.each do |list| %>
+          <%= link_to list_path(list), class: "card card-clickable list-card" do %>
+            <div class="list-card__covers">
+              <% list.games.first(4).each do |game| %>
+                <div class="list-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+              <% end %>
+              <% (4 - list.games.size).clamp(0, 4).times do %>
+                <div class="list-card__cover list-card__cover--empty"></div>
+              <% end %>
+            </div>
+            <div class="list-card__body">
+              <h3 class="list-card__name"><i class="fa-solid fa-list-ul me-2"></i><%= list.name %></h3>
+              <p class="list-card__meta">
+                <%= pluralize(list.games.size, "game") %> &middot; <%= pluralize(list.votes_count.to_i, "like") %>
+              </p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="user-profile__lists-empty">No lists yet.</p>
+    <% end %>
+  </section>
+
+  <%# Modal mount point — turbo_stream / Stimulus injects the popup here %>
+  <div id="user-modal" data-profile-modal-target="container"></div>
+</div>

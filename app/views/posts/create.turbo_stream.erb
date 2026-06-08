@@ -1,0 +1,6 @@
+<%= turbo_stream.prepend "activity-feed-posts" do %>
+  <%= render "posts/post", post: @post %>
+<% end %>
+<%= turbo_stream.update "new-post-form" do %>
+  <%= render "posts/form" %>
+<% end %>

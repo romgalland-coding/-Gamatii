@@ -1,0 +1,14 @@
+<div id="comment-<%= comment.id %>" class="post-comment">
+  <div class="post-comment__header">
+    <div class="post-comment__avatar"><%= comment.user.gamer_tag.first(2).upcase %></div>
+    <span class="post-comment__name"><%= comment.user.gamer_tag %></span>
+    <span class="post-comment__time"><%= time_ago_in_words(comment.created_at) %> ago</span>
+    <% if current_user == comment.user %>
+      <%= button_to post_comment_path(post, comment), method: :delete,
+            class: "post-comment__delete" do %>
+        <i class="fa-solid fa-times"></i>
+      <% end %>
+    <% end %>
+  </div>
+  <p class="post-comment__body"><%= comment.body %></p>
+</div>

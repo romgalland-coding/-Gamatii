@@ -1,0 +1,311 @@
+// Public user profile + followers/following modal
+
+.user-profile {
+  max-width: 420px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: $mat-bg;
+  padding: 1.75rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  // Matches .list-show__back: grey, 600 weight, 0.95rem.
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: rgba(0, 0, 0, 0.6);
+    text-decoration: none;
+
+    &:hover { color: #000; }
+  }
+
+  &__settings {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 2.5px solid #000;
+    border-radius: 0.6rem;
+    box-shadow: 3px 3px 0 0 #000;
+    background-color: #fff;
+    color: #000;
+    font-size: 1.1rem;
+    text-decoration: none;
+
+    &:hover { color: #000; background-color: $mat-yellow-light; }
+    &:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 #000; }
+  }
+
+  &__header {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    column-gap: 1rem;
+  }
+
+  &__id {
+    min-width: 0;
+  }
+
+  // Matches .list-show__name (the single-entity name scale).
+  &__name {
+    font-size: 1.75rem;
+    font-weight: 800;
+    font-family: $headers-font;
+    margin: 0;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__stats {
+    display: contents;
+  }
+
+  &__bio {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  // Matches .lists-title (the "… lists" page heading scale).
+  &__lists-title {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: $headers-font;
+    margin: 0.5rem 0 1rem;
+  }
+
+  &__lists-empty {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+// Emoji-on-tile avatar
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid #000;
+  background-color: $mat-yellow;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &--lg {
+    width: 84px;
+    height: 84px;
+    border-radius: 1rem;
+    font-size: 2.4rem;
+    box-shadow: 4px 4px 0 0 #000;
+  }
+
+  &--sm {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.6rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+}
+
+// Follower / following count buttons in the header
+.user-stat {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 0 0.25rem;
+
+  &__count {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.55);
+  }
+}
+
+// Big follow button
+.profile-follow {
+  &__btn {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: 2.5px solid #000;
+    border-radius: 1rem;
+    box-shadow: 4px 4px 0 0 #000;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+    &:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 0 #000;
+    }
+  }
+
+  &__btn--follow { background-color: $mat-blue; color: #000; }
+  &__btn--following { background-color: $mat-green; color: #000; }
+}
+
+// Followers / following modal
+.user-modal {
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 18vh 1.25rem 1.25rem;
+    z-index: 1050;
+  }
+
+  & {
+    width: 100%;
+    max-width: 390px;
+    background-color: $mat-bg;
+    border: 2.5px solid #000;
+    border-radius: 1rem;
+    box-shadow: 6px 6px 0 0 #000;
+    overflow: hidden;
+  }
+
+  &__header {
+    background-color: $mat-yellow;
+    border-bottom: 2.5px solid #000;
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__owner {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+  }
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-family: $headers-font;
+    margin: 0;
+  }
+
+  &__close {
+    width: 36px;
+    height: 36px;
+    border: 2.5px solid #000;
+    border-radius: 0.5rem;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__body {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  &__empty {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem 0;
+    margin: 0;
+  }
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #fff;
+  border: 2.5px solid #000;
+  border-radius: 0.85rem;
+  box-shadow: 3px 3px 0 0 #000;
+  padding: 0.6rem 0.75rem;
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: #000;
+    min-width: 0;
+
+    &:hover { color: #000; }
+  }
+
+  &__name {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Compact follow pill inside the modal
+.follow-pill {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid #000;
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 0 #000;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &--follow { background-color: $mat-blue; color: #000; }
+  &--following { background-color: $mat-green; color: #000; }
+}
+
+// Desktop: clear the side rail and use the wider canvas instead of a centered
+// mobile column. Mirrors the .lists-page / .list-show-page desktop treatment.
+@include desktop {
+  .user-profile {
+    max-width: 760px;
+    padding: 2.5rem 2rem;
+    gap: 1.5rem;
+  }
+
+  // Desktop name/heading scale mirrors .list-show__name (2.25rem) and
+  // .lists-title (2.5rem) respectively.
+  .user-profile__name {
+    font-size: 2.25rem;
+  }
+
+  .user-profile__lists-title {
+    font-size: 2.5rem;
+  }
+
+  // More columns now that there's room.
+  .user-profile .lists-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -18,8 +18,30 @@
     <i class="fa-solid fa-arrow-right quiz-cta__arrow"></i>
   <% end %>
 
+  <%# ---------- Activity Feed ---------- %>
+  <% if current_user %>
+    <section class="home-section">
+      <header class="home-section__head">
+        <h2 class="home-section__title">🗣️ Activity Feed</h2>
+      </header>
+      <p class="home-section__subtitle">Posts from people you follow.</p>
+
+      <%= render "posts/new_post_modal" %>
+
+      <div id="activity-feed-posts" class="activity-feed">
+        <% if @feed_posts.any? %>
+          <%= render @feed_posts %>
+        <% else %>
+          <p class="home-section__subtitle">
+            Nothing here yet — follow other gamers to see their posts.
+          </p>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <%# ---------- Popular Games ---------- %>
-  <section class="home-section">
+  <section class="home-section home-section--spaced">
     <header class="home-section__head">
       <h2 class="home-section__title">🔥 Popular games this week</h2>
     </header>

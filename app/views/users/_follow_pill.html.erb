@@ -1,0 +1,18 @@
+<%# Compact follow/following pill used inside the followers/following modal rows. %>
+<div id="follow-pill-<%= user.id %>" class="follow-pill-wrap">
+  <% if current_user && current_user != user %>
+    <% if current_user.following?(user) %>
+      <%= button_to user_follow_path(user), method: :delete,
+            params: { variant: "pill" },
+            class: "follow-pill follow-pill--following" do %>
+        <i class="fa-solid fa-user-check me-1"></i>Following
+      <% end %>
+    <% else %>
+      <%= button_to user_follow_path(user), method: :post,
+            params: { variant: "pill" },
+            class: "follow-pill follow-pill--follow" do %>
+        <i class="fa-solid fa-user-plus me-1"></i>Follow
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

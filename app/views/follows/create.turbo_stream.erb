@@ -1,0 +1,7 @@
+<%# Swap whichever follow controls are on the page (big button + modal pill). %>
+<%= turbo_stream.replace "follow-button-#{@target.id}" do %>
+  <%= render "users/follow_button", user: @target %>
+<% end %>
+<%= turbo_stream.replace "follow-pill-#{@target.id}" do %>
+  <%= render "users/follow_pill", user: @target %>
+<% end %>

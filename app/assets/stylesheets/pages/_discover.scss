@@ -2,11 +2,12 @@
 .discover {
   max-width: 420px;
   margin: 0 auto;
-  padding: 1.75rem 1rem 6rem;
-
-  &__header {
-    margin-bottom: 1.5rem;
-  }
+  min-height: 100vh;
+  background-color: $mat-bg;
+  padding: 1.75rem 1.25rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 
   &__title {
     font-family: $headers-font;
@@ -200,5 +201,24 @@
   &__likes {
     color: $mat-red-dark;
     font-weight: 600;
+  }
+}
+
+// ---------- Desktop ----------
+@include desktop {
+  .discover {
+    max-width: 760px;
+    height: auto;
+    min-height: 100vh;
+    padding-bottom: 2.5rem;
+
+    &__top-week {
+      flex-direction: row;
+
+      .discover-list-card {
+        flex: 1;
+        min-width: 0;
+      }
+    }
   }
 }

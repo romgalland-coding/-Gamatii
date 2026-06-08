@@ -15,6 +15,10 @@ class User < ApplicationRecord
     "Linux"
   ].freeze
 
+  # Fallback palette for users with no avatar_color set, keyed off the record id
+  # so each user gets a stable tile color even without seeded data.
+  AVATAR_COLORS = %w[#F6C453 #A7D7A0 #9EC5FE #F4A8C0 #C4B5FD #FCD9A8 #9AE6D5].freeze
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -25,6 +29,9 @@ class User < ApplicationRecord
   has_many :lists, dependent: :destroy
   has_many :list_likes, dependent: :destroy
   has_many :quiz_games, dependent: :destroy
+  has_many :posts, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
   has_many :quizzes, through: :quiz_games
   has_many :chats, dependent: :destroy
   has_many :messages, through: :chats
@@ -56,5 +63,17 @@ class User < ApplicationRecord
   # Top lists by likes; used for the profile's "top lists" section.
   def top_lists(limit = 3)
     lists.order(votes_count: :desc).limit(limit)
+  end
+
+  # The colored tile background for the emoji avatar; falls back to a stable
+  # palette pick when no color was seeded.
+  def avatar_background
+    avatar_color.presence || AVATAR_COLORS[id % AVATAR_COLORS.size]
+  end
+
+  # The glyph shown on the avatar tile: the seeded emoji, or the first two
+  # letters of the gamer_tag as a fallback.
+  def avatar_glyph
+    avatar_emoji.presence || gamer_tag.to_s.first(2).upcase
   end
 end

@@ -48,7 +48,7 @@ def fetch_for_theme(fetch_spec)
   elsif fetch_spec[:genre]
     query[:genres] = fetch_spec[:genre]
   end
-  (rawg_get("/games", query)["results"] || [])
+  rawg_get("/games", query)["results"] || []
 end
 
 # Create (or reuse) a Game record from a RAWG list entry, fetching detail for
@@ -62,22 +62,22 @@ def upsert_game(g)
   platforms_arr = g["platforms"]&.map { |p| p.dig("platform", "name") } || []
 
   Game.create!(
-    rawg_id:      g["id"],
-    title:        g["name"],
-    cover_img:    g["background_image"],
-    in_game_img:  g.dig("short_screenshots", 1, "image"),
-    screenshots:  (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
-    genre:        g.dig("genres", 0, "name"),
-    platforms:    platforms_arr,
+    rawg_id: g["id"],
+    title: g["name"],
+    cover_img: g["background_image"],
+    in_game_img: g.dig("short_screenshots", 1, "image"),
+    screenshots: (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
+    genre: g.dig("genres", 0, "name"),
+    platforms: platforms_arr,
     # `rating` stores the Metascore (0–100), not RAWG's user rating — the UI
     # already labels this column "Metacritic" (lists filter) and the quiz ranks
     # the top 5 by it. RAWG's user rating is too easily inflated by a few votes.
-    rating:       g["metacritic"] || detail["metacritic"],
+    rating: g["metacritic"] || detail["metacritic"],
     release_date: g["released"],
-    description:  detail["description_raw"]&.slice(0, 2000),
-    developer:    detail.dig("developers", 0, "name"),
-    publisher:    detail.dig("publishers", 0, "name"),
-    game_mode:    game_modes_from_tags(detail["tags"])
+    description: detail["description_raw"]&.slice(0, 2000),
+    developer: detail.dig("developers", 0, "name"),
+    publisher: detail.dig("publishers", 0, "name"),
+    game_mode: game_modes_from_tags(detail["tags"])
   )
 rescue ActiveRecord::RecordNotUnique
   Game.find_by(rawg_id: g["id"]) || Game.find_by(title: g["name"])
@@ -90,6 +90,9 @@ end
 
 puts "Cleaning previous seed data…"
 curated_emails = %w[pixelknight@gmail.com neonbyte@gmail.com vortexcaster@gmail.com]
+# Nullify list references on posts before lists are destroyed to avoid FK violations
+# (posts from user A may reference lists owned by user B, which gets destroyed first).
+Post.update_all(list_id: nil)
 # Generated users all share the @seed.gamatii domain so we can wipe them by pattern,
 # however many there are this run.
 User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii")).each do |u|
@@ -144,9 +147,33 @@ LIST_SPECS = [
 
 # The 3 curated users keep their identities (handy for demoing a known login).
 CURATED_USERS = [
-  { email: "pixelknight@gmail.com",  gamer_tag: "PixelKnight",  platform: ["PC", "Nintendo Switch"] },
-  { email: "neonbyte@gmail.com",     gamer_tag: "NeonByte",     platform: ["PlayStation 5", "PlayStation 4"] },
-  { email: "vortexcaster@gmail.com", gamer_tag: "VortexCaster", platform: ["Xbox Series S/X", "Xbox One", "PC"] }
+  { email: "pixelknight@gmail.com",  gamer_tag: "PixelKnight",  platform: ["PC", "Nintendo Switch"],
+    avatar_emoji: "🦊", avatar_color: "#FFE599",
+    bio: "Soulslike speedrunner. Will fight anyone about Hollow Knight." },
+  { email: "neonbyte@gmail.com",     gamer_tag: "NeonByte",     platform: ["PlayStation 5", "PlayStation 4"],
+    avatar_emoji: "👾", avatar_color: "#C4B5FD",
+    bio: "Indie game hoarder. My backlog has its own backlog." },
+  { email: "vortexcaster@gmail.com", gamer_tag: "VortexCaster", platform: ["Xbox Series S/X", "Xbox One", "PC"],
+    avatar_emoji: "🎮", avatar_color: "#9FC5F8",
+    bio: "Competitive shooters and a worrying amount of coffee." }
+].freeze
+
+# Pools the generated roster draws from so every profile feels lived-in.
+EMOJI_POOL = %w[🐉 🦄 🤖 👻 🐙 🦅 🌙 🔥 🐺 ⚡️ 🍄 🦝 🛸 🧙 🐱].freeze
+AVATAR_COLOR_POOL = %w[#F6C453 #A7D7A0 #9EC5FE #F4A8C0 #C4B5FD #FCD9A8 #9AE6D5].freeze
+BIO_POOL = [
+  "Just here for the loot.",
+  "RPG enjoyer. Probably AFK in a menu somewhere.",
+  "Cozy games by day, horror games by night.",
+  "100% completionist or nothing.",
+  "Retro collector. Cartridges only, fight me.",
+  "Co-op partner wanted. Must tolerate friendly fire.",
+  "Lore nerd. I read every codex entry.",
+  "Speedrun curious, casually competitive.",
+  "Building the ultimate wishlist one sale at a time.",
+  "Will quit my job for a good open world.",
+  "Tactics and turn-based, all day.",
+  "Pixel art appreciator and rhythm game addict."
 ].freeze
 
 # Generate the rest of the roster up to 15 total. Tags are picked from a pool so
@@ -157,23 +184,29 @@ TAG_POOL = %w[
   RogueCircuit ApexRaven LunarSpecter VoidStriker NitroGhost
 ]
 generated_count = 15 - CURATED_USERS.size
-generated_users = TAG_POOL.first(generated_count).map do |tag|
+generated_users = TAG_POOL.first(generated_count).each_with_index.map do |tag, i|
   {
-    email:    "#{tag.downcase}@seed.gamatii",
+    email: "#{tag.downcase}@seed.gamatii",
     gamer_tag: tag,
-    platform: User::PLATFORMS.sample(rng.rand(1..3), random: rng)
+    platform: User::PLATFORMS.sample(rng.rand(1..3), random: rng),
+    avatar_emoji: EMOJI_POOL[i % EMOJI_POOL.size],
+    avatar_color: AVATAR_COLOR_POOL[i % AVATAR_COLOR_POOL.size],
+    bio: BIO_POOL[i % BIO_POOL.size]
   }
 end
 
 ALL_USERS = CURATED_USERS + generated_users
 
 puts "\nCreating #{ALL_USERS.size} users and their lists…"
-ALL_USERS.each do |data|
+created_users = ALL_USERS.map do |data|
   user = User.create!(
-    email:    data[:email],
+    email: data[:email],
     password: "password",
     gamer_tag: data[:gamer_tag],
-    platform: data[:platform]
+    platform: data[:platform],
+    avatar_emoji: data[:avatar_emoji],
+    avatar_color: data[:avatar_color],
+    bio: data[:bio]
   )
 
   LIST_SPECS.each do |ldata|
@@ -182,7 +215,23 @@ ALL_USERS.each do |data|
     sample.each { |game| list.list_games.create!(game: game) }
     puts "  #{user.gamer_tag} › #{list.name} (#{ldata[:list_type]}): #{sample.size} games"
   end
+
+  user
 end
+
+# ── Follow graph ──────────────────────────────────────────────────────────────
+# Each user follows a random subset of the others, so every profile shows real
+# follower/following counts and populated modals.
+
+puts "\nWiring up the follow graph…"
+follow_count = 0
+created_users.each do |user|
+  others = created_users - [user]
+  others.sample(rng.rand(3..9), random: rng).each do |target|
+    follow_count += 1 if user.follow(target)&.persisted?
+  end
+end
+puts "  #{follow_count} follow relationships created."
 
 # ── Daily Quizzes (14-day rotation) ───────────────────────────────────────────
 # One quiz per theme, positioned by its index in Quiz::THEMES — that index is
@@ -207,7 +256,7 @@ puts "\nSeeding leaderboard guesses + reference picks on every quiz…"
 # base correct-count (0–5, spread across the roster), rotated by quiz position so
 # the ranking shuffles from one quiz to the next.
 seed_users  = User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii")).to_a
-base_counts = seed_users.each_index.map { |i| (i % 6) }  # cycles 0..5 across users
+base_counts = seed_users.each_index.map { |i| i % 6 } # cycles 0..5 across users
 
 Quiz.order(:position).each do |quiz|
   answers = quiz.answer_pool(5)
@@ -231,9 +280,176 @@ Quiz.order(:position).each do |quiz|
 end
 puts "  #{seed_users.size} users seeded across #{Quiz.count} quizzes."
 
-puts "\nSeed complete!"
-
-
 # ── Random vote counts (placeholder until likes exist) ───────────────────────
 puts "\nAssigning random vote counts to lists…"
 List.find_each { |list| list.update_column(:votes_count, rand(0..200)) }
+
+# ── Activity Feed: follows + posts + comments + likes ────────────────────────
+require "open-uri"
+
+puts "\nSeeding activity feed (follows, posts, comments, likes)…"
+
+pixel_knight  = User.find_by!(gamer_tag: "PixelKnight")
+neon_byte     = User.find_by!(gamer_tag: "NeonByte")
+vortex_caster = User.find_by!(gamer_tag: "VortexCaster")
+shadow_fox    = User.find_by!(gamer_tag: "ShadowFox")
+glitch_wizard = User.find_by!(gamer_tag: "GlitchWizard")
+turbo_nova    = User.find_by!(gamer_tag: "TurboNova")
+
+# PixelKnight follows these 4
+[neon_byte, vortex_caster, shadow_fox, glitch_wizard].each do |u|
+  pixel_knight.follow(u)
+end
+puts "  PixelKnight now follows 4 users."
+
+# Grab a few seeded games for photo attachments and list linking
+cover_games = Game.where.not(cover_img: nil).limit(12).to_a
+
+def attach_cover(post, game)
+  return unless game&.cover_img.present?
+
+  data = URI.open(game.cover_img, &:read)
+  post.photo.attach(
+    io: StringIO.new(data),
+    filename: "#{game.title.parameterize}.jpg",
+    content_type: "image/jpeg"
+  )
+rescue StandardError => e
+  puts "  [photo skip] #{e.message}"
+end
+
+# Lists belonging to the followed users (for sharing)
+nb_played   = neon_byte.lists.find_by(list_type: "played")
+vc_wishlist = vortex_caster.lists.find_by(list_type: "wishlist")
+sf_custom   = shadow_fox.lists.find_by(list_type: "custom")
+gw_played   = glitch_wizard.lists.find_by(list_type: "played")
+
+POST_SPECS = [
+  # 1 — text only
+  {
+    author: neon_byte,
+    body: "Just finished The Last of Us for the third time. Every single playthrough hits differently. Ellie's arc in Part II is criminally underrated storytelling.",
+    url: nil, list: nil, photo_game: nil
+  },
+  # 2 — text + URL
+  {
+    author: vortex_caster,
+    body: "Hot take: Battle Royale is officially dead. This article sums up why the genre peaked in 2019 and hasn't recovered since.",
+    url: "https://www.ign.com/articles/the-rise-and-fall-of-battle-royale",
+    list: nil, photo_game: nil
+  },
+  # 3 — list share only
+  {
+    author: shadow_fox,
+    body: nil, url: nil,
+    list: sf_custom, photo_game: nil
+  },
+  # 4 — text + list
+  {
+    author: glitch_wizard,
+    body: "Wrapped these up this year. My taste is immaculate, don't @ me.",
+    url: nil,
+    list: gw_played, photo_game: nil
+  },
+  # 5 — photo only
+  {
+    author: neon_byte,
+    body: nil, url: nil, list: nil,
+    photo_game: cover_games[0]
+  },
+  # 6 — text + photo
+  {
+    author: vortex_caster,
+    body: "Late night session going deep on this one 🌙 The art direction is next level.",
+    url: nil, list: nil,
+    photo_game: cover_games[2]
+  },
+  # 7 — text + URL + list
+  {
+    author: shadow_fox,
+    body: "This indie dev just dropped a free demo — it's genuinely incredible. Added it to my wishlist already.",
+    url: "https://store.steampowered.com",
+    list: vc_wishlist, photo_game: nil
+  },
+  # 8 — photo + list
+  {
+    author: glitch_wizard,
+    body: "Screenshot dump from last week. Also sharing my played list for context 👇",
+    url: nil,
+    list: gw_played,
+    photo_game: cover_games[4]
+  },
+  # 9 — text + photo + URL
+  {
+    author: neon_byte,
+    body: "Obsessing over this game's soundtrack. Found the full OST on YouTube — link below. Absolute cinema.",
+    url: "https://www.youtube.com",
+    list: nil,
+    photo_game: cover_games[6]
+  },
+  # 10 — long text + list
+  {
+    author: vortex_caster,
+    body: "Gaming confession: I have a backlog of 200+ games and I keep buying more. Every sale on Steam I tell myself 'just one more'. My played list is embarrassingly short compared to my wishlist. Anyone else living this nightmare?",
+    url: nil,
+    list: nb_played, photo_game: nil
+  }
+].freeze
+
+COMMENTS_POOL = [
+  "This is so real 😭",
+  "100% agree with this take.",
+  "No way, I disagree completely. Counter-argument: skill issue.",
+  "I've been meaning to play this for ages, thanks for the reminder!",
+  "The list is 🔥🔥🔥",
+  "Bro same, I have like 300 in my backlog and I keep adding more.",
+  "That URL goes hard, thanks for sharing.",
+  "The photo is insane, what game is this?",
+  "Your taste is unreal fr.",
+  "Adding this to my wishlist right now.",
+  "I finished that yesterday actually, what a ride.",
+  "The music in that game is genuinely one of the best OSTs ever.",
+  "Controversial opinion but I liked Part I more honestly.",
+  "Peak gaming moment.",
+  "How many hours do you have in this? Because same."
+].freeze
+
+all_commenters = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wizard, turbo_nova]
+all_likers     = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wizard, turbo_nova]
+
+POST_SPECS.each_with_index do |spec, i|
+  post = spec[:author].posts.build(body: spec[:body], url: spec[:url], list: spec[:list])
+  attach_cover(post, spec[:photo_game]) if spec[:photo_game]
+  post.save!
+
+  # 2–4 comments from random users (not the author)
+  commenters = (all_commenters - [spec[:author]]).sample(rng.rand(2..4), random: rng)
+  commenters.each do |commenter|
+    post.comments.create!(
+      user: commenter,
+      body: COMMENTS_POOL.sample(random: rng)
+    )
+  end
+
+  # 1–5 likes from random users (not the author)
+  likers = (all_likers - [spec[:author]]).sample(rng.rand(1..5), random: rng)
+  likers.each do |liker|
+    post.likes.find_or_create_by!(user: liker)
+  end
+
+  puts "  Post #{i + 1}/#{POST_SPECS.size} by #{spec[:author].gamer_tag} — #{post.comments.count} comments, #{post.likes.count} likes"
+end
+
+# Any real (non-seed) account in the DB gets auto-followed to the 4 content
+# creators so their activity feed is populated immediately after seeding.
+content_creators = [neon_byte, vortex_caster, shadow_fox, glitch_wizard]
+seed_emails = curated_emails + TAG_POOL.map { |t| "#{t.downcase}@seed.gamatii" }
+external_users = User.where.not(email: seed_emails)
+if external_users.any?
+  external_users.each do |user|
+    content_creators.each { |creator| user.follow(creator) }
+  end
+  puts "  Auto-followed content creators for #{external_users.count} external user(s): #{external_users.pluck(:gamer_tag).join(', ')}"
+end
+
+puts "\nSeed complete!"

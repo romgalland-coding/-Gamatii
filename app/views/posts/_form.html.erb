@@ -1,0 +1,28 @@
+<%= simple_form_for Post.new, url: posts_path,
+      data: { action: "turbo:submit-end->post-modal#handleSubmitEnd" } do |f| %>
+  <div id="post-form-errors"></div>
+
+  <%= f.input :body, label: "What's on your mind?", as: :text,
+        input_html: { rows: 3, placeholder: "Share something with your followers..." },
+        wrapper_class: "post-form__field" %>
+
+  <%= f.input :list_id, label: "Share a list (optional)", as: :select,
+        collection: current_user.lists.order(:name),
+        label_method: :name,
+        value_method: :id,
+        include_blank: "— none —",
+        wrapper_class: "post-form__field" %>
+
+  <%= f.input :url, label: "Link (optional)",
+        input_html: { placeholder: "https://..." },
+        wrapper_class: "post-form__field" %>
+
+  <div class="post-form__field">
+    <label class="form-label">Photo (optional)</label>
+    <%= f.file_field :photo, class: "form-control form-control-sm" %>
+  </div>
+
+  <div class="post-form__actions">
+    <%= f.submit "Post", class: "btn btn-primary" %>
+  </div>
+<% end %>
