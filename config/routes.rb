@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get "discover", to: "pages#discover"
 
   # Recommendation chatbot hosted on the Discover page
-  resources :chats, only: [:show, :create] do
+  resources :chats, only: %i[show create] do
     resources :messages, only: [:create]
   end
 
@@ -38,5 +38,16 @@ Rails.application.routes.draw do
 
   resources :quiz_games, only: [:destroy]
 
-  resource :profile, only: [:show, :edit, :update]
+  resource :profile, only: %i[show edit update] do
+    get :settings
+  end
+
+  # Public user profiles + social graph
+  resources :users, only: [:show] do
+    member do
+      get :followers
+      get :following
+    end
+    resource :follow, only: %i[create destroy]
+  end
 end
