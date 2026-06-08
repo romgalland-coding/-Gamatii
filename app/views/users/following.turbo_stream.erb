@@ -1,0 +1,3 @@
+<%= turbo_stream.update "user-modal" do %>
+  <%= render "users/user_list_modal", title: @title, users: @users, user: @user %>
+<% end %>

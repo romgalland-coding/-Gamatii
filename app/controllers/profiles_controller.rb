@@ -4,6 +4,12 @@ class ProfilesController < ApplicationController
   def show
     @user = current_user
     authorize @user
+    @lists = @user.lists.includes(:games).order(votes_count: :desc, created_at: :desc)
+  end
+
+  def settings
+    @user = current_user
+    authorize @user, :show?
   end
 
   def edit
@@ -22,7 +28,7 @@ class ProfilesController < ApplicationController
     end
 
     if @user.update(user_params)
-      redirect_to profile_path, notice: "Profil mis à jour"
+      redirect_to settings_profile_path, notice: "Profil mis à jour"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -36,7 +42,7 @@ class ProfilesController < ApplicationController
       :email,
       :password,
       :password_confirmation,
-      platform: [],
+      platform: []
     )
   end
 end

@@ -1,0 +1,33 @@
+<%# Popup listing followers/following. Rendered into #user-modal by the
+    profile_modal Stimulus controller. %>
+<div class="user-modal__backdrop" data-action="click->profile-modal#close">
+  <div class="user-modal" data-action="click->profile-modal#stop">
+    <header class="user-modal__header">
+      <div>
+        <p class="user-modal__owner"><%= user.gamer_tag %></p>
+        <h2 class="user-modal__title"><%= title %></h2>
+      </div>
+      <button class="user-modal__close" data-action="profile-modal#close" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </header>
+
+    <div class="user-modal__body">
+      <% if users.any? %>
+        <% users.each do |u| %>
+          <div class="user-row">
+            <%= link_to user_path(u), class: "user-row__link", data: { turbo_frame: "_top" } do %>
+              <%= render "users/avatar", user: u, size: "sm" %>
+              <span class="user-row__name"><%= u.gamer_tag %></span>
+            <% end %>
+            <% if current_user && current_user != u %>
+              <%= render "users/follow_pill", user: u %>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="user-modal__empty">Nobody here yet.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
