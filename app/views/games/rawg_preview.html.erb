@@ -1,35 +1,46 @@
 <%= turbo_frame_tag "game_preview_#{@rawg_id}" do %>
   <% if @game["background_image"].present? %>
-    <%= image_tag @game["background_image"], class: "img-fluid rounded mb-3 w-100",
-          style: "max-height: 220px; object-fit: cover;" %>
+    <div class="game-show__cover mb-3" style="background-image: url('<%= @game["background_image"] %>')"></div>
   <% end %>
 
-  <p class="text-muted mb-1"><%= @game["genres"]&.map { |g| g["name"] }&.join(", ") %></p>
-  <h4 class="mb-3"><%= @game["name"] %></h4>
+  <p class="game-show__genre"><%= @game["genres"]&.map { |g| g["name"] }&.join(", ") %></p>
+  <h1 class="game-show__title mb-2"><%= @game["name"] %></h1>
 
   <% if @game["platforms"].present? %>
-    <div class="mb-3">
+    <div class="game-show__tags mb-3">
       <% @game["platforms"].each do |p| %>
-        <span class="badge bg-secondary me-1 mb-1"><%= p.dig("platform", "name") %></span>
+        <span class="game-show__platform-tag"><%= p.dig("platform", "name") %></span>
       <% end %>
     </div>
   <% end %>
 
-  <h6 class="text-uppercase text-muted">Description</h6>
-  <p><%= @game["description_raw"].presence || "No description available." %></p>
+  <h2 class="game-show__section-title">Description</h2>
+  <% desc = @game["description_raw"].to_s.presence || "No description available." %>
+  <% truncated = desc.length > 220 %>
+  <div class="game-show__desc-box" <% if truncated %>data-controller="expand"<% end %>>
+    <% if truncated %>
+      <span data-expand-target="short"><%= desc[0..219].rstrip %>…</span>
+      <span data-expand-target="full" class="d-none"><%= desc %></span>
+      <button class="game-show__read-more" data-action="click->expand#toggle">
+        <span data-expand-target="btn">Read more</span>
+      </button>
+    <% else %>
+      <%= desc %>
+    <% end %>
+  </div>
 
-  <div class="row text-center g-2">
-    <div class="col">
-      <div class="fw-bold"><%= @game["developers"]&.map { |d| d["name"] }&.join(", ").presence || "TBD" %></div>
-      <small class="text-muted">Studio</small>
+  <div class="game-show__info mt-3">
+    <div class="game-show__info-badge">
+      <div class="game-show__info-label">Studio</div>
+      <%= @game["developers"]&.map { |d| d["name"] }&.join(", ").presence || "TBD" %>
     </div>
-    <div class="col">
-      <div class="fw-bold"><%= @game["released"]&.first(4) || "TBD" %></div>
-      <small class="text-muted">Released</small>
+    <div class="game-show__info-badge">
+      <div class="game-show__info-label">Released</div>
+      <%= @game["released"]&.first(4) || "TBD" %>
     </div>
-    <div class="col">
-      <div class="fw-bold"><%= @game["metacritic"] || "N/A" %></div>
-      <small class="text-muted">Rating</small>
+    <div class="game-show__info-badge">
+      <div class="game-show__info-label">Rating</div>
+      <%= @game["metacritic"] || "N/A" %>
     </div>
   </div>
 <% end %>

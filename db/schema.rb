@@ -47,7 +47,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_094026) do
     t.bigint "list_id", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_list_games_on_game_id"
-    t.index ["list_id", "game_id"], name: "index_list_games_on_list_id_and_game_id", unique: true
     t.index ["list_id"], name: "index_list_games_on_list_id"
   end
 
@@ -57,6 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_094026) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["list_id"], name: "index_list_likes_on_list_id"
+    t.index ["user_id", "list_id"], name: "index_list_likes_on_user_id_and_list_id", unique: true
     t.index ["user_id"], name: "index_list_likes_on_user_id"
   end
 
