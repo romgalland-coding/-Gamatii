@@ -75,6 +75,29 @@ class ListsController < ApplicationController
     authorize @list
   end
 
+  def search
+    skip_authorization
+    @query = params[:query].to_s.strip
+    @page  = (params[:page] || 1).to_i
+
+    if @query.length >= 2
+      results = List.includes(:user, :games)
+                    .where("name ILIKE ?", "%#{@query}%")
+                    .order(Arel.sql("COALESCE(votes_count, 0) DESC"))
+                    .offset((@page - 1) * 10)
+                    .limit(11)
+      @has_more = results.size == 11
+      @lists    = results.first(10)
+    else
+      @lists    = []
+      @has_more = false
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   def search_games
     skip_authorization
     @query = params[:query]

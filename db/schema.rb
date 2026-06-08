@@ -320,6 +320,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_093201) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "avatar_color"
+    t.string "avatar_emoji"
     t.text "bio"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false

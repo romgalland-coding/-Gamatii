@@ -1,12 +1,13 @@
-// Discover landing — entry point to the recommendation chatbot.
+// Discover landing — entry point to the recommendation chatbot + list search.
 .discover {
   max-width: 420px;
   margin: 0 auto;
-  padding: 1.75rem 1rem 1rem;
-
-  &__header {
-    margin-bottom: 1.5rem;
-  }
+  min-height: 100vh;
+  background-color: $mat-bg;
+  padding: 1.75rem 1.25rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 
   &__title {
     font-family: $headers-font;
@@ -32,5 +33,192 @@
     padding: 0.9rem 1rem;
     font-size: 1rem;
     font-weight: 700;
+  }
+
+  &__section {
+    margin-top: 2rem;
+  }
+
+  &__section-title {
+    font-family: $headers-font;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.75rem;
+  }
+
+  &__search-bar {
+    position: relative;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 0.875rem;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    width: 100%;
+    padding: 0.7rem 1rem 0.7rem 2.4rem;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background-color: #fff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #000;
+    outline: none;
+    box-shadow: 3px 3px 0 #000;
+    transition: box-shadow 0.1s ease;
+
+    &::placeholder { color: rgba(0, 0, 0, 0.35); }
+
+    &:focus { box-shadow: 4px 4px 0 #000; }
+  }
+
+  &__list-results,
+  &__top-week {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  &__search-empty {
+    font-size: 0.9rem;
+    color: $color-muted-fg;
+    text-align: center;
+    padding: 1rem 0;
+    margin: 0;
+  }
+
+  &__see-more {
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.65rem;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background-color: $mat-blue-light;
+    box-shadow: 3px 3px 0 #000;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    transition: box-shadow 0.1s ease, transform 0.1s ease;
+
+    &:active {
+      box-shadow: none;
+      transform: translate(3px, 3px);
+    }
+  }
+}
+
+.discover-list-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem;
+  border: 2px solid #000;
+  border-radius: 0.75rem;
+  background-color: #fff;
+  box-shadow: 3px 3px 0 #000;
+  text-decoration: none;
+  color: #000;
+  position: relative;
+
+  &:hover { color: #000; text-decoration: none; }
+
+  &__rank {
+    position: absolute;
+    top: -0.65rem;
+    left: 0.75rem;
+    background-color: $mat-yellow;
+    border: 2px solid #000;
+    border-radius: 999px;
+    padding: 0.05rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #000;
+    line-height: 1.5;
+  }
+
+  &__covers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__cover {
+    background-size: cover;
+    background-position: center;
+    background-color: $mat-blue-light;
+
+    &--empty { background-color: $color-muted; }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  &__name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__author {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.55);
+    margin: 0;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.55);
+    margin: 0.15rem 0 0;
+  }
+
+  &__likes {
+    color: $mat-red-dark;
+    font-weight: 600;
+  }
+}
+
+// ---------- Desktop ----------
+@include desktop {
+  .discover {
+    max-width: 760px;
+    height: auto;
+    min-height: 100vh;
+    padding-bottom: 2.5rem;
+
+    &__top-week {
+      flex-direction: row;
+
+      .discover-list-card {
+        flex: 1;
+        min-width: 0;
+      }
+    }
   }
 }

@@ -1,0 +1,25 @@
+<% if @page == 1 %>
+  <%= turbo_stream.update "list_search_results" do %>
+    <% if @lists.any? %>
+      <% @lists.each do |list| %>
+        <%= render "lists/discover_list_card", list: list %>
+      <% end %>
+    <% else %>
+      <p class="discover__search-empty">No lists found for "<%= @query %>".</p>
+    <% end %>
+  <% end %>
+<% else %>
+  <% @lists.each do |list| %>
+    <%= turbo_stream.append "list_search_results" do %>
+      <%= render "lists/discover_list_card", list: list %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.update "list_search_more" do %>
+  <% if @has_more %>
+    <button class="discover__see-more" data-action="click->list-search#loadMore">
+      See more
+    </button>
+  <% end %>
+<% end %>

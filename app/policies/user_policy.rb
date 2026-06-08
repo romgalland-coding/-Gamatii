@@ -1,8 +1,18 @@
 class UserPolicy < ApplicationPolicy
+  # Public profile pages and their follower/following lists are viewable by anyone.
   def show?
-    user == record
+    true
   end
 
+  def followers?
+    true
+  end
+
+  def following?
+    true
+  end
+
+  # Account management (the singular /profile) stays self-only.
   def edit?
     user == record
   end

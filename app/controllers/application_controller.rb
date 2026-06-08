@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   include Pundit::Authorization
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
   before_action :authenticate_user!
@@ -12,6 +14,11 @@ class ApplicationController < ActionController::Base
   after_action :verify_policy_scoped, only: :index, unless: :skip_pundit?
 
   private
+
+  def user_not_authorized
+    flash[:alert] = "You're not allowed to do that."
+    redirect_back fallback_location: root_path
+  end
 
   # Always send users to the homepage after login, ignoring Devise's stored
   # location (friendly forwarding). Without this, hitting an auth-protected page
@@ -44,7 +51,7 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:gamer_tag, platform: []])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:gamer_tag, platform: []])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:gamer_tag, { platform: [] }])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:gamer_tag, { platform: [] }])
   end
 end

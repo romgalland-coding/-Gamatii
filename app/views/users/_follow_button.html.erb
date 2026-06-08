@@ -1,0 +1,16 @@
+<%# Big follow/following button. Swapped in place via turbo_stream on (un)follow. %>
+<div id="follow-button-<%= user.id %>" class="profile-follow">
+  <% if current_user && current_user != user %>
+    <% if current_user.following?(user) %>
+      <%= button_to user_follow_path(user), method: :delete,
+            class: "profile-follow__btn profile-follow__btn--following" do %>
+        Following
+      <% end %>
+    <% else %>
+      <%= button_to user_follow_path(user), method: :post,
+            class: "profile-follow__btn profile-follow__btn--follow" do %>
+        <i class="fa-solid fa-user-plus me-2"></i>Follow
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

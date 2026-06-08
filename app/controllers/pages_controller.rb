@@ -22,9 +22,11 @@ class PagesController < ApplicationController
   end
 
   def discover
-    # Past chats for the recommendation assistant. The history UI is a later
-    # step; for now this backs the "Create a new chat" entry point.
     @chats = current_user.chats.order(updated_at: :desc)
+    @top_lists_this_week = List.includes(:user, :games)
+                               .where(created_at: 7.days.ago..)
+                               .order(Arel.sql("COALESCE(votes_count, 0) DESC"))
+                               .limit(3)
   end
 
 end

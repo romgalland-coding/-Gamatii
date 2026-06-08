@@ -48,7 +48,7 @@ def fetch_for_theme(fetch_spec)
   elsif fetch_spec[:genre]
     query[:genres] = fetch_spec[:genre]
   end
-  (rawg_get("/games", query)["results"] || [])
+  rawg_get("/games", query)["results"] || []
 end
 
 # Create (or reuse) a Game record from a RAWG list entry, fetching detail for
@@ -62,22 +62,22 @@ def upsert_game(g)
   platforms_arr = g["platforms"]&.map { |p| p.dig("platform", "name") } || []
 
   Game.create!(
-    rawg_id:      g["id"],
-    title:        g["name"],
-    cover_img:    g["background_image"],
-    in_game_img:  g.dig("short_screenshots", 1, "image"),
-    screenshots:  (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
-    genre:        g.dig("genres", 0, "name"),
-    platforms:    platforms_arr,
+    rawg_id: g["id"],
+    title: g["name"],
+    cover_img: g["background_image"],
+    in_game_img: g.dig("short_screenshots", 1, "image"),
+    screenshots: (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
+    genre: g.dig("genres", 0, "name"),
+    platforms: platforms_arr,
     # `rating` stores the Metascore (0–100), not RAWG's user rating — the UI
     # already labels this column "Metacritic" (lists filter) and the quiz ranks
     # the top 5 by it. RAWG's user rating is too easily inflated by a few votes.
-    rating:       g["metacritic"] || detail["metacritic"],
+    rating: g["metacritic"] || detail["metacritic"],
     release_date: g["released"],
-    description:  detail["description_raw"]&.slice(0, 2000),
-    developer:    detail.dig("developers", 0, "name"),
-    publisher:    detail.dig("publishers", 0, "name"),
-    game_mode:    game_modes_from_tags(detail["tags"])
+    description: detail["description_raw"]&.slice(0, 2000),
+    developer: detail.dig("developers", 0, "name"),
+    publisher: detail.dig("publishers", 0, "name"),
+    game_mode: game_modes_from_tags(detail["tags"])
   )
 rescue ActiveRecord::RecordNotUnique
   Game.find_by(rawg_id: g["id"]) || Game.find_by(title: g["name"])
@@ -147,9 +147,33 @@ LIST_SPECS = [
 
 # The 3 curated users keep their identities (handy for demoing a known login).
 CURATED_USERS = [
-  { email: "pixelknight@gmail.com",  gamer_tag: "PixelKnight",  platform: ["PC", "Nintendo Switch"] },
-  { email: "neonbyte@gmail.com",     gamer_tag: "NeonByte",     platform: ["PlayStation 5", "PlayStation 4"] },
-  { email: "vortexcaster@gmail.com", gamer_tag: "VortexCaster", platform: ["Xbox Series S/X", "Xbox One", "PC"] }
+  { email: "pixelknight@gmail.com",  gamer_tag: "PixelKnight",  platform: ["PC", "Nintendo Switch"],
+    avatar_emoji: "🦊", avatar_color: "#FFE599",
+    bio: "Soulslike speedrunner. Will fight anyone about Hollow Knight." },
+  { email: "neonbyte@gmail.com",     gamer_tag: "NeonByte",     platform: ["PlayStation 5", "PlayStation 4"],
+    avatar_emoji: "👾", avatar_color: "#C4B5FD",
+    bio: "Indie game hoarder. My backlog has its own backlog." },
+  { email: "vortexcaster@gmail.com", gamer_tag: "VortexCaster", platform: ["Xbox Series S/X", "Xbox One", "PC"],
+    avatar_emoji: "🎮", avatar_color: "#9FC5F8",
+    bio: "Competitive shooters and a worrying amount of coffee." }
+].freeze
+
+# Pools the generated roster draws from so every profile feels lived-in.
+EMOJI_POOL = %w[🐉 🦄 🤖 👻 🐙 🦅 🌙 🔥 🐺 ⚡️ 🍄 🦝 🛸 🧙 🐱].freeze
+AVATAR_COLOR_POOL = %w[#F6C453 #A7D7A0 #9EC5FE #F4A8C0 #C4B5FD #FCD9A8 #9AE6D5].freeze
+BIO_POOL = [
+  "Just here for the loot.",
+  "RPG enjoyer. Probably AFK in a menu somewhere.",
+  "Cozy games by day, horror games by night.",
+  "100% completionist or nothing.",
+  "Retro collector. Cartridges only, fight me.",
+  "Co-op partner wanted. Must tolerate friendly fire.",
+  "Lore nerd. I read every codex entry.",
+  "Speedrun curious, casually competitive.",
+  "Building the ultimate wishlist one sale at a time.",
+  "Will quit my job for a good open world.",
+  "Tactics and turn-based, all day.",
+  "Pixel art appreciator and rhythm game addict."
 ].freeze
 
 # Generate the rest of the roster up to 15 total. Tags are picked from a pool so
@@ -160,23 +184,29 @@ TAG_POOL = %w[
   RogueCircuit ApexRaven LunarSpecter VoidStriker NitroGhost
 ]
 generated_count = 15 - CURATED_USERS.size
-generated_users = TAG_POOL.first(generated_count).map do |tag|
+generated_users = TAG_POOL.first(generated_count).each_with_index.map do |tag, i|
   {
-    email:    "#{tag.downcase}@seed.gamatii",
+    email: "#{tag.downcase}@seed.gamatii",
     gamer_tag: tag,
-    platform: User::PLATFORMS.sample(rng.rand(1..3), random: rng)
+    platform: User::PLATFORMS.sample(rng.rand(1..3), random: rng),
+    avatar_emoji: EMOJI_POOL[i % EMOJI_POOL.size],
+    avatar_color: AVATAR_COLOR_POOL[i % AVATAR_COLOR_POOL.size],
+    bio: BIO_POOL[i % BIO_POOL.size]
   }
 end
 
 ALL_USERS = CURATED_USERS + generated_users
 
 puts "\nCreating #{ALL_USERS.size} users and their lists…"
-ALL_USERS.each do |data|
+created_users = ALL_USERS.map do |data|
   user = User.create!(
-    email:    data[:email],
+    email: data[:email],
     password: "password",
     gamer_tag: data[:gamer_tag],
-    platform: data[:platform]
+    platform: data[:platform],
+    avatar_emoji: data[:avatar_emoji],
+    avatar_color: data[:avatar_color],
+    bio: data[:bio]
   )
 
   LIST_SPECS.each do |ldata|
@@ -185,7 +215,23 @@ ALL_USERS.each do |data|
     sample.each { |game| list.list_games.create!(game: game) }
     puts "  #{user.gamer_tag} › #{list.name} (#{ldata[:list_type]}): #{sample.size} games"
   end
+
+  user
 end
+
+# ── Follow graph ──────────────────────────────────────────────────────────────
+# Each user follows a random subset of the others, so every profile shows real
+# follower/following counts and populated modals.
+
+puts "\nWiring up the follow graph…"
+follow_count = 0
+created_users.each do |user|
+  others = created_users - [user]
+  others.sample(rng.rand(3..9), random: rng).each do |target|
+    follow_count += 1 if user.follow(target)&.persisted?
+  end
+end
+puts "  #{follow_count} follow relationships created."
 
 # ── Daily Quizzes (14-day rotation) ───────────────────────────────────────────
 # One quiz per theme, positioned by its index in Quiz::THEMES — that index is
@@ -210,7 +256,7 @@ puts "\nSeeding leaderboard guesses + reference picks on every quiz…"
 # base correct-count (0–5, spread across the roster), rotated by quiz position so
 # the ranking shuffles from one quiz to the next.
 seed_users  = User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii")).to_a
-base_counts = seed_users.each_index.map { |i| (i % 6) }  # cycles 0..5 across users
+base_counts = seed_users.each_index.map { |i| i % 6 } # cycles 0..5 across users
 
 Quiz.order(:position).each do |quiz|
   answers = quiz.answer_pool(5)

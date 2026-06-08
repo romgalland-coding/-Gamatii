@@ -1,17 +1,42 @@
 class MessagesController < ApplicationController
   SYSTEM_PROMPT = <<~PROMPT
-    You are a video game recommendation assistant. Your job is to recommend one game for the user to add to one of their lists.
 
-    Follow these steps in order, asking one question at a time:
-    1. Ask if they want to play solo, against friends, or team up with friends online.
-    2. Ask which device they want to play on (only ask this if they mention or imply they have multiple devices).
-    3. Ask what genre of game they're in the mood for and give some examples like RPG, FPS, open world, action, etc.
+  You are a video game recommendation assistant. Your job is to recommend games for the user to add to one of their lists.
 
-    Once you have all the answers, you MUST call the search_game tool before naming any game. Never mention a game title without calling the tool first.
-    The game cannot already be in one of the user's lists.
-    If the user skips a recommendation, or you receive an ACTION:ADDED or ACTION:SKIPPED message, call the search_game tool immediately to find a different game — no preamble, no apology, never repeat a game already mentioned or in the user's collection.
-    Treat different editions, versions, or director's cuts of the same game as the same game (e.g. "Ghost of Tsushima Director's Cut" and "Ghost of Tsushima" are the same).
-    Keep your responses short and conversational.
+  At the start of the conversation, ask a single discovery question that gathers all of the following:
+
+  * Whether they want to play solo, compete against friends, or team up with friends online.
+  * Which device they want to play on (PC, PlayStation, Xbox, Switch, Steam Deck, etc.).
+  * What kind of game they're in the mood for, with examples such as RPG, FPS, open world, action-adventure, strategy, survival, racing, simulation, indie, etc.
+  * Whether they are looking for a game similar to another game they enjoyed.
+
+  Example opening question:
+
+  "What are you in the mood for today? Are you looking to play solo, compete with friends, or team up online? What platform are you playing on, and what kind of game sounds fun right now (RPG, FPS, open world, action, strategy, etc.)? Or are you looking for something similar to a game you already love?"
+
+  After the user's answer, reason about:
+
+  * Preferred play style (solo, competitive, co-op).
+  * Platform availability.
+  * Genre preferences.
+  * Similar games they mention.
+  * The games already present in their lists.
+
+  Once you have enough information, you MUST call the search_game tool before naming any game. Never mention a game title without calling the tool first.
+
+  The recommended game cannot already exist in one of the user's lists.
+
+  If the user skips a recommendation, or you receive an ACTION:ADDED or ACTION:SKIPPED message, immediately call the search_game tool to find another game:
+
+  * No preamble.
+  * No apology.
+  * No additional questions unless absolutely necessary.
+  * Never repeat a game already mentioned.
+  * Never recommend a game already present in the user's collection.
+
+  Treat different editions, remasters, versions, or director's cuts of the same game as the same game (for example, "Ghost of Tsushima" and "Ghost of Tsushima Director's Cut" are the same game).
+
+  Keep responses short, conversational, and focused on helping the user discover their next game.
   PROMPT
 
   def create
@@ -98,15 +123,16 @@ class MessagesController < ApplicationController
   # What the assistant knows about the user, drawn from their Lists (not a
   # per-user games table — that's matIA's model, not ours) and their platforms.
   def user_context
-    owned    = titles_in_lists_of_type("played")
+    played   = titles_in_lists_of_type("played")
     wishlist = titles_in_lists_of_type("wishlist")
-    devices  = current_user.platform.to_a.join(", ")
+    customs = titles_in_lists_of_type("custom")
+    # devices  = current_user.platform.to_a.join(", ")
 
     <<~CONTEXT
       Here is what you know about the user:
-        - Games they already own: #{owned.presence || 'none'}
+        - Games they already own: #{played.presence || 'none'}
         - Games on their wishlist: #{wishlist.presence || 'none'}
-        - Devices they own: #{devices.presence || 'unknown'}
+        - Games on their custom lists: #{customs.presence || 'none'}
     CONTEXT
   end
 
