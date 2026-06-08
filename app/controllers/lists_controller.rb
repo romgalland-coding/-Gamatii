@@ -66,7 +66,8 @@ class ListsController < ApplicationController
       game_modes: params[:game_modes],
       rating:     params[:rating],
       from:       params[:from],
-      to:         params[:to]
+      to:         params[:to],
+      limit:      params[:limit]
     )
     @games_in_list = @list.games.pluck(:rawg_id)
   end
