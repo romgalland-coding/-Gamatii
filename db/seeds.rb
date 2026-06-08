@@ -302,27 +302,6 @@ turbo_nova    = User.find_by!(gamer_tag: "TurboNova")
 end
 puts "  PixelKnight now follows 4 users."
 
-# Grab specific games for photo attachments — matched to their post's content
-hollow_knight_game  = Game.where("title ILIKE ?", "%hollow knight%").where.not(cover_img: nil).first
-clair_obscur_game   = Game.where("title ILIKE ?", "%clair obscur%").where.not(cover_img: nil).first
-tlou_game           = Game.where("title ILIKE ?", "%last of us%").where.not(cover_img: nil).first
-fallback_games      = Game.where.not(cover_img: nil)
-                          .where("title NOT ILIKE ?", "%zelda%")
-                          .limit(12).to_a
-
-def attach_cover(post, game)
-  return unless game&.cover_img.present?
-
-  data = URI.open(game.cover_img, &:read)
-  post.photo.attach(
-    io: StringIO.new(data),
-    filename: "#{game.title.parameterize}.jpg",
-    content_type: "image/jpeg"
-  )
-rescue StandardError => e
-  puts "  [photo skip] #{e.message}"
-end
-
 # Lists belonging to the followed users (for sharing)
 nb_played   = neon_byte.lists.find_by(list_type: "played")
 vc_wishlist = vortex_caster.lists.find_by(list_type: "wishlist")
@@ -334,70 +313,70 @@ POST_SPECS = [
   {
     author: neon_byte,
     body: "Just finished The Last of Us for the third time. Every single playthrough hits differently. Ellie's arc in Part II is criminally underrated storytelling.",
-    url: nil, list: nil, photo_game: nil
+    url: nil, list: nil, photo_url: nil
   },
-  # 2 — text + URL
+  # 2 — text + URL + list
   {
-    author: vortex_caster,
-    body: "Clair Obscur: Expedition 33 is the most interesting JRPG in years. French studio, Belle Époque aesthetic, real-time parry mechanics — it has no right being this good. Review below.",
-    url: "https://www.ign.com/articles/clair-obscur-expedition-33-review",
-    list: nil, photo_game: nil
+    author: shadow_fox,
+    body: "007: First Light — open world Bond game confirmed. IO Interactive might actually pull this off. Already on my wishlist, link has all the details.",
+    url: "https://www.ign.com/articles/007-first-light-everything-we-know",
+    list: vc_wishlist, photo_url: nil
   },
   # 3 — list share only
   {
     author: shadow_fox,
     body: nil, url: nil,
-    list: sf_custom, photo_game: nil
+    list: sf_custom, photo_url: nil
   },
   # 4 — text + list
   {
     author: glitch_wizard,
     body: "Wrapped these up this year. My taste is immaculate, don't @ me.",
     url: nil,
-    list: gw_played, photo_game: nil
+    list: gw_played, photo_url: nil
   },
-  # 5 — photo only
+  # 5 — photo only (The Last of Us)
   {
     author: neon_byte,
     body: nil, url: nil, list: nil,
-    photo_game: tlou_game || fallback_games[0]
+    photo_url: "https://images.lanouvellerepublique.fr/image/upload/t_1020w/f_auto/5f05c781990e2d6f048b4578.jpg"
   },
-  # 6 — text + photo
+  # 6 — text + photo (Hollow Knight)
   {
     author: vortex_caster,
     body: "Hollow Knight: Silksong watch begins again. Replaying the original to cope. No notes, the atmosphere is untouchable.",
     url: nil, list: nil,
-    photo_game: hollow_knight_game || fallback_games[1]
+    photo_url: "https://cdn.shopify.com/s/files/1/0570/8280/6468/files/product_silksong_pharloom_champion_poster_EU_designview.png?v=1762467232"
   },
-  # 7 — text + URL + list
+  # 7 — text + URL
   {
-    author: shadow_fox,
-    body: "007: First Light — open world Bond game confirmed. IO Interactive might actually pull this off. Already on my wishlist, link has all the details.",
-    url: "https://www.ign.com/articles/007-first-light-everything-we-know",
-    list: vc_wishlist, photo_game: nil
+    author: vortex_caster,
+    body: "Clair Obscur: Expedition 33 is the most interesting JRPG in years. French studio, Belle Époque aesthetic, real-time parry mechanics — it has no right being this good. Review below.",
+    url: "https://static.wikia.nocookie.net/clair-obscur/images/2/2a/COE33_Lorieniso.jpg/revision/latest/thumbnail/width/360/height/450?cb=20250524161002",
+    list: nil, photo_url: nil
   },
-  # 8 — photo + list
+  # 8 — photo + list (Clair Obscur)
   {
     author: glitch_wizard,
     body: "Clair Obscur: Expedition 33 visuals are something else. Screenshots don't do it justice — sharing my played list while I wait for a sequel.",
     url: nil,
     list: gw_played,
-    photo_game: clair_obscur_game || fallback_games[2]
+    photo_url: "https://image.jeuxvideo.com/medias-md/174136/1741361048-6233-card.jpg"
   },
-  # 9 — text + photo + URL
+  # 9 — text + photo + URL (Clair Obscur OST)
   {
     author: neon_byte,
     body: "The Clair Obscur: Expedition 33 OST has been on loop for days. Lorien Testard composed something genuinely special — link below. The combat theme alone is insane.",
     url: "https://www.youtube.com/watch?v=0TqPMFHqiGo",
     list: nil,
-    photo_game: clair_obscur_game || fallback_games[3]
+    photo_url: "https://static.wikia.nocookie.net/clair-obscur/images/2/2a/COE33_Lorieniso.jpg/revision/latest/thumbnail/width/360/height/450?cb=20250524161002"
   },
   # 10 — long text + list
   {
     author: vortex_caster,
     body: "Gaming confession: I have a backlog of 200+ games and I keep buying more. Every sale on Steam I tell myself 'just one more'. My played list is embarrassingly short compared to my wishlist. Anyone else living this nightmare?",
     url: nil,
-    list: nb_played, photo_game: nil
+    list: nb_played, photo_url: nil
   }
 ].freeze
 
@@ -425,12 +404,11 @@ all_commenters = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wiz
 all_likers     = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wizard, turbo_nova]
 
 POST_SPECS.each_with_index do |spec, i|
-  post = spec[:author].posts.build(body: spec[:body], url: spec[:url], list: spec[:list])
-  attach_cover(post, spec[:photo_game]) if spec[:photo_game]
+  post = spec[:author].posts.build(body: spec[:body], url: spec[:url], list: spec[:list], photo_url: spec[:photo_url])
   post.save!
 
-  # Spread posts over ~14 days (index 0 = oldest, last index = most recent)
-  post_time = ((POST_SPECS.size - 1 - i) * 36 + rng.rand(0..12)).hours.ago
+  # Spread posts over ~14 days (index 0 = most recent, last index = oldest)
+  post_time = (i * 36 + rng.rand(0..12)).hours.ago
   post.update_columns(created_at: post_time, updated_at: post_time)
 
   # 2–4 comments from random users (not the author), each after the post

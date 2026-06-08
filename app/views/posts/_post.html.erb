@@ -18,11 +18,11 @@
     <p class="post-card__body"><%= post.body %></p>
   <% end %>
 
-  <% if post.photo.attached? %>
+  <% if post.photo_url.present? %>
     <div class="post-card__photo"
          data-controller="lightbox"
-         data-lightbox-images-value="<%= [url_for(post.photo)].to_json %>">
-      <%= image_tag post.photo,
+         data-lightbox-images-value="<%= [post.photo_url].to_json %>">
+      <%= image_tag post.photo_url,
           class: "post-card__img post-card__img--clickable",
           data: { action: "click->lightbox#open", lightbox_index_param: 0 } %>
       <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
