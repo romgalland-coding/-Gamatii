@@ -6,6 +6,10 @@
     <p class="lists-subtitle">Wishlists, collections, and everything you've curated.</p>
   </header>
 
+  <% if current_user %>
+    <%= link_to "+ Create a new list", new_list_path, class: "btn btn-primary w-100 lists-create-btn" %>
+  <% end %>
+
   <% if @lists.any? %>
     <div class="lists-grid">
       <% @lists.each do |list| %>
@@ -34,9 +38,6 @@
     </div>
   <% end %>
 
-  <% if current_user %>
-    <%= link_to "+ Create a new list", new_list_path, class: "btn btn-primary w-100 lists-create-btn" %>
-  <% end %>
 </div>
 
 <%= render "shared/navbar", active: :lists %>
