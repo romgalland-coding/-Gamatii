@@ -119,16 +119,20 @@ class RawgService
   end
 
   def search_games(filters = {})
-    query = { key: @api_key, page_size: 20 }
-    query[:genres]     = Array(filters[:genres]).join(",")     if filters[:genres].present?
-    query[:platforms]  = Array(filters[:platforms]).flat_map { |id| id.to_s.split(",") }.join(",") if filters[:platforms].present?
-    query[:publishers] = Array(filters[:publishers]).flat_map { |id| id.to_s.split(",") }.join(",") if filters[:publishers].present?
-    query[:tags]       = Array(filters[:game_modes]).join(",") if filters[:game_modes].present?
-    query[:metacritic] = "#{filters[:rating]},100"                               if filters[:rating].present?
-    query[:dates]      = "#{filters[:from]},#{filters[:to]}"                     if filters[:from].present? && filters[:to].present?
+    base_query = { key: @api_key, page_size: 20 }
+    base_query[:genres]     = Array(filters[:genres]).join(",")     if filters[:genres].present?
+    base_query[:platforms]  = Array(filters[:platforms]).flat_map { |id| id.to_s.split(",") }.join(",") if filters[:platforms].present?
+    base_query[:publishers] = Array(filters[:publishers]).flat_map { |id| id.to_s.split(",") }.join(",") if filters[:publishers].present?
+    base_query[:tags]       = Array(filters[:game_modes]).join(",") if filters[:game_modes].present?
+    base_query[:metacritic] = "#{filters[:rating]},100"                               if filters[:rating].present?
+    base_query[:dates]      = "#{filters[:from]},#{filters[:to]}"                     if filters[:from].present? && filters[:to].present?
 
-    response = HTTParty.get("#{BASE_URL}/games", query: query)
-    response["results"] || []
+    total = (filters[:limit].presence || 20).to_i
+    pages = (total / 20.0).ceil
+    (1..pages).flat_map do |page|
+      response = HTTParty.get("#{BASE_URL}/games", query: base_query.merge(page: page))
+      response["results"] || []
+    end.first(total)
   end
 
   private
