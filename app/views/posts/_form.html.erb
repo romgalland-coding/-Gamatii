@@ -17,10 +17,9 @@
         input_html: { placeholder: "https://..." },
         wrapper_class: "post-form__field" %>
 
-  <div class="post-form__field">
-    <label class="form-label">Photo (optional)</label>
-    <%= f.file_field :photo, class: "form-control form-control-sm" %>
-  </div>
+  <%= f.input :photo_url, label: "Photo URL (optional)",
+        input_html: { placeholder: "https://..." },
+        wrapper_class: "post-form__field" %>
 
   <div class="post-form__actions">
     <%= f.submit "Post", class: "btn btn-primary" %>
