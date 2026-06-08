@@ -33,9 +33,9 @@
     </li>
   </ul>
 
+  <%= turbo_frame_tag "games-grid" do %>
   <div class="tab-content">
     <div class="tab-pane fade show active" id="grid-view" role="tabpanel">
-      <%= turbo_frame_tag "games-grid" do %>
       <div class="row row-cols-2 g-3">
     <% @games.each do |game| %>
       <% added = @games_in_list.include?(game["id"]) %>
@@ -115,7 +115,6 @@
               ),
               class: "btn btn-outline-primary btn-sm" %>
       </div>
-      <% end %>
     </div>
 
     <div class="tab-pane fade" id="swipe-view" role="tabpanel">
@@ -206,6 +205,7 @@
       </div>
     </div>
   </div>
+  <% end %>
 </div>
 
 <%# Filter offcanvas — games reload only when Apply is submitted %>
