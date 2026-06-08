@@ -33,72 +33,26 @@
     </li>
   </ul>
 
+  <%= turbo_frame_tag "games-grid" do %>
   <div class="tab-content">
     <div class="tab-pane fade show active" id="grid-view" role="tabpanel">
-      <%= turbo_frame_tag "games-grid" do %>
-      <div class="row row-cols-2 g-3">
-    <% @games.each do |game| %>
-      <% added = @games_in_list.include?(game["id"]) %>
-      <% add_params = {
-           origin:    "build",
-           rawg_id:   game["id"],
-           genres:     params[:genres],
-           platforms:  params[:platforms],
-           publishers: params[:publishers],
-           game_modes: params[:game_modes],
-           rating:    params[:rating],
-           from:      params[:from],
-           to:        params[:to],
-           limit:     params[:limit]
-         } %>
-
-      <div class="col">
-        <div class="card h-100">
-          <div role="button" data-bs-toggle="modal" data-bs-target="#gameModal<%= game["id"] %>">
-            <% if game["background_image"] %>
-              <%= image_tag game["background_image"], class: "card-img-top", style: "height: 150px; object-fit: cover;" %>
-            <% end %>
-            <div class="card-body">
-              <h6 class="card-title"><%= game["name"] %></h6>
-              <p class="card-text text-muted">
-                <small>⭐ <%= game["metacritic"] || "N/A" %></small>
-              </p>
-            </div>
-          </div>
-          <div class="card-footer" id="grid-card-<%= game["id"] %>">
-            <% if added %>
-              <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
-            <% else %>
-              <%= button_to "Add to list", list_list_games_path(@list), params: add_params,
-                    class: "btn btn-primary btn-sm w-100" %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-
-      <%# Game preview popup %>
-      <div class="modal fade" id="gameModal<%= game["id"] %>" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div class="modal-content" style="background-color: #FAF3E3;">
-            <div class="modal-header d-flex justify-content-between align-items-center" style="border-bottom: none;">
-              <% if added %>
-                <button class="btn btn-secondary btn-sm" disabled>Added</button>
-              <% else %>
-                <%= button_to "Add to list", list_list_games_path(@list), params: add_params,
-                      class: "btn btn-primary btn-sm m-0" %>
-              <% end %>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <%= turbo_frame_tag "game_preview_#{game["id"]}",
-                    src: rawg_game_preview_path(game["id"]), loading: "lazy" do %>
-                <p class="text-center text-muted py-4">Loading…</p>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
+      <div class="row row-cols-2 g-3" id="games-grid-cards">
+        <% @games.each do |game| %>
+          <% added = @games_in_list.include?(game["id"]) %>
+          <% add_params = {
+               origin:     "build",
+               rawg_id:    game["id"],
+               genres:     params[:genres],
+               platforms:  params[:platforms],
+               publishers: params[:publishers],
+               game_modes: params[:game_modes],
+               rating:     params[:rating],
+               from:       params[:from],
+               to:         params[:to],
+               limit:      params[:limit]
+             } %>
+          <%= render "build_grid_card", game: game, list: @list, add_params: add_params, added: added %>
+        <% end %>
       </div>
 
       <div class="text-center mt-3">
@@ -115,81 +69,46 @@
               ),
               class: "btn btn-outline-primary btn-sm" %>
       </div>
-      <% end %>
     </div>
 
     <div class="tab-pane fade" id="swipe-view" role="tabpanel">
       <div class="swipe-stack" data-controller="swipe">
 
-        <div class="swipe-stack__empty" data-swipe-target="empty" style="display:none;">
+        <div class="swipe-stack__empty" data-swipe-target="empty" id="swipe-empty-state" style="display:none;">
           <p>You've seen all <%= @games.length %> games!</p>
+          <%= link_to "See more",
+                build_list_path(@list,
+                  page:       (params[:limit].presence || 20).to_i / 20 + 1,
+                  limit:      params[:limit],
+                  genres:     params[:genres],
+                  platforms:  params[:platforms],
+                  publishers: params[:publishers],
+                  game_modes: params[:game_modes],
+                  rating:     params[:rating],
+                  from:       params[:from],
+                  to:         params[:to]
+                ),
+                class: "btn btn-outline-primary btn-sm" %>
           <%= link_to "Back to grid", "#grid-view",
                 data: { "bs-toggle": "tab", "bs-target": "#grid-view" },
                 class: "btn btn-secondary btn-sm" %>
         </div>
 
-        <div class="swipe-stack__cards" data-swipe-target="stack">
+        <div class="swipe-stack__cards" data-swipe-target="stack" id="swipe-stack-cards">
           <% @games.reverse_each do |game| %>
             <% added = @games_in_list.include?(game["id"]) %>
             <% add_params = {
                  origin:     "swipe",
                  rawg_id:    game["id"],
-                 genres:      params[:genres],
-                 platforms:   params[:platforms],
-                 publishers:  params[:publishers],
-                 game_modes:  params[:game_modes],
+                 genres:     params[:genres],
+                 platforms:  params[:platforms],
+                 publishers: params[:publishers],
+                 game_modes: params[:game_modes],
                  rating:     params[:rating],
                  from:       params[:from],
                  to:         params[:to]
                } %>
-
-            <div class="card swipe-card"
-                 data-swipe-target="card"
-                 data-rawg-id="<%= game["id"] %>"
-                 data-add-url="<%= list_list_games_path(@list) %>"
-                 data-add-params="<%= add_params.to_json %>"
-                 data-added="<%= added %>"
-                 data-action="pointerdown->swipe#dragstart pointermove->swipe#dragmove pointerup->swipe#dragend pointercancel->swipe#dragend">
-
-              <div class="swipe-card__overlay swipe-card__overlay--add">ADD</div>
-              <div class="swipe-card__overlay swipe-card__overlay--skip">SKIP</div>
-
-              <% if game["background_image"] %>
-                <%= image_tag game["background_image"], class: "swipe-card__img" %>
-              <% else %>
-                <div class="swipe-card__img swipe-card__img--placeholder"></div>
-              <% end %>
-
-              <div class="swipe-card__body">
-                <h5 class="swipe-card__title"><%= game["name"] %></h5>
-                <p class="swipe-card__meta">⭐ <%= game["metacritic"] || "N/A" %></p>
-                <% if added %>
-                  <span class="badge bg-secondary">Already in list</span>
-                <% end %>
-              </div>
-            </div>
-
-            <div class="modal fade" id="swipeModal<%= game["id"] %>" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content" style="background-color: #FAF3E3;">
-                  <div class="modal-header d-flex justify-content-between align-items-center" style="border-bottom: none;">
-                    <% if added %>
-                      <button class="btn btn-secondary btn-sm" disabled>Added</button>
-                    <% else %>
-                      <%= button_to "Add to list", list_list_games_path(@list), params: add_params,
-                            class: "btn btn-primary btn-sm m-0" %>
-                    <% end %>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <%= turbo_frame_tag "game_preview_#{game["id"]}",
-                          src: rawg_game_preview_path(game["id"]), loading: "lazy" do %>
-                      <p class="text-center text-muted py-4">Loading…</p>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <%= render "build_swipe_card", game: game, list: @list, add_params: add_params, added: added %>
           <% end %>
         </div>
 
@@ -206,6 +125,7 @@
       </div>
     </div>
   </div>
+  <% end %>
 </div>
 
 <%# Filter offcanvas — games reload only when Apply is submitted %>

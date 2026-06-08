@@ -1,0 +1,47 @@
+<div class="card swipe-card"
+     data-swipe-target="card"
+     data-rawg-id="<%= game["id"] %>"
+     data-add-url="<%= list_list_games_path(list) %>"
+     data-add-params="<%= add_params.to_json %>"
+     data-added="<%= added %>"
+     data-action="pointerdown->swipe#dragstart pointermove->swipe#dragmove pointerup->swipe#dragend pointercancel->swipe#dragend">
+
+  <div class="swipe-card__overlay swipe-card__overlay--add">ADD</div>
+  <div class="swipe-card__overlay swipe-card__overlay--skip">SKIP</div>
+
+  <% if game["background_image"] %>
+    <%= image_tag game["background_image"], class: "swipe-card__img" %>
+  <% else %>
+    <div class="swipe-card__img swipe-card__img--placeholder"></div>
+  <% end %>
+
+  <div class="swipe-card__body">
+    <h5 class="swipe-card__title"><%= game["name"] %></h5>
+    <p class="swipe-card__meta">⭐ <%= game["metacritic"] || "N/A" %></p>
+    <% if added %>
+      <span class="badge bg-secondary">Already in list</span>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal fade" id="swipeModal<%= game["id"] %>" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content" style="background-color: #FAF3E3;">
+      <div class="modal-header d-flex justify-content-between align-items-center" style="border-bottom: none;">
+        <% if added %>
+          <button class="btn btn-secondary btn-sm" disabled>Added</button>
+        <% else %>
+          <%= button_to "Add to list", list_list_games_path(list), params: add_params,
+                class: "btn btn-primary btn-sm m-0" %>
+        <% end %>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag "game_preview_#{game["id"]}",
+              src: rawg_game_preview_path(game["id"]), loading: "lazy" do %>
+          <p class="text-center text-muted py-4">Loading…</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

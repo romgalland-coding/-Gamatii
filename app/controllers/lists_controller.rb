@@ -67,9 +67,16 @@ class ListsController < ApplicationController
       rating:     params[:rating],
       from:       params[:from],
       to:         params[:to],
-      limit:      params[:limit]
+      limit:      params[:limit],
+      page:       params[:page]&.to_i
     )
     @games_in_list = @list.games.pluck(:rawg_id)
+    @next_page = params[:page].present? ? params[:page].to_i + 1 : nil
+
+    respond_to do |format|
+      format.turbo_stream if params[:page].present?
+      format.html
+    end
   end
 
   def edit

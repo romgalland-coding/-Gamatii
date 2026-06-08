@@ -127,12 +127,17 @@ class RawgService
     base_query[:metacritic] = "#{filters[:rating]},100"                               if filters[:rating].present?
     base_query[:dates]      = "#{filters[:from]},#{filters[:to]}"                     if filters[:from].present? && filters[:to].present?
 
-    total = (filters[:limit].presence || 20).to_i
-    pages = (total / 20.0).ceil
-    (1..pages).flat_map do |page|
-      response = HTTParty.get("#{BASE_URL}/games", query: base_query.merge(page: page))
+    if filters[:page]
+      response = HTTParty.get("#{BASE_URL}/games", query: base_query.merge(page: filters[:page]))
       response["results"] || []
-    end.first(total)
+    else
+      total = (filters[:limit].presence || 20).to_i
+      pages = (total / 20.0).ceil
+      (1..pages).flat_map do |page|
+        response = HTTParty.get("#{BASE_URL}/games", query: base_query.merge(page: page))
+        response["results"] || []
+      end.first(total)
+    end
   end
 
   private
