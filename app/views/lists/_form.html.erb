@@ -24,7 +24,8 @@
               <input type="checkbox" class="filter-panel__checkbox"
                      value="<%= g[:id] %>" data-name="<%= g[:name] %>"
                      data-action="change->multi-select#toggle"
-                     data-multi-select-target="checkbox">
+                     data-multi-select-target="checkbox"
+                     <% if Array(params[:genres]).include?(g[:id].to_s) %>checked<% end %>>
             </label>
           <% end %>
         </div>
@@ -55,7 +56,8 @@
               <input type="checkbox" class="filter-panel__checkbox"
                      value="<%= p[:id] %>" data-name="<%= p[:name] %>"
                      data-action="change->multi-select#toggle"
-                     data-multi-select-target="checkbox">
+                     data-multi-select-target="checkbox"
+                     <% if Array(params[:publishers]).include?(p[:id].to_s) %>checked<% end %>>
             </label>
           <% end %>
         </div>
@@ -86,7 +88,8 @@
               <input type="checkbox" class="filter-panel__checkbox"
                      value="<%= p[:id] %>" data-name="<%= p[:name] %>"
                      data-action="change->multi-select#toggle"
-                     data-multi-select-target="checkbox">
+                     data-multi-select-target="checkbox"
+                     <% if Array(params[:platforms]).include?(p[:id].to_s) %>checked<% end %>>
             </label>
           <% end %>
         </div>
@@ -117,7 +120,8 @@
               <input type="checkbox" class="filter-panel__checkbox"
                      value="<%= m[:id] %>" data-name="<%= m[:name] %>"
                      data-action="change->multi-select#toggle"
-                     data-multi-select-target="checkbox">
+                     data-multi-select-target="checkbox"
+                     <% if Array(params[:game_modes]).include?(m[:id].to_s) %>checked<% end %>>
             </label>
           <% end %>
         </div>
@@ -131,12 +135,12 @@
 
   <div class="mb-3">
     <label class="form-label">Release date from</label>
-    <%= date_field_tag :from, nil, class: "form-control" %>
+    <%= date_field_tag :from, params[:from], class: "form-control" %>
   </div>
 
   <div class="mb-3">
     <label class="form-label">Release date to</label>
-    <%= date_field_tag :to, nil, class: "form-control" %>
+    <%= date_field_tag :to, params[:to], class: "form-control" %>
   </div>
 
   <%= f.submit "Create & discover games", class: "btn btn-primary w-100" %>
