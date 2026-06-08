@@ -39,4 +39,9 @@ Rails.application.routes.draw do
   resources :quiz_games, only: [:destroy]
 
   resource :profile, only: [:show, :edit, :update]
+
+  resources :posts, only: [:index, :show, :create, :destroy] do
+    resources :comments, only: [:create, :destroy]
+    resources :likes, only: [:create, :destroy]
+  end
 end

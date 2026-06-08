@@ -1,0 +1,19 @@
+<div data-controller="post-modal">
+  <button class="btn btn-primary w-100 home-create-btn"
+          data-action="click->post-modal#open">
+    ✦ Create a post
+  </button>
+
+  <div data-post-modal-target="modal" class="post-modal">
+    <div class="post-modal__overlay" data-action="click->post-modal#close"></div>
+    <div class="post-modal__box">
+      <div class="post-modal__header">
+        <h3>New post</h3>
+        <button class="post-modal__close" data-action="click->post-modal#close">✕</button>
+      </div>
+      <div id="new-post-form">
+        <%= render "posts/form" %>
+      </div>
+    </div>
+  </div>
+</div>

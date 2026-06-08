@@ -1,0 +1,29 @@
+<div class="post-list-preview" data-controller="toggle">
+  <button class="post-list-preview__header" data-action="click->toggle#toggle">
+    <span class="post-list-preview__title">
+      <i class="fa-solid fa-list-ul"></i>
+      <%= list.name %>
+    </span>
+    <span class="post-list-preview__count">
+      <%= pluralize(list.games.size, "game") %>
+      <i class="fa-solid fa-chevron-down post-list-preview__chevron"></i>
+    </span>
+  </button>
+
+  <div data-toggle-target="content">
+    <div class="post-list-preview__games">
+      <% list.games.first(5).each do |game| %>
+        <%= link_to game_path(game), class: "post-list-preview__game" do %>
+          <div class="post-list-preview__cover"
+               style="background-image: url('<%= game.cover_img %>')"></div>
+          <span class="post-list-preview__game-title"><%= game.title %></span>
+          <i class="fa-solid fa-chevron-right post-list-preview__arrow"></i>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= link_to list_path(list), class: "post-list-preview__footer" do %>
+      See whole list <i class="fa-solid fa-arrow-right"></i>
+    <% end %>
+  </div>
+</div>
