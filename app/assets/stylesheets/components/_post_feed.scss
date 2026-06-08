@@ -84,8 +84,11 @@
   &__img {
     width: 100%;
     display: block;
-    max-height: 320px;
-    object-fit: cover;
+
+    &--clickable {
+      cursor: zoom-in;
+      &:hover { opacity: 0.92; }
+    }
   }
 
 

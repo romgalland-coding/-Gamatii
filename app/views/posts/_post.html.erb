@@ -19,8 +19,20 @@
   <% end %>
 
   <% if post.photo.attached? %>
-    <div class="post-card__photo">
-      <%= image_tag post.photo, class: "post-card__img" %>
+    <div class="post-card__photo"
+         data-controller="lightbox"
+         data-lightbox-images-value="<%= [url_for(post.photo)].to_json %>">
+      <%= image_tag post.photo,
+          class: "post-card__img post-card__img--clickable",
+          data: { action: "click->lightbox#open", lightbox_index_param: 0 } %>
+      <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
+        <div class="lightbox__backdrop" data-action="click->lightbox#close"></div>
+        <div class="lightbox__box lightbox__box--photo">
+          <button class="lightbox__close" data-action="click->lightbox#close">✕</button>
+          <div class="lightbox__image" data-lightbox-target="image"></div>
+          <div class="lightbox__counter" data-lightbox-target="counter"></div>
+        </div>
+      </div>
     </div>
   <% end %>
 
