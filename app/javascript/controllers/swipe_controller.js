@@ -12,6 +12,19 @@ export default class extends Controller {
     this.deltaX = 0
     this.skipAlreadyAdded()
     this.updateProgress()
+    this.initialized = true
+  }
+
+  // Called by Stimulus whenever a card element is added to the DOM after connect()
+  cardTargetConnected(card) {
+    if (!this.initialized) return // ignore targets present on initial connect
+    // New cards arrived (turbo stream append) — reset pointer to the new top card
+    this.pointer = this.cardTargets.length - 1
+    this.emptyTarget.style.display   = "none"
+    this.stackTarget.style.display   = ""
+    this.actionsTarget.style.display = ""
+    this.skipAlreadyAdded()
+    this.updateProgress()
   }
 
   get currentCard() {

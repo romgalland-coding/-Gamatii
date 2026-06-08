@@ -1,0 +1,46 @@
+<div class="col">
+  <div class="card h-100">
+    <div role="button" data-bs-toggle="modal" data-bs-target="#gameModal<%= game["id"] %>">
+      <% if game["background_image"] %>
+        <%= image_tag game["background_image"], class: "card-img-top", style: "height: 150px; object-fit: cover;" %>
+      <% end %>
+      <div class="card-body">
+        <h6 class="card-title"><%= game["name"] %></h6>
+        <p class="card-text text-muted">
+          <small>⭐ <%= game["metacritic"] || "N/A" %></small>
+        </p>
+      </div>
+    </div>
+    <div class="card-footer" id="grid-card-<%= game["id"] %>">
+      <% if added %>
+        <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
+      <% else %>
+        <%= button_to "Add to list", list_list_games_path(list), params: add_params,
+              class: "btn btn-primary btn-sm w-100" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# Game preview popup %>
+<div class="modal fade" id="gameModal<%= game["id"] %>" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content" style="background-color: #FAF3E3;">
+      <div class="modal-header d-flex justify-content-between align-items-center" style="border-bottom: none;">
+        <% if added %>
+          <button class="btn btn-secondary btn-sm" disabled>Added</button>
+        <% else %>
+          <%= button_to "Add to list", list_list_games_path(list), params: add_params,
+                class: "btn btn-primary btn-sm m-0" %>
+        <% end %>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag "game_preview_#{game["id"]}",
+              src: rawg_game_preview_path(game["id"]), loading: "lazy" do %>
+          <p class="text-center text-muted py-4">Loading…</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
