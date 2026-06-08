@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :lists do
     collection do
       get :search_games
+      get :search
     end
     member do
       get :build
