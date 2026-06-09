@@ -1,0 +1,61 @@
+<%# Discovery (build) filter, restyled to match the list-show filter panel but
+    wired as a real GET form: "Apply" submits and the server re-runs the RAWG
+    search. Multi-selects carry RAWG ids; rating is a Metascore minimum. %>
+<div class="list-filter-panel" data-build-filter-target="panel">
+  <%= form_with url: build_list_path(@list), method: :get,
+        data: { build_filter_target: "form" }, class: "list-filter-panel__inner" do %>
+
+    <div class="list-filter-panel__header">
+      <span class="list-filter-panel__title">Filter games</span>
+      <button class="list-filter-panel__close" type="button"
+              data-action="click->build-filter#close" aria-label="Close filters">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <%= render "lists/build_filter_dropdown",
+          label: "Genre", placeholder: "All genres",
+          name: "genres[]", options: @genres, selected: Array(params[:genres]) %>
+
+    <%= render "lists/build_filter_dropdown",
+          label: "Platform", placeholder: "All platforms",
+          name: "platforms[]", options: @platforms, selected: Array(params[:platforms]) %>
+
+    <%= render "lists/build_filter_dropdown",
+          label: "Publisher", placeholder: "All publishers",
+          name: "publishers[]", options: @publishers, selected: Array(params[:publishers]) %>
+
+    <%= render "lists/build_filter_dropdown",
+          label: "Game mode", placeholder: "All modes",
+          name: "game_modes[]", options: @game_modes, selected: Array(params[:game_modes]) %>
+
+    <%# Rating (Metascore minimum, 0–100). %>
+    <div class="filter-row">
+      <span class="filter-row__label">Rating</span>
+      <div class="filter-slider-row">
+        <input type="range" name="rating" class="filter-slider-input"
+               min="0" max="100" step="10" value="<%= params[:rating].presence || 0 %>"
+               data-action="input->build-filter#updateSliderLabel">
+        <span class="filter-slider-value <%= 'is-active' if params[:rating].to_i.positive? %>">
+          <%= params[:rating].to_i.positive? ? "#{params[:rating]}+" : "—" %>
+        </span>
+      </div>
+    </div>
+
+    <%# Release-date range. %>
+    <div class="filter-row">
+      <span class="filter-row__label">From</span>
+      <%= date_field_tag :from, params[:from], class: "filter-date-input" %>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row__label">To</span>
+      <%= date_field_tag :to, params[:to], class: "filter-date-input" %>
+    </div>
+
+    <div class="list-filter-panel__actions">
+      <button class="list-filter-panel__reset" type="button"
+              data-action="click->build-filter#reset">Reset</button>
+      <button class="list-filter-panel__save" type="submit">Show results</button>
+    </div>
+  <% end %>
+</div>

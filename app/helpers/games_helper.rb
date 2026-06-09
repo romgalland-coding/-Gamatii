@@ -37,4 +37,13 @@ module GamesHelper
     match = PLATFORM_SHORT_LABELS.find { |pattern, _| name =~ pattern }
     match ? match.last : name
   end
+
+  # "Genre · 2014 · Switch / Wii U" line for a RAWG search-result hash, mirroring
+  # the meta shown on list cards. Each part is dropped when absent.
+  def rawg_card_meta(game)
+    genre     = game.dig("genres", 0, "name")
+    year      = game["released"].to_s[0, 4].presence
+    platforms = Array(game["platforms"]).map { |p| p.dig("platform", "name") }.compact
+    [genre, year, short_platforms(platforms).presence].select(&:present?).join(" · ")
+  end
 end

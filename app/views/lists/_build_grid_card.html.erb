@@ -1,17 +1,20 @@
 <div class="col">
-  <div class="card h-100">
-    <div role="button" data-bs-toggle="modal" data-bs-target="#gameModal<%= game["id"] %>">
-      <% if game["background_image"] %>
-        <%= image_tag rawg_thumb(game["background_image"]), class: "card-img-top", loading: "lazy", style: "height: 150px; object-fit: cover;" %>
-      <% end %>
-      <div class="card-body">
-        <h6 class="card-title"><%= game["name"] %></h6>
-        <p class="card-text text-muted">
-          <small>⭐ <%= game["metacritic"] || "N/A" %></small>
-        </p>
+  <div class="build-card card card-clickable h-100">
+    <div role="button" class="build-card__link"
+         data-bs-toggle="modal" data-bs-target="#gameModal<%= game["id"] %>">
+      <div class="build-card__cover" <%= lazy_bg(rawg_thumb(game["background_image"], 600)) %>>
+        <% if (rating = display_rating(game["metacritic"])) %>
+          <span class="build-card__rating"><i class="fa-solid fa-star"></i> <%= rating %></span>
+        <% end %>
+      </div>
+      <div class="build-card__body">
+        <span class="build-card__title"><%= game["name"] %></span>
+        <% if (meta = rawg_card_meta(game)).present? %>
+          <span class="build-card__meta"><%= meta %></span>
+        <% end %>
       </div>
     </div>
-    <div class="card-footer" id="grid-card-<%= game["id"] %>">
+    <div class="build-card__footer" id="grid-card-<%= game["id"] %>">
       <% if added %>
         <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
       <% else %>
