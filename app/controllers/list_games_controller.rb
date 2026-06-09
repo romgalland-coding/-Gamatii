@@ -16,10 +16,10 @@ class ListGamesController < ApplicationController
       g.game_mode    = rawg_data["tags"]&.map { |t| t["slug"] }&.select { |s| RawgService::GAME_MODE_SLUGS.include?(s) } || []
     end
 
-    @list_game = ListGame.new(list: @list, game: @game)
+    @list_game = ListGame.find_or_initialize_by(list: @list, game: @game)
     authorize @list_game
 
-    saved = @list_game.save
+    saved = @list_game.save || @list_game.persisted?
 
     if params[:origin] == "build"
       filter_params = params.permit(:rating, :from, :to, :limit, :swipe_offset, genres: [], platforms: [], publishers: [], game_modes: [])
