@@ -46,9 +46,9 @@ class BuildSwipeCardTest < ApplicationSystemTestCase
 
     card = find(".swipe-card", match: :first)
     width = card.evaluate_script("this.getBoundingClientRect().width")
-    # The deck is capped at 380px; the card must be far narrower than the 1400px page.
-    assert_operator width, :<=, 400, "swipe card should be card-width, got #{width}px"
-    assert_operator width, :>=, 300, "swipe card should not be tiny, got #{width}px"
+    # On desktop the deck scales up to 560px but must not stretch the page.
+    assert_operator width, :<=, 580, "swipe card should be capped near 560px, got #{width}px"
+    assert_operator width, :>=, 480, "swipe card should be scaled up on desktop, got #{width}px"
 
     save_screenshot("tmp/screenshots/swipe_card_width.png")
   end
