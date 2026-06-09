@@ -1,4 +1,20 @@
 module ApplicationHelper
+  STORE_ICONS = {
+    "steam"             => "fa-brands fa-steam",
+    "playstation-store" => "fa-brands fa-playstation",
+    "xbox-store"        => "fa-brands fa-xbox",
+    "apple-appstore"    => "fa-brands fa-apple",
+    "google-play"       => "fa-brands fa-google-play",
+    "gog"               => "fa-solid fa-dragon",
+    "nintendo"          => "fa-solid fa-gamepad",
+    "epic-games"        => "fa-solid fa-bolt",
+    "itch"              => "fa-solid fa-heart",
+  }.freeze
+
+  def store_icon(slug)
+    STORE_ICONS[slug.to_s] || "fa-solid fa-store"
+  end
+
   # DOM id for an add-to-list panel row. `scope` namespaces the id so the same
   # list can appear in several panels on one page (e.g. one per recommendation
   # card in a chat) without colliding. No scope keeps the original id used on
