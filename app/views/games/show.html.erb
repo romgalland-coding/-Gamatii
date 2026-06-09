@@ -48,8 +48,8 @@
   <% if @game.platforms.present? %>
     <h2 class="game-show__section-title">Platforms</h2>
     <div class="game-show__tags">
-      <% @game.platforms.each do |platform| %>
-        <span class="game-show__platform-tag"><%= platform %></span>
+      <% @game.platforms.map { |p| short_platform_label(p) }.uniq.each do |label| %>
+        <span class="game-show__platform-tag"><%= label %></span>
       <% end %>
     </div>
   <% end %>
