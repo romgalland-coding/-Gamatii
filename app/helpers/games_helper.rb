@@ -33,8 +33,6 @@ module GamesHelper
     format("%.1f", rating.to_f / 10)
   end
 
-  private
-
   def short_platform_label(name)
     match = PLATFORM_SHORT_LABELS.find { |pattern, _| name =~ pattern }
     match ? match.last : name
