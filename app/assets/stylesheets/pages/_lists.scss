@@ -1233,6 +1233,20 @@
   .list-game-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  // Scale the swipe deck up on desktop (~1.47×) while keeping the same ratios:
+  // 380→560 width, 300→442 deck height, 210→310 cover height.
+  .swipe-stack {
+    max-width: 560px;
+
+    &__cards {
+      height: 442px;
+    }
+  }
+
+  .swipe-card__img {
+    height: 310px;
+  }
 }
 
 // ===================== VIEW TOGGLE (Grid / Swipe) =====================
