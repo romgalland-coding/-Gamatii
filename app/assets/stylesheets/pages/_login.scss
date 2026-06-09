@@ -143,6 +143,40 @@
   }
 }
 
+// "Continue with Google" OAuth button — brand yellow, neo-brutalist style
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000;
+  background-color: $mat-yellow;
+  border: 2.5px solid #000;
+  border-radius: 0.75rem;
+  box-shadow: 3px 3px 0 0 #000;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+
+  i {
+    font-size: 1.05rem;
+  }
+
+  &:hover {
+    background-color: $mat-yellow-light;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 0 #000;
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 #000;
+  }
+}
+
 // Auth links section
 .auth-links {
   display: flex;
@@ -152,6 +186,12 @@
   padding-top: 1.5rem;
   border-top: 2px solid rgba(0, 0, 0, 0.1);
   text-align: center;
+
+  // button_to wraps the Google button in a <form>; strip its default margin
+  // so it lines up with the other auth links.
+  form.button_to {
+    margin: 0;
+  }
 
   p {
     margin: 0;
