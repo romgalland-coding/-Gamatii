@@ -3,8 +3,7 @@
 <ul class="search-autocomplete">
   <% results.each do |game| %>
     <li class="search-autocomplete__item">
-      <div class="search-autocomplete__cover"
-            style="background-image: url('<%= game["background_image"] %>')"></div>
+      <div class="search-autocomplete__cover" <%= lazy_bg(rawg_thumb(game["background_image"])) %>></div>
       <div class="search-autocomplete__info">
         <span class="search-autocomplete__name"><%= game["name"] %></span>
         <span class="search-autocomplete__meta">

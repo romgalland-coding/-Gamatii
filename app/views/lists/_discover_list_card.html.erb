@@ -5,7 +5,7 @@
   <% end %>
   <div class="discover-list-card__covers">
     <% list.games.first(4).each do |game| %>
-      <div class="discover-list-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+      <div class="discover-list-card__cover" <%= lazy_bg(rawg_thumb(game.cover_img)) %>></div>
     <% end %>
     <% (4 - list.games.size).clamp(0, 4).times do %>
       <div class="discover-list-card__cover discover-list-card__cover--empty"></div>

@@ -10,7 +10,7 @@
   <div class="swipe-card__overlay swipe-card__overlay--skip">SKIP</div>
 
   <% if game["background_image"] %>
-    <%= image_tag game["background_image"], class: "swipe-card__img" %>
+    <%= image_tag rawg_thumb(game["background_image"], 600), class: "swipe-card__img" %>
   <% else %>
     <div class="swipe-card__img swipe-card__img--placeholder"></div>
   <% end %>

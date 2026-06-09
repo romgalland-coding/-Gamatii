@@ -26,6 +26,7 @@
          data-lightbox-images-value="<%= [post.photo_url].to_json %>">
       <%= image_tag post.photo_url,
           class: "post-card__img post-card__img--clickable",
+          loading: "lazy",
           data: { action: "click->lightbox#open", lightbox_index_param: 0 } %>
       <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
         <div class="lightbox__backdrop" data-action="click->lightbox#close"></div>

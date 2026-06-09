@@ -12,7 +12,7 @@
        data-bs-toggle="modal"
        data-bs-target="#gameModal<%= game.id %>">
     <% if game.cover_img.present? %>
-      <div class="rec-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+      <div class="rec-card__cover" <%= lazy_bg(rawg_thumb(game.cover_img)) %>></div>
     <% else %>
       <div class="rec-card__cover rec-card__cover--placeholder">
         <i class="fa-solid fa-gamepad"></i>

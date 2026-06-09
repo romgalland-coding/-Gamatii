@@ -10,7 +10,7 @@
           data-rating="<%= game.rating.to_i %>"
           data-year="<%= game.release_date&.year %>">
         <%= link_to game_path(game), class: "list-game-card__link" do %>
-          <div class="list-game-card__cover" style="background-image: url('<%= game.cover_img %>')">
+          <div class="list-game-card__cover" <%= lazy_bg(rawg_thumb(game.cover_img)) %>>
             <span class="list-game-card__rank">#<%= index + 1 %></span>
             <% if (rating = display_rating(game.rating)) %>
               <span class="list-game-card__rating">
