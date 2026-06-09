@@ -16,6 +16,9 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 gem 'devise'
+# "Sign in with Google" via OmniAuth
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'
 gem 'httparty'
 # LLM chat for the Discover recommendation assistant
 gem "ruby_llm", "~> 1.15"
