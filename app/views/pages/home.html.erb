@@ -28,9 +28,17 @@
 
       <%= render "posts/new_post_modal" %>
 
-      <div id="activity-feed-posts" class="activity-feed">
+      <div id="activity-feed-posts" class="activity-feed" data-controller="feed-more">
         <% if @feed_posts.any? %>
-          <%= render @feed_posts %>
+          <%= render @feed_posts.first(5) %>
+          <% if @feed_posts.size > 5 %>
+            <div class="d-none" data-feed-more-target="extra">
+              <%= render @feed_posts.drop(5) %>
+            </div>
+            <button class="btn btn-outline-dark w-100" data-action="click->feed-more#show" data-feed-more-target="btn">
+              See <%= @feed_posts.size - 5 %> more posts
+            </button>
+          <% end %>
         <% else %>
           <p class="home-section__subtitle">
             Nothing here yet — follow other gamers to see their posts.

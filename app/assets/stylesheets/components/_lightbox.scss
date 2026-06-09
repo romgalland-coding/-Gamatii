@@ -92,6 +92,19 @@
   white-space: nowrap;
 }
 
+.lightbox__box--photo {
+  aspect-ratio: unset;
+  width: 90vw;
+  max-width: 500px;
+  height: 75vh;
+
+  .lightbox__image {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
 .game-show__thumb--clickable {
   cursor: pointer;
 

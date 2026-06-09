@@ -106,7 +106,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_093321) do
     t.bigint "list_id", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_list_games_on_game_id"
-    t.index ["list_id", "game_id"], name: "index_list_games_on_list_id_and_game_id", unique: true
     t.index ["list_id"], name: "index_list_games_on_list_id"
   end
 

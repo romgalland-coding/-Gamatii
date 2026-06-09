@@ -34,13 +34,7 @@
       </button>
       <%= render "shared/search_modal", list_id: @list.id %>
     </div>
-  <% end %>
 
-  <div id="list-games-section-<%= @list.id %>">
-    <%= render "games_section", list: @list, list_games: @list_games %>
-  </div>
-
-  <% if current_user == @list.user %>
     <div class="list-show__delete-zone" data-controller="confirm-dialog">
       <button class="btn btn-danger w-100 list-show__delete"
               data-action="click->confirm-dialog#open">
@@ -73,6 +67,10 @@
       </dialog>
     </div>
   <% end %>
+
+  <div id="list-games-section-<%= @list.id %>">
+    <%= render "games_section", list: @list, list_games: @list_games %>
+  </div>
 
 </div>
 

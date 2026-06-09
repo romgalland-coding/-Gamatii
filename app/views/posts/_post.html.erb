@@ -1,10 +1,12 @@
 <div id="post-<%= post.id %>" class="post-card" data-controller="toggle">
   <div class="post-card__header">
-    <div class="post-card__avatar"><%= post.user.gamer_tag.first(2).upcase %></div>
-    <div class="post-card__meta">
-      <span class="post-card__name"><%= post.user.gamer_tag %></span>
-      <span class="post-card__time"><%= time_ago_in_words(post.created_at) %> ago</span>
-    </div>
+    <%= link_to user_path(post.user), class: "post-card__user" do %>
+      <div class="post-card__avatar"><%= post.user.gamer_tag.first(2).upcase %></div>
+      <div class="post-card__meta">
+        <span class="post-card__name"><%= post.user.gamer_tag %></span>
+        <span class="post-card__time"><%= time_ago_in_words(post.created_at) %> ago</span>
+      </div>
+    <% end %>
     <% if current_user == post.user %>
       <%= button_to post_path(post), method: :delete,
             form: { data: { turbo_confirm: "Delete this post?" } },
@@ -18,9 +20,21 @@
     <p class="post-card__body"><%= post.body %></p>
   <% end %>
 
-  <% if post.photo.attached? %>
-    <div class="post-card__photo">
-      <%= image_tag post.photo, class: "post-card__img" %>
+  <% if post.photo_url.present? %>
+    <div class="post-card__photo"
+         data-controller="lightbox"
+         data-lightbox-images-value="<%= [post.photo_url].to_json %>">
+      <%= image_tag post.photo_url,
+          class: "post-card__img post-card__img--clickable",
+          data: { action: "click->lightbox#open", lightbox_index_param: 0 } %>
+      <div class="lightbox" data-lightbox-target="overlay" data-action="keydown@window->lightbox#handleKey">
+        <div class="lightbox__backdrop" data-action="click->lightbox#close"></div>
+        <div class="lightbox__box lightbox__box--photo">
+          <button class="lightbox__close" data-action="click->lightbox#close">✕</button>
+          <div class="lightbox__image" data-lightbox-target="image"></div>
+          <div class="lightbox__counter" data-lightbox-target="counter"></div>
+        </div>
+      </div>
     </div>
   <% end %>
 

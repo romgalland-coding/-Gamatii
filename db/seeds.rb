@@ -302,22 +302,6 @@ turbo_nova    = User.find_by!(gamer_tag: "TurboNova")
 end
 puts "  PixelKnight now follows 4 users."
 
-# Grab a few seeded games for photo attachments and list linking
-cover_games = Game.where.not(cover_img: nil).limit(12).to_a
-
-def attach_cover(post, game)
-  return unless game&.cover_img.present?
-
-  data = URI.open(game.cover_img, &:read)
-  post.photo.attach(
-    io: StringIO.new(data),
-    filename: "#{game.title.parameterize}.jpg",
-    content_type: "image/jpeg"
-  )
-rescue StandardError => e
-  puts "  [photo skip] #{e.message}"
-end
-
 # Lists belonging to the followed users (for sharing)
 nb_played   = neon_byte.lists.find_by(list_type: "played")
 vc_wishlist = vortex_caster.lists.find_by(list_type: "wishlist")
@@ -329,70 +313,70 @@ POST_SPECS = [
   {
     author: neon_byte,
     body: "Just finished The Last of Us for the third time. Every single playthrough hits differently. Ellie's arc in Part II is criminally underrated storytelling.",
-    url: nil, list: nil, photo_game: nil
+    url: nil, list: nil, photo_url: nil
   },
-  # 2 — text + URL
+  # 2 — text + URL + list
   {
-    author: vortex_caster,
-    body: "Hot take: Battle Royale is officially dead. This article sums up why the genre peaked in 2019 and hasn't recovered since.",
-    url: "https://www.ign.com/articles/the-rise-and-fall-of-battle-royale",
-    list: nil, photo_game: nil
+    author: shadow_fox,
+    body: "007: First Light — open world Bond game confirmed. IO Interactive might actually pull this off. Already on my wishlist, link has all the details.",
+    url: "https://www.ign.com/articles/007-first-light-everything-we-know",
+    list: vc_wishlist, photo_url: nil
   },
   # 3 — list share only
   {
     author: shadow_fox,
     body: nil, url: nil,
-    list: sf_custom, photo_game: nil
+    list: sf_custom, photo_url: nil
   },
   # 4 — text + list
   {
     author: glitch_wizard,
     body: "Wrapped these up this year. My taste is immaculate, don't @ me.",
     url: nil,
-    list: gw_played, photo_game: nil
+    list: gw_played, photo_url: nil
   },
-  # 5 — photo only
+  # 5 — photo only (The Last of Us)
   {
     author: neon_byte,
     body: nil, url: nil, list: nil,
-    photo_game: cover_games[0]
+    photo_url: "https://images.lanouvellerepublique.fr/image/upload/t_1020w/f_auto/5f05c781990e2d6f048b4578.jpg"
   },
-  # 6 — text + photo
+  # 6 — text + photo (Hollow Knight)
   {
     author: vortex_caster,
-    body: "Late night session going deep on this one 🌙 The art direction is next level.",
+    body: "Hollow Knight: Silksong watch begins again. Replaying the original to cope. No notes, the atmosphere is untouchable.",
     url: nil, list: nil,
-    photo_game: cover_games[2]
+    photo_url: "https://cdn.shopify.com/s/files/1/0570/8280/6468/files/product_silksong_pharloom_champion_poster_EU_designview.png?v=1762467232"
   },
-  # 7 — text + URL + list
+  # 7 — text + URL
   {
-    author: shadow_fox,
-    body: "This indie dev just dropped a free demo — it's genuinely incredible. Added it to my wishlist already.",
-    url: "https://store.steampowered.com",
-    list: vc_wishlist, photo_game: nil
+    author: vortex_caster,
+    body: "Clair Obscur: Expedition 33 is the most interesting JRPG in years. French studio, Belle Époque aesthetic, real-time parry mechanics — it has no right being this good. Review below.",
+    url: "https://static.wikia.nocookie.net/clair-obscur/images/2/2a/COE33_Lorieniso.jpg/revision/latest/thumbnail/width/360/height/450?cb=20250524161002",
+    list: nil, photo_url: nil
   },
-  # 8 — photo + list
+  # 8 — photo + list (Clair Obscur)
   {
     author: glitch_wizard,
-    body: "Screenshot dump from last week. Also sharing my played list for context 👇",
+    body: "Clair Obscur: Expedition 33 visuals are something else. Screenshots don't do it justice — sharing my played list while I wait for a sequel.",
     url: nil,
     list: gw_played,
-    photo_game: cover_games[4]
+    photo_url: "https://image.jeuxvideo.com/medias-md/174136/1741361048-6233-card.jpg"
   },
-  # 9 — text + photo + URL
+  # 9 — text + photo + URL (Clair Obscur OST)
   {
     author: neon_byte,
-    body: "Obsessing over this game's soundtrack. Found the full OST on YouTube — link below. Absolute cinema.",
-    url: "https://www.youtube.com",
+    body: "The Clair Obscur: Expedition 33 OST has been on loop for days. Lorien Testard composed something genuinely special — link below. The combat theme alone is insane.",
+    url: "https://www.youtube.com/watch?v=0TqPMFHqiGo",
     list: nil,
-    photo_game: cover_games[6]
+    photo_url: "https://static.wikia.nocookie.net/clair-obscur/images/2/2a/COE33_Lorieniso.jpg/revision/latest/thumbnail/width/360/height/450?cb=20250524161002"
   },
   # 10 — long text + list
   {
     author: vortex_caster,
     body: "Gaming confession: I have a backlog of 200+ games and I keep buying more. Every sale on Steam I tell myself 'just one more'. My played list is embarrassingly short compared to my wishlist. Anyone else living this nightmare?",
     url: nil,
-    list: nb_played, photo_game: nil
+    list: nb_played, photo_url: nil
   }
 ].freeze
 
@@ -404,13 +388,15 @@ COMMENTS_POOL = [
   "The list is 🔥🔥🔥",
   "Bro same, I have like 300 in my backlog and I keep adding more.",
   "That URL goes hard, thanks for sharing.",
-  "The photo is insane, what game is this?",
+  "The visuals are insane, what game is this?",
   "Your taste is unreal fr.",
   "Adding this to my wishlist right now.",
   "I finished that yesterday actually, what a ride.",
-  "The music in that game is genuinely one of the best OSTs ever.",
+  "Silksong will drop when we least expect it. I believe.",
   "Controversial opinion but I liked Part I more honestly.",
   "Peak gaming moment.",
+  "007: First Light has so much potential, IO Interactive won't miss.",
+  "Expedition 33 OST is genuinely one of the best in years.",
   "How many hours do you have in this? Because same."
 ].freeze
 
@@ -418,24 +404,24 @@ all_commenters = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wiz
 all_likers     = [pixel_knight, neon_byte, vortex_caster, shadow_fox, glitch_wizard, turbo_nova]
 
 POST_SPECS.each_with_index do |spec, i|
-  post = spec[:author].posts.build(body: spec[:body], url: spec[:url], list: spec[:list])
-  attach_cover(post, spec[:photo_game]) if spec[:photo_game]
+  post = spec[:author].posts.build(body: spec[:body], url: spec[:url], list: spec[:list], photo_url: spec[:photo_url])
   post.save!
 
-  # 2–4 comments from random users (not the author)
+  # Spread posts over ~14 days (index 0 = most recent, last index = oldest)
+  post_time = (i * 36 + rng.rand(0..12)).hours.ago
+  post.update_columns(created_at: post_time, updated_at: post_time)
+
+  # 2–4 comments from random users (not the author), each after the post
   commenters = (all_commenters - [spec[:author]]).sample(rng.rand(2..4), random: rng)
   commenters.each do |commenter|
-    post.comments.create!(
-      user: commenter,
-      body: COMMENTS_POOL.sample(random: rng)
-    )
+    comment = post.comments.create!(user: commenter, body: COMMENTS_POOL.sample(random: rng))
+    comment_time = post_time + rng.rand(10..120).minutes
+    comment.update_columns(created_at: comment_time, updated_at: comment_time)
   end
 
   # 1–5 likes from random users (not the author)
   likers = (all_likers - [spec[:author]]).sample(rng.rand(1..5), random: rng)
-  likers.each do |liker|
-    post.likes.find_or_create_by!(user: liker)
-  end
+  likers.each { |liker| post.likes.find_or_create_by!(user: liker) }
 
   puts "  Post #{i + 1}/#{POST_SPECS.size} by #{spec[:author].gamer_tag} — #{post.comments.count} comments, #{post.likes.count} likes"
 end

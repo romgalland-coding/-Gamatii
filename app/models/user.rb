@@ -22,7 +22,8 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :omniauthable, omniauth_providers: [:google_oauth2]
 
   has_one_attached :avatar
 
@@ -45,6 +46,41 @@ class User < ApplicationRecord
 
   validates :gamer_tag, presence: true, uniqueness: true, length: { maximum: 20 }
   validates :bio, length: { maximum: 500 }, allow_blank: true
+
+  # Every new account starts with an empty Played list and Wishlist. Covers
+  # both the Devise sign-up and Google OmniAuth paths (both persist via create).
+  after_create :create_default_lists
+
+  # Finds or creates the user behind a Google OmniAuth response. Matches an
+  # existing record by provider+uid, then by email (so password users can also
+  # sign in with Google), and otherwise creates a new account with a random
+  # password and an auto-generated unique gamer_tag the user can edit later.
+  def self.from_omniauth(auth)
+    user = find_by(provider: auth.provider, uid: auth.uid) ||
+           find_by(email: auth.info.email)
+
+    user ||= new(email: auth.info.email, password: Devise.friendly_token[0, 20],
+                 gamer_tag: generate_unique_gamer_tag(auth.info.name || auth.info.email))
+
+    user.update(provider: auth.provider, uid: auth.uid)
+    user
+  end
+
+  # Builds a gamer_tag (max 20 chars) from a name/email seed and appends a
+  # numeric suffix until it's unique.
+  def self.generate_unique_gamer_tag(seed)
+    base = seed.to_s.split("@").first.gsub(/[^a-zA-Z0-9]/, "")
+    base = "gamer" if base.blank?
+    base = base[0, 16]
+
+    candidate = base
+    suffix = 0
+    while exists?(gamer_tag: candidate)
+      suffix += 1
+      candidate = "#{base[0, 16 - suffix.to_s.length]}#{suffix}"
+    end
+    candidate
+  end
 
   def follow(other_user)
     return if self == other_user
@@ -75,5 +111,12 @@ class User < ApplicationRecord
   # letters of the gamer_tag as a fallback.
   def avatar_glyph
     avatar_emoji.presence || gamer_tag.to_s.first(2).upcase
+  end
+
+  private
+
+  def create_default_lists
+    lists.create!(name: "Played",   list_type: "played")
+    lists.create!(name: "Wishlist", list_type: "wishlist")
   end
 end
