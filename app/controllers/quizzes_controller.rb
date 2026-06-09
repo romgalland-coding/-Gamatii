@@ -1,6 +1,8 @@
 class QuizzesController < ApplicationController
   include QuizScoring
   helper_method :normalize_title
+  skip_before_action :authenticate_user!, only: :daily
+  before_action :require_login_or_redirect, only: :daily
 
   def daily
     # Capture a single timestamp so the quizzes and the countdown all agree on

@@ -24,6 +24,13 @@
   </head>
 
   <body>
+    <% flash.each do |type, message| %>
+      <% css_class = type.to_s == "alert" ? "alert-warning" : "alert-success" %>
+      <div class="alert <%= css_class %> alert-dismissible fade show flash-toast" role="alert">
+        <%= message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
     <%= yield %>
   </body>
 </html>

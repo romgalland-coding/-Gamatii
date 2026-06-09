@@ -1,14 +1,10 @@
 class ListsController < ApplicationController
   before_action :authenticate_user!, only: %i[new create edit update destroy build like]
+  before_action :require_login_or_redirect, only: :index
   before_action :set_list, only: %i[show edit update destroy like]
 
   def index
-    @lists = policy_scope(List)
-    if current_user
-      @lists = current_user.lists.includes(:games, :user).order(created_at: :desc)
-    else
-      @lists = List.includes(:games, :user).order(created_at: :desc)
-    end
+    @lists = current_user.lists.includes(:games, :user).order(created_at: :desc)
   end
 
   def show

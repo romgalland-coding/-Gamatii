@@ -1,5 +1,6 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:home]
+  skip_before_action :authenticate_user!, only: %i[home discover]
+  before_action :require_login_or_redirect, only: :discover
 
   def home
     # NOTE: "popular" is seed-driven for now. Eventually these will rank by
