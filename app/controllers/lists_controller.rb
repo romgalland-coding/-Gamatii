@@ -4,6 +4,7 @@ class ListsController < ApplicationController
   before_action :set_list, only: %i[show edit update destroy like]
 
   def index
+    skip_policy_scope
     @lists = current_user.lists.includes(:games, :user).order(created_at: :desc)
   end
 
