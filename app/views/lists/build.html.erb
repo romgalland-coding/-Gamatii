@@ -18,22 +18,20 @@
 
   <%= turbo_frame_tag "games-grid" do %>
   <% swipe_active = params[:tab] == "swipe" %>
-  <ul class="nav nav-pills mb-3" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' unless swipe_active %>" id="grid-tab"
+  <div class="d-flex justify-content-center mb-3">
+    <div class="view-toggle" role="tablist">
+      <button class="view-toggle__btn <%= 'active' unless swipe_active %>" id="grid-tab"
               data-bs-toggle="tab" data-bs-target="#grid-view"
               type="button" role="tab">
         <i class="fa-solid fa-grip"></i> Grid
       </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if swipe_active %>" id="swipe-tab"
+      <button class="view-toggle__btn <%= 'active' if swipe_active %>" id="swipe-tab"
               data-bs-toggle="tab" data-bs-target="#swipe-view"
               type="button" role="tab">
         <i class="fa-solid fa-hand-pointer"></i> Swipe
       </button>
-    </li>
-  </ul>
+    </div>
+  </div>
   <div class="tab-content">
     <div class="tab-pane fade <%= 'show active' unless swipe_active %>" id="grid-view" role="tabpanel">
       <div class="row row-cols-2 g-3" id="games-grid-cards">
