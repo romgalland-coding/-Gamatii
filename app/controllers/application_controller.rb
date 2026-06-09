@@ -20,6 +20,12 @@ class ApplicationController < ActionController::Base
     redirect_back fallback_location: root_path
   end
 
+  def require_login_or_redirect
+    return if current_user
+    flash[:alert] = "You need to create an account to access this page."
+    redirect_to root_path
+  end
+
   # Always send users to the homepage after login, ignoring Devise's stored
   # location (friendly forwarding). Without this, hitting an auth-protected page
   # while logged out — e.g. the quiz — would bounce there after sign-in.
