@@ -45,11 +45,14 @@
     </div>
   </div>
 
-  <div class="game-show__tags">
-    <% @game.platforms.each do |platform| %>
-      <span class="game-show__platform-tag"><%= platform %></span>
-    <% end %>
-  </div>
+  <% if @game.platforms.present? %>
+    <h2 class="game-show__section-title">Platforms</h2>
+    <div class="game-show__tags">
+      <% @game.platforms.each do |platform| %>
+        <span class="game-show__platform-tag"><%= platform %></span>
+      <% end %>
+    </div>
+  <% end %>
 
   <h2 class="game-show__section-title">Description</h2>
   <% desc = @game.description.to_s %>
@@ -80,6 +83,24 @@
       <%= @game.rating || "N/A" %>
     </div>
   </div>
+
+  <% if @game.store_links.present? %>
+    <h2 class="game-show__section-title">Buy</h2>
+    <% store_rows = @game.store_links.size > 6 ? @game.store_links.each_slice((@game.store_links.size / 2.0).ceil).to_a : [@game.store_links] %>
+    <div class="game-show__stores-wrap">
+      <% store_rows.each do |row| %>
+        <div class="game-show__stores">
+          <% row.each do |store| %>
+            <%= link_to store["url"], target: "_blank", rel: "noopener noreferrer",
+                class: "game-show__store-btn" do %>
+              <i class="<%= store_icon(store["slug"]) %>"></i>
+              <%= store["name"] %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 
   <% if current_user %>
     <%= link_to "+ Add to a list", "#",

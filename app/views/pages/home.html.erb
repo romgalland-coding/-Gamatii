@@ -26,7 +26,14 @@
       </header>
       <p class="home-section__subtitle">Posts from people you follow.</p>
 
-      <%= render "posts/new_post_modal" %>
+      <div class="feed-actions">
+        <%= link_to "#", class: "btn btn-outline-dark feed-actions__find" do %>
+          <i class="fa-solid fa-magnifying-glass"></i> Find friends
+        <% end %>
+        <div class="feed-actions__create">
+          <%= render "posts/new_post_modal" %>
+        </div>
+      </div>
 
       <div id="activity-feed-posts" class="activity-feed" data-controller="feed-more">
         <% if @feed_posts.any? %>

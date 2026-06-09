@@ -1,3 +1,25 @@
+// ---------- Feed action bar (Find friends + Create a post) ----------
+
+.feed-actions {
+  display: flex;
+  gap: 0.5rem;
+
+  &__find {
+    flex: 0 0 calc(33.333% - 0.25rem);
+    white-space: nowrap;
+    background-color: #9EF8A9;
+    border-color: #000;
+    &:hover { background-color: darken(#9EF8A9, 8%); border-color: #000; color: #000; }
+  }
+
+  &__create {
+    flex: 1;
+
+    // Make the modal trigger button fill its container
+    > div, button, a { width: 100%; }
+  }
+}
+
 // ---------- Activity Feed ----------
 
 .activity-feed {
