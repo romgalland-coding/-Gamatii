@@ -38,19 +38,12 @@ module GamesHelper
     match ? match.last : name
   end
 
-  STORE_ICONS = {
-    "steam"             => "fa-brands fa-steam",
-    "playstation-store" => "fa-brands fa-playstation",
-    "xbox-store"        => "fa-brands fa-xbox",
-    "apple-appstore"    => "fa-brands fa-apple",
-    "google-play"       => "fa-brands fa-google-play",
-    "gog"               => "fa-solid fa-dragon",
-    "nintendo"          => "fa-solid fa-gamepad",
-    "epic-games"        => "fa-solid fa-bolt",
-    "itch"              => "fa-solid fa-heart",
-  }.freeze
-
-  def store_icon(slug)
-    STORE_ICONS[slug.to_s] || "fa-solid fa-store"
+  # "Genre · 2014 · Switch / Wii U" line for a RAWG search-result hash, mirroring
+  # the meta shown on list cards. Each part is dropped when absent.
+  def rawg_card_meta(game)
+    genre     = game.dig("genres", 0, "name")
+    year      = game["released"].to_s[0, 4].presence
+    platforms = Array(game["platforms"]).map { |p| p.dig("platform", "name") }.compact
+    [genre, year, short_platforms(platforms).presence].select(&:present?).join(" · ")
   end
 end

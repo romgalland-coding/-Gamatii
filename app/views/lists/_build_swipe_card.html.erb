@@ -9,15 +9,22 @@
   <div class="swipe-card__overlay swipe-card__overlay--add">ADD</div>
   <div class="swipe-card__overlay swipe-card__overlay--skip">SKIP</div>
 
-  <% if game["background_image"] %>
-    <%= image_tag rawg_thumb(game["background_image"], 600), class: "swipe-card__img" %>
-  <% else %>
-    <div class="swipe-card__img swipe-card__img--placeholder"></div>
-  <% end %>
+  <div class="swipe-card__cover">
+    <% if game["background_image"] %>
+      <%= image_tag rawg_thumb(game["background_image"], 600), class: "swipe-card__img" %>
+    <% else %>
+      <div class="swipe-card__img swipe-card__img--placeholder"></div>
+    <% end %>
+    <% if (rating = display_rating(game["metacritic"])) %>
+      <span class="build-card__rating swipe-card__rating"><i class="fa-solid fa-star"></i> <%= rating %></span>
+    <% end %>
+  </div>
 
   <div class="swipe-card__body">
     <h5 class="swipe-card__title"><%= game["name"] %></h5>
-    <p class="swipe-card__meta">⭐ <%= game["metacritic"] || "N/A" %></p>
+    <% if (meta = rawg_card_meta(game)).present? %>
+      <p class="swipe-card__meta"><%= meta %></p>
+    <% end %>
     <% if added %>
       <span class="badge bg-secondary">Already in list</span>
     <% end %>
