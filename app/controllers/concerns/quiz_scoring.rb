@@ -22,16 +22,33 @@ module QuizScoring
     answers.count { |g| guessed_titles.include?(normalize_title(g.title)) }
   end
 
-  # Ranks everyone who guessed on `quiz` by score (found-count as tiebreaker).
-  # `current_user` is always included so they see their own rank. Returns the
-  # ranked rows plus the current user's rank and the total player count.
+  # Builds the leaderboard in two views the UI toggles between:
+  #   :global  — everyone who guessed on `quiz` (plus current_user).
+  #   :follows — current_user and only the people they follow.
+  # Each view is independently ranked (score desc, found-count tiebreaker) so a
+  # user's rank reflects the pool they're being compared against. Returns a hash
+  # keyed by view, each carrying the windowed rows, the user's rank, and the
+  # total player count for that pool.
   def leaderboard_for(quiz, answers)
-    rows = QuizGame.guesses.where(quiz: quiz).includes(:game, :user)
-                   .group_by(&:user)
-                   .map { |user, qgs| leaderboard_row(user, qgs, answers) }
+    scored = QuizGame.guesses.where(quiz: quiz).includes(:game, :user)
+                     .group_by(&:user)
+                     .map { |user, qgs| leaderboard_row(user, qgs, answers) }
 
-    rows << leaderboard_row(current_user, [], answers) if rows.none? { |r| r[:user] == current_user }
+    # current_user always appears in both views even before they've guessed.
+    scored << leaderboard_row(current_user, [], answers) if scored.none? { |r| r[:user] == current_user }
 
+    followed_ids = current_user.following.ids.to_set
+    follows_rows = scored.select { |r| r[:user] == current_user || followed_ids.include?(r[:user].id) }
+
+    {
+      global: rank_and_window(scored),
+      follows: rank_and_window(follows_rows)
+    }
+  end
+
+  # Ranks rows, finds current_user's row, and returns the windowed slice plus
+  # rank + total. `rows` always includes current_user (callers guarantee it).
+  def rank_and_window(rows)
     ranked = rows.sort_by { |r| [-r[:score], -r[:found]] }
                  .each_with_index.map { |r, i| r.merge(rank: i + 1) }
     me = ranked.find { |r| r[:user] == current_user }

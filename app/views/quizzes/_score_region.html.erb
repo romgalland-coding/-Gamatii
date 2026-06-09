@@ -8,9 +8,12 @@
   avatars = { "PixelKnight" => "🦊", "NeonByte" => "🌿", "VortexCaster" => "📖" }
   auto = local_assigns.fetch(:auto_open, guesses_remaining <= 0)
   round_ended = local_assigns.fetch(:round_ended, false)
+  global  = leaderboard[:global]
+  follows = leaderboard[:follows]
+  follows_anyone = current_user.following.exists?
 %>
 <div id="quiz_score_region">
-  <div data-controller="quiz-score"
+  <div data-controller="quiz-score leaderboard-toggle"
        data-quiz-score-auto-value="<%= auto %>"
        data-quiz-score-share-text-value="<%= share_text %>">
 
@@ -25,7 +28,10 @@
           <p class="quiz-score-card__label">YOUR SCORE</p>
           <h2 class="quiz-score-card__value"><%= score %></h2>
           <p class="quiz-score-card__meta">
-            <%= found %>/5 found · ranked #<%= my_rank %> of <%= total_players %>
+            <%= found %>/5 found ·
+            <%# Rank depends on the active view, so render both and toggle them. %>
+            <span data-leaderboard-toggle-target="meta" data-view="global">ranked #<%= global[:my_rank] %> of <%= global[:total_players] %></span>
+            <span data-leaderboard-toggle-target="meta" data-view="follows" hidden>ranked #<%= follows[:my_rank] %> of <%= follows[:total_players] %></span>
           </p>
           <button type="button" class="quiz-score-card__close"
                   data-action="quiz-score#close" aria-label="Close">
@@ -34,23 +40,30 @@
         </div>
 
         <div class="quiz-score-card__body">
-          <p class="quiz-score-card__friends">FRIENDS</p>
-          <ul class="quiz-leaderboard">
-            <% leaderboard.each do |row| %>
-              <% me = row[:user] == current_user %>
-              <li class="quiz-leaderboard__row <%= 'quiz-leaderboard__row--me' if me %>">
-                <span class="quiz-leaderboard__rank"><%= row[:rank] %></span>
-                <span class="quiz-leaderboard__avatar">
-                  <%= me ? "🎮" : avatars.fetch(row[:user].gamer_tag, "🎮") %>
-                </span>
-                <span class="quiz-leaderboard__name">
-                  @<%= row[:user].gamer_tag %><% if me %><small>(you)</small><% end %>
-                </span>
-                <span class="quiz-leaderboard__found"><%= row[:found] %>/5</span>
-                <span class="quiz-leaderboard__pts"><%= row[:score] %></span>
-              </li>
-            <% end %>
+          <div class="quiz-leaderboard-toggle" role="tablist">
+            <button type="button" class="quiz-leaderboard-toggle__btn quiz-leaderboard-toggle__btn--active"
+                    data-leaderboard-toggle-target="tab" data-view="global"
+                    data-action="leaderboard-toggle#switch">Global</button>
+            <button type="button" class="quiz-leaderboard-toggle__btn"
+                    data-leaderboard-toggle-target="tab" data-view="follows"
+                    data-action="leaderboard-toggle#switch">Follows</button>
+          </div>
+
+          <%# Global view %>
+          <ul class="quiz-leaderboard" data-leaderboard-toggle-target="view" data-view="global">
+            <%= render partial: "quizzes/leaderboard_row", collection: global[:rows], as: :row, locals: { avatars: avatars } %>
           </ul>
+
+          <%# Follows view — empty state when the user follows no one. %>
+          <div data-leaderboard-toggle-target="view" data-view="follows" hidden>
+            <% if follows_anyone %>
+              <ul class="quiz-leaderboard">
+                <%= render partial: "quizzes/leaderboard_row", collection: follows[:rows], as: :row, locals: { avatars: avatars } %>
+              </ul>
+            <% else %>
+              <p class="quiz-leaderboard__empty">Follow other people and compare your score with them!</p>
+            <% end %>
+          </div>
 
           <button type="button" class="quiz-score-share"
                   data-action="quiz-score#share">

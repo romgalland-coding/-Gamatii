@@ -61,9 +61,6 @@ class QuizzesController < ApplicationController
     @score = score_for(@yesterday_answers, @guessed_titles)
     @found = found_count(@yesterday_answers, @guessed_titles)
 
-    board = leaderboard_for(@yesterday_quiz, @yesterday_answers)
-    @leaderboard   = board[:rows]
-    @my_rank       = board[:my_rank]
-    @total_players = board[:total_players]
+    @leaderboard = leaderboard_for(@yesterday_quiz, @yesterday_answers)
   end
 end

@@ -86,10 +86,7 @@ class QuizGamesController < ApplicationController
     @found             = found_count(@yesterday_answers, @guessed_titles)
     @previous_score    = previous_score || @score
 
-    board = leaderboard_for(@quiz, @yesterday_answers)
-    @leaderboard   = board[:rows]
-    @my_rank       = board[:my_rank]
-    @total_players = board[:total_players]
+    @leaderboard = leaderboard_for(@quiz, @yesterday_answers)
   end
 
   # The score the user had BEFORE the just-created guess, so the count-up starts
