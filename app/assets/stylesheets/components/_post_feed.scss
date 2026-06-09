@@ -24,6 +24,29 @@
     gap: 0.6rem;
   }
 
+  // Clickable author (avatar + name/time) → user profile.
+  &__user {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 0.6rem;
+    padding: 0.15rem;
+    margin: -0.15rem;
+    transition: background-color 0.1s ease;
+
+    &:hover {
+      color: inherit;
+      background-color: rgba(0, 0, 0, 0.05);
+
+      .post-card__avatar { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 0 #000; }
+      .post-card__name { text-decoration: underline; }
+    }
+  }
+
   &__avatar {
     flex-shrink: 0;
     width: 2rem;
@@ -36,6 +59,7 @@
     justify-content: center;
     font-size: 0.7rem;
     font-weight: 800;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
   }
 
   &__meta {
@@ -191,6 +215,22 @@
     gap: 0.45rem;
   }
 
+  // Clickable comment author (avatar + name) → user profile.
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+      color: inherit;
+
+      .post-comment__avatar { transform: translate(-1px, -1px); box-shadow: 1.5px 1.5px 0 0 #000; }
+      .post-comment__name { text-decoration: underline; }
+    }
+  }
+
   &__avatar {
     width: 1.5rem;
     height: 1.5rem;
@@ -203,6 +243,7 @@
     font-size: 0.6rem;
     font-weight: 800;
     flex-shrink: 0;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
   }
 
   &__name { font-weight: 700; font-size: 0.82rem; }

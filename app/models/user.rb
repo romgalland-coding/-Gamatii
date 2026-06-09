@@ -47,6 +47,10 @@ class User < ApplicationRecord
   validates :gamer_tag, presence: true, uniqueness: true, length: { maximum: 20 }
   validates :bio, length: { maximum: 500 }, allow_blank: true
 
+  # Every new account starts with an empty Played list and Wishlist. Covers
+  # both the Devise sign-up and Google OmniAuth paths (both persist via create).
+  after_create :create_default_lists
+
   # Finds or creates the user behind a Google OmniAuth response. Matches an
   # existing record by provider+uid, then by email (so password users can also
   # sign in with Google), and otherwise creates a new account with a random
@@ -107,5 +111,12 @@ class User < ApplicationRecord
   # letters of the gamer_tag as a fallback.
   def avatar_glyph
     avatar_emoji.presence || gamer_tag.to_s.first(2).upcase
+  end
+
+  private
+
+  def create_default_lists
+    lists.create!(name: "Played",   list_type: "played")
+    lists.create!(name: "Wishlist", list_type: "wishlist")
   end
 end
