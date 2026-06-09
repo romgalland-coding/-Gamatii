@@ -16,7 +16,7 @@
         <%= link_to list_path(list), class: "card card-clickable list-card" do %>
           <div class="list-card__covers">
             <% list.games.first(4).each do |game| %>
-              <div class="list-card__cover" style="background-image: url('<%= game.cover_img %>')"></div>
+              <div class="list-card__cover" <%= lazy_bg(rawg_thumb(game.cover_img)) %>></div>
             <% end %>
             <% (4 - list.games.size).clamp(0, 4).times do %>
               <div class="list-card__cover list-card__cover--empty"></div>

@@ -59,7 +59,7 @@
         <div class="confirm-dialog__box">
           <% cover = @list_games.first&.game&.cover_img %>
           <% if cover.present? %>
-            <div class="confirm-dialog__cover" style="background-image: url('<%= cover %>')"></div>
+            <div class="confirm-dialog__cover" <%= lazy_bg(rawg_thumb(cover)) %>></div>
           <% else %>
             <div class="confirm-dialog__cover confirm-dialog__cover--placeholder"></div>
           <% end %>

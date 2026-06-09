@@ -19,7 +19,7 @@
   <p class="game-show__genre"><%= @game.genre %></p>
   <h1 class="game-show__title"><%= @game.title %></h1>
 
-  <div class="game-show__cover" style="background-image: url('<%= @game.cover_img %>'); background-size: cover; background-position: center;"></div>
+  <div class="game-show__cover" <%= lazy_bg(@game.cover_img) %>></div>
 
   <% shots = @game.screenshots.presence || [@game.in_game_img].compact %>
   <div class="game-show__thumbnails"
@@ -27,7 +27,7 @@
        data-lightbox-images-value="<%= shots.to_json %>">
     <% shots.each_with_index do |url, i| %>
       <div class="game-show__thumb game-show__thumb--clickable"
-           style="background-image: url('<%= url %>'); background-size: cover; background-position: center;"
+           <%= lazy_bg(rawg_thumb(url)) %>
            data-action="click->lightbox#open"
            data-lightbox-index-param="<%= i %>"></div>
     <% end %>

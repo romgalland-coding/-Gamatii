@@ -1,7 +1,7 @@
 <%# Emoji-on-colored-tile avatar. Pass `size:` ("lg" for profile header, default for rows). %>
 <% size ||= nil %>
 <% if user.avatar.attached? %>
-  <%= image_tag user.avatar, class: "user-avatar user-avatar--#{size || 'sm'}", alt: user.gamer_tag %>
+  <%= image_tag user.avatar, class: "user-avatar user-avatar--#{size || 'sm'}", alt: user.gamer_tag, loading: "lazy" %>
 <% else %>
   <div class="user-avatar user-avatar--<%= size || 'sm' %>" style="background-color: <%= user.avatar_background %>">
     <%= user.avatar_glyph %>

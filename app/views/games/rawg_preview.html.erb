@@ -1,6 +1,6 @@
 <%= turbo_frame_tag "game_preview_#{@rawg_id}" do %>
   <% if @game["background_image"].present? %>
-    <div class="game-show__cover mb-3" style="background-image: url('<%= @game["background_image"] %>')"></div>
+    <div class="game-show__cover mb-3" <%= lazy_bg(rawg_thumb(@game["background_image"], 600)) %>></div>
   <% end %>
 
   <p class="game-show__genre"><%= @game["genres"]&.map { |g| g["name"] }&.join(", ") %></p>

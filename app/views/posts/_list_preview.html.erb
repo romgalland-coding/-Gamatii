@@ -14,8 +14,7 @@
     <div class="post-list-preview__games">
       <% list.games.first(5).each do |game| %>
         <%= link_to game_path(game), class: "post-list-preview__game" do %>
-          <div class="post-list-preview__cover"
-               style="background-image: url('<%= game.cover_img %>')"></div>
+          <div class="post-list-preview__cover" <%= lazy_bg(rawg_thumb(game.cover_img)) %>></div>
           <span class="post-list-preview__game-title"><%= game.title %></span>
           <i class="fa-solid fa-chevron-right post-list-preview__arrow"></i>
         <% end %>

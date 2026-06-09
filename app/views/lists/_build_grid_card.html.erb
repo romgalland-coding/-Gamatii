@@ -2,7 +2,7 @@
   <div class="card h-100">
     <div role="button" data-bs-toggle="modal" data-bs-target="#gameModal<%= game["id"] %>">
       <% if game["background_image"] %>
-        <%= image_tag game["background_image"], class: "card-img-top", style: "height: 150px; object-fit: cover;" %>
+        <%= image_tag rawg_thumb(game["background_image"]), class: "card-img-top", loading: "lazy", style: "height: 150px; object-fit: cover;" %>
       <% end %>
       <div class="card-body">
         <h6 class="card-title"><%= game["name"] %></h6>
