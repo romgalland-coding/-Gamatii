@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_09_093321) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_09_131741) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_093321) do
     t.integer "rawg_id"
     t.date "release_date"
     t.string "screenshots", default: [], array: true
+    t.jsonb "store_links", default: []
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["rawg_id"], name: "index_games_on_rawg_id", unique: true
@@ -96,7 +97,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_093321) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
-    t.index ["user_id", "likeable_type", "likeable_id"], name: "index_likes_on_user_id_and_likeable_type_and_likeable_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
@@ -116,7 +116,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_093321) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["list_id"], name: "index_list_likes_on_list_id"
-    t.index ["user_id", "list_id"], name: "index_list_likes_on_user_id_and_list_id", unique: true
     t.index ["user_id"], name: "index_list_likes_on_user_id"
   end
 

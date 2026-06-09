@@ -83,6 +83,31 @@ class RawgService
     response.parsed_response
   end
 
+  STORE_CATALOG = {
+    1  => { name: "Steam",             slug: "steam" },
+    2  => { name: "Xbox Store",        slug: "xbox-store" },
+    3  => { name: "PlayStation Store", slug: "playstation-store" },
+    4  => { name: "App Store",         slug: "apple-appstore" },
+    5  => { name: "GOG",               slug: "gog" },
+    6  => { name: "Nintendo Store",    slug: "nintendo" },
+    7  => { name: "Xbox 360 Store",    slug: "xbox-store" },
+    8  => { name: "Google Play",       slug: "google-play" },
+    9  => { name: "itch.io",           slug: "itch" },
+    11 => { name: "Epic Games",        slug: "epic-games" },
+  }.freeze
+
+  def stores(rawg_id)
+    response = HTTParty.get("#{BASE_URL}/games/#{rawg_id}/stores", query: { key: @api_key })
+    (response["results"] || []).filter_map do |entry|
+      url = entry["url"].presence
+      meta = STORE_CATALOG[entry["store_id"]]
+      next unless url && meta
+      { "name" => meta[:name], "slug" => meta[:slug], "url" => url }
+    end
+  rescue StandardError
+    []
+  end
+
   # The four "filter option" lists below are effectively static (RAWG's catalog
   # of genres/platforms/publishers/tags rarely changes), so we cache them for a
   # day to keep them out of the request path. See ApplicationController#load_rawg_filter_options.

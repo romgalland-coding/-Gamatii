@@ -3,6 +3,12 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     authorize @game
+
+    if @game.rawg_id.present? && @game.store_links.nil?
+      links = RawgService.new.stores(@game.rawg_id)
+      @game.update_columns(store_links: links)
+    end
+
     return unless current_user
 
     @user_lists = current_user.lists.joins(:list_games).where(list_games: { game_id: @game.id })
