@@ -1,0 +1,29 @@
+<%# One multi-select dropdown row for the build filter panel.
+    Locals: label, placeholder, name (e.g. "genres[]"), options ([{id:, name:}]),
+    selected (array of id strings already chosen). %>
+<% selected_names = options.select { |o| selected.include?(o[:id].to_s) }.map { |o| o[:name] } %>
+<div class="filter-row">
+  <span class="filter-row__label"><%= label %></span>
+  <div class="filter-dropdown">
+    <button class="filter-dropdown__trigger" type="button"
+            data-placeholder="<%= placeholder %>"
+            data-action="click->build-filter#toggleDropdown">
+      <span class="filter-dropdown__label">
+        <%= selected_names.any? ? selected_names.join(", ") : placeholder %>
+      </span>
+      <i class="fa-solid fa-chevron-down filter-dropdown__arrow"></i>
+    </button>
+    <div class="filter-dropdown__menu">
+      <% options.each do |opt| %>
+        <label class="filter-dropdown__option">
+          <input type="checkbox" class="filter-checkbox"
+                 name="<%= name %>" value="<%= opt[:id] %>"
+                 data-display-label="<%= opt[:name] %>"
+                 data-action="change->build-filter#updateDropdownLabel"
+                 <%= "checked" if selected.include?(opt[:id].to_s) %>>
+          <span><%= opt[:name] %></span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+</div>

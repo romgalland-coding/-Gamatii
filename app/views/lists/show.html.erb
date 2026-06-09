@@ -27,6 +27,11 @@
   </div>
 
   <% if current_user == @list.user %>
+    <%# Primary add path: browse & bulk-add via the grid/swipe discovery view. %>
+    <%= link_to build_list_path(@list), class: "list-show__discover-btn" do %>
+      <i class="fa-solid fa-compass"></i> Discover games
+    <% end %>
+
     <div class="list-show__cta">
       <button class="list-show__edit-btn"
               data-action="click->list-edit#toggle">
