@@ -1,0 +1,14 @@
+<%# One leaderboard row. Locals: row (a {user:, rank:, found:, score:} hash),
+    avatars (gamer_tag → emoji map). %>
+<% me = row[:user] == current_user %>
+<li class="quiz-leaderboard__row <%= 'quiz-leaderboard__row--me' if me %>">
+  <span class="quiz-leaderboard__rank"><%= row[:rank] %></span>
+  <span class="quiz-leaderboard__avatar">
+    <%= me ? "🎮" : avatars.fetch(row[:user].gamer_tag, "🎮") %>
+  </span>
+  <span class="quiz-leaderboard__name">
+    @<%= row[:user].gamer_tag %><% if me %><small>(you)</small><% end %>
+  </span>
+  <span class="quiz-leaderboard__found"><%= row[:found] %>/5</span>
+  <span class="quiz-leaderboard__pts"><%= row[:score] %></span>
+</li>

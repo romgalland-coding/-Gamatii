@@ -100,6 +100,9 @@ User.where(email: curated_emails).or(User.where("email LIKE ?", "%@seed.gamatii"
   u.lists.destroy_all
   u.destroy
 end
+# Chat messages reference recommended games via game_id (optional); nullify them
+# so the catalogue can be wiped without tripping the messages→games foreign key.
+Message.update_all(game_id: nil)
 Game.destroy_all
 
 # ── Fetch games for each of the 14 quiz themes ────────────────────────────────
@@ -210,7 +213,12 @@ created_users = ALL_USERS.map do |data|
   )
 
   LIST_SPECS.each do |ldata|
-    list = user.lists.create!(name: ldata[:name], list_type: ldata[:list_type])
+    # New users already get empty "Played" and "Wishlist" lists from the
+    # User after_create callback, so reuse those by name and only create the
+    # rest (e.g. "Favorites") fresh — then fill each with sample games.
+    list = user.lists.find_or_create_by!(name: ldata[:name]) do |l|
+      l.list_type = ldata[:list_type]
+    end
     sample = games.sample(ldata[:count], random: rng)
     sample.each { |game| list.list_games.create!(game: game) }
     puts "  #{user.gamer_tag} › #{list.name} (#{ldata[:list_type]}): #{sample.size} games"

@@ -522,17 +522,20 @@
 
 .quiz-score-overlay {
   display: none;
-  // Absolute (not fixed) so it spans the .quiz-page column and centers on the
-  // quiz content rather than the whole viewport (which is offset by the nav).
-  position: absolute;
+  // Fixed to the viewport so the card is always centered no matter how tall the
+  // page content is. (Was absolute to .quiz-page, which pinned the card to the
+  // top of a tall page and overlapped the controls on short desktop screens.)
+  position: fixed;
   inset: 0;
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.45);
   padding: 1.25rem;
+  // Center vertically, but scroll when the card is taller than the viewport.
+  overflow-y: auto;
 
   &.is-open {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
   }
 }
@@ -540,7 +543,9 @@
 .quiz-score-card {
   width: 100%;
   max-width: 420px;
-  margin-top: 2rem;
+  // Vertical margin keeps breathing room top/bottom when the card scrolls on
+  // short screens; `auto` recentres it within the flex container otherwise.
+  margin: auto;
   border: 2.5px solid #000;
   border-radius: 1.25rem;
   box-shadow: 5px 5px 0 0 #000;
@@ -597,12 +602,34 @@
     padding: 1.25rem;
   }
 
-  &__friends {
-    font-size: 0.75rem;
+}
+
+// Global / Follows switch above the leaderboard.
+.quiz-leaderboard-toggle {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  margin-bottom: 0.85rem;
+  background-color: $mat-bg;
+  border: 2.5px solid #000;
+  border-radius: 0.85rem;
+
+  &__btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.6rem;
+    background: none;
     font-weight: 700;
-    letter-spacing: 0.07em;
-    opacity: 0.5;
-    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+
+    &--active {
+      background-color: #fff;
+      border: 2px solid #000;
+      color: #000;
+    }
   }
 }
 
@@ -660,6 +687,14 @@
   &__pts {
     font-weight: 800;
     flex-shrink: 0;
+  }
+
+  &__empty {
+    text-align: center;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.55);
+    padding: 2rem 1rem;
+    margin: 0 0 1rem;
   }
 }
 
@@ -753,5 +788,11 @@
 
   .quiz-title {
     font-size: 2.25rem;
+  }
+
+  // Clear the 240px side rail so the fixed overlay centers over the content
+  // area rather than starting under the nav.
+  .quiz-score-overlay {
+    left: 240px;
   }
 }
