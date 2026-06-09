@@ -2,7 +2,13 @@
   <ol class="list-game-grid">
     <% list_games.each_with_index do |lg, index| %>
       <% game = lg.game %>
-      <li class="list-game-card card card-clickable">
+      <li class="list-game-card card card-clickable"
+          data-list-filter-target="card"
+          data-platforms="<%= game.platforms.to_json %>"
+          data-genre="<%= game.genre %>"
+          data-studio="<%= game.developer %>"
+          data-rating="<%= game.rating.to_i %>"
+          data-year="<%= game.release_date&.year %>">
         <%= link_to game_path(game), class: "list-game-card__link" do %>
           <div class="list-game-card__cover" style="background-image: url('<%= game.cover_img %>')">
             <span class="list-game-card__rank">#<%= index + 1 %></span>
@@ -32,4 +38,13 @@
       </li>
     <% end %>
   </ol>
+  <div class="list-games-empty" data-list-filter-target="emptyState">
+    <i class="fa-solid fa-filter-circle-xmark list-games-empty__icon"></i>
+    <p class="list-games-empty__text">No games match your filters.</p>
+    <button class="list-games-empty__reset"
+            data-action="click->list-filter#reset"
+            type="button">
+      Clear filters
+    </button>
+  </div>
 <% end %>

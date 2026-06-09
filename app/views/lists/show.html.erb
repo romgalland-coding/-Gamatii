@@ -1,4 +1,4 @@
-<div class="list-show-page" data-controller="list-edit">
+<div class="list-show-page" data-controller="list-edit list-filter">
 
   <div class="list-show__topbar">
     <%= link_to "‹ Lists", lists_path, class: "list-show__back" %>
@@ -33,7 +33,19 @@
         <i class="fa-solid fa-pen"></i> Edit
       </button>
       <%= render "shared/search_modal", list_id: @list.id %>
+      <% if @list_games.any? %>
+        <button class="list-show__filter-btn"
+                data-action="click->list-filter#toggle"
+                data-list-filter-target="toggleBtn">
+          <i class="fa-solid fa-sliders"></i> Filter
+          <span class="list-show__filter-count" data-list-filter-target="count"></span>
+        </button>
+      <% end %>
     </div>
+
+    <% if @list_games.any? %>
+      <%= render "lists/filter_panel", list_games: @list_games %>
+    <% end %>
 
     <div class="list-show__delete-zone" data-controller="confirm-dialog">
       <button class="btn btn-danger w-100 list-show__delete"
