@@ -16,26 +16,24 @@
     </div>
   </header>
 
-  <ul class="nav nav-pills mb-3" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="grid-tab"
+  <%= turbo_frame_tag "games-grid" do %>
+  <% swipe_active = params[:tab] == "swipe" %>
+  <div class="d-flex justify-content-center mb-3">
+    <div class="view-toggle" role="tablist">
+      <button class="view-toggle__btn <%= 'active' unless swipe_active %>" id="grid-tab"
               data-bs-toggle="tab" data-bs-target="#grid-view"
               type="button" role="tab">
         <i class="fa-solid fa-grip"></i> Grid
       </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="swipe-tab"
+      <button class="view-toggle__btn <%= 'active' if swipe_active %>" id="swipe-tab"
               data-bs-toggle="tab" data-bs-target="#swipe-view"
               type="button" role="tab">
         <i class="fa-solid fa-hand-pointer"></i> Swipe
       </button>
-    </li>
-  </ul>
-
-  <%= turbo_frame_tag "games-grid" do %>
+    </div>
+  </div>
   <div class="tab-content">
-    <div class="tab-pane fade show active" id="grid-view" role="tabpanel">
+    <div class="tab-pane fade <%= 'show active' unless swipe_active %>" id="grid-view" role="tabpanel">
       <div class="row row-cols-2 g-3" id="games-grid-cards">
         <% @games.each do |game| %>
           <% added = @games_in_list.include?(game["id"]) %>
@@ -58,7 +56,9 @@
       <div class="text-center mt-3">
         <%= link_to "See more",
               build_list_path(@list,
-                limit:      (params[:limit].presence || 20).to_i + 20,
+                page:       (params[:limit].presence || 20).to_i / 20 + 1,
+                limit:      params[:limit],
+                tab:        "swipe",
                 genres:     params[:genres],
                 platforms:  params[:platforms],
                 publishers: params[:publishers],
@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <div class="tab-pane fade" id="swipe-view" role="tabpanel">
+    <div class="tab-pane fade <%= 'show active' if swipe_active %>" id="swipe-view" role="tabpanel">
       <div class="swipe-stack" data-controller="swipe">
 
         <div class="swipe-stack__empty" data-swipe-target="empty" id="swipe-empty-state" style="display:none;">
@@ -80,6 +80,7 @@
                 build_list_path(@list,
                   page:       (params[:limit].presence || 20).to_i / 20 + 1,
                   limit:      params[:limit],
+                  tab:        "swipe",
                   genres:     params[:genres],
                   platforms:  params[:platforms],
                   publishers: params[:publishers],
