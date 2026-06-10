@@ -14,7 +14,7 @@
   <header class="d-flex justify-content-between align-items-start">
     <div>
       <h1 class="lists-title"><%= @list.name %></h1>
-      <p class="lists-subtitle">
+      <p class="lists-subtitle" id="build-games-count-<%= @list.id %>">
         <%= pluralize(@games_in_list.size, "game") %> in this list · browse to add more
       </p>
     </div>
@@ -31,18 +31,18 @@
   <%= render "lists/build_filter_panel" %>
 
   <%= turbo_frame_tag "games-grid" do %>
-  <% swipe_active = params[:tab] == "swipe" %>
+  <% swipe_active = params[:tab] != "grid" %>
   <div class="d-flex justify-content-center mb-3">
     <div class="view-toggle" role="tablist">
-      <button class="view-toggle__btn <%= 'active' unless swipe_active %>" id="grid-tab"
-              data-bs-toggle="tab" data-bs-target="#grid-view"
-              type="button" role="tab">
-        <i class="fa-solid fa-grip"></i> Grid
-      </button>
       <button class="view-toggle__btn <%= 'active' if swipe_active %>" id="swipe-tab"
               data-bs-toggle="tab" data-bs-target="#swipe-view"
               type="button" role="tab">
         <i class="fa-solid fa-hand-pointer"></i> Swipe
+      </button>
+      <button class="view-toggle__btn <%= 'active' unless swipe_active %>" id="grid-tab"
+              data-bs-toggle="tab" data-bs-target="#grid-view"
+              type="button" role="tab">
+        <i class="fa-solid fa-grip"></i> Grid
       </button>
     </div>
   </div>
@@ -53,6 +53,7 @@
           <% added = @games_in_list.include?(game["id"]) %>
           <% add_params = {
                origin:     "build",
+               tab:        "grid",
                rawg_id:    game["id"],
                genres:     params[:genres],
                platforms:  params[:platforms],
