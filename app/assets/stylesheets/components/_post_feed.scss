@@ -7,9 +7,11 @@
   &__find {
     flex: 0 0 calc(33.333% - 0.25rem);
     white-space: nowrap;
-    background-color: #9EF8A9;
+    border-radius: 2rem !important;
+    box-shadow: 2px 2px 0 0 #000;
+    background-color: $mat-bg;
     border-color: #000;
-    &:hover { background-color: darken(#9EF8A9, 8%); border-color: #000; color: #000; }
+    &:hover { background-color: darken($mat-bg, 6%); border-color: #000; color: #000; }
   }
 
   &__create {
@@ -412,7 +414,7 @@
   border: 2px solid #000;
   border-radius: 0.9rem;
   overflow: hidden;
-  background: $mat-yellow-light;
+  background: $mat-bg;
 
   &__header {
     display: flex;
@@ -513,8 +515,8 @@
     font-weight: 700;
     text-decoration: none;
     color: #000;
-    background: $mat-yellow-light;
+    background: $mat-bg;
 
-    &:hover { background: $mat-yellow; color: #000; }
+    &:hover { background: darken($mat-bg, 6%); color: #000; }
   }
 }
