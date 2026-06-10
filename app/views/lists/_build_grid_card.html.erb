@@ -18,7 +18,8 @@
       <% if added %>
         <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
       <% else %>
-        <%= button_to "Add to list", list_list_games_path(list), params: add_params,
+        <%= button_to "Add to list", list_list_games_path(list),
+              params: add_params.merge(origin: "build_grid"),
               class: "btn btn-primary btn-sm w-100" %>
       <% end %>
     </div>

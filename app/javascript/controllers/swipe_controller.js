@@ -132,7 +132,7 @@ export default class extends Controller {
       authenticity_token: document.querySelector('meta[name="csrf-token"]').content
     })
 
-    await fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Accept": "text/vnd.turbo-stream.html",
@@ -140,6 +140,11 @@ export default class extends Controller {
       },
       body
     })
+
+    if (response.ok) {
+      const html = await response.text()
+      Turbo.renderStreamMessage(html)
+    }
   }
 
   // ── UI state ──────────────────────────────────────────────────────────

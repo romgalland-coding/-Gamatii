@@ -1,6 +1,11 @@
-<% if params[:origin] == "swipe" %>
+<% if params[:origin].in?(%w[swipe build_grid]) %>
   <%= turbo_stream.replace "grid-card-#{@game.rawg_id}" do %>
     <button class="btn btn-secondary btn-sm w-100" disabled>Added</button>
+  <% end %>
+  <%= turbo_stream.replace "build-games-count-#{@list.id}" do %>
+    <p class="lists-subtitle" id="build-games-count-<%= @list.id %>">
+      <%= pluralize(@list.list_games.count, "game") %> in this list · browse to add more
+    </p>
   <% end %>
 <% elsif params[:origin] == "list_show_search" %>
   <%= turbo_stream.replace "search-result-btn-#{@game.rawg_id}" do %>

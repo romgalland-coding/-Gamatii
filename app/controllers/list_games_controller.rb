@@ -22,7 +22,7 @@ class ListGamesController < ApplicationController
     saved = @list_game.save || @list_game.persisted?
 
     if params[:origin] == "build"
-      filter_params = params.permit(:rating, :from, :to, :limit, :swipe_offset, genres: [], platforms: [], publishers: [], game_modes: [])
+      filter_params = params.permit(:rating, :from, :to, :limit, :swipe_offset, :tab, genres: [], platforms: [], publishers: [], game_modes: [])
       redirect_to build_list_path(@list, **filter_params),
                   alert: (saved ? nil : "Could not add game to list.")
     elsif params[:origin] == "list_show_search"
@@ -35,6 +35,11 @@ class ListGamesController < ApplicationController
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to list_path(@list) }
+      end
+    elsif params[:origin] == "build_grid"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to build_list_path(@list, tab: "grid") }
       end
     elsif params[:origin].in?(%w[game_show chat swipe])
       respond_to do |format|
