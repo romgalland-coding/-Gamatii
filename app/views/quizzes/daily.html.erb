@@ -91,6 +91,7 @@
       <div class="quiz-input-row"
            data-controller="quiz-autocomplete"
            data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(@today_quiz) %>">
+        <i class="fa-solid fa-magnifying-glass quiz-input-icon"></i>
         <% topic = quiz_topic(@today_quiz) %>
         <%= text_field_tag :quiz_query,
               nil,

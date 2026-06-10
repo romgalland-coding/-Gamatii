@@ -84,7 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_073247) do
     t.integer "rawg_id"
     t.date "release_date"
     t.string "screenshots", default: [], array: true
-    t.jsonb "store_links", default: []
+    t.jsonb "store_links"
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["rawg_id"], name: "index_games_on_rawg_id", unique: true

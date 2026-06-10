@@ -6,6 +6,7 @@
        data-controller="quiz-autocomplete"
        data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(quiz) %>"
        data-action="turbo:submit-end->quiz-autocomplete#reset">
+    <i class="fa-solid fa-magnifying-glass quiz-input-icon"></i>
     <% topic = quiz_topic(quiz) %>
     <%= text_field_tag :quiz_query,
           nil,
