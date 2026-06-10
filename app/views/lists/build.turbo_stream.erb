@@ -10,8 +10,7 @@
        game_modes: params[:game_modes],
        rating:     params[:rating],
        from:       params[:from],
-       to:         params[:to],
-       limit:      params[:limit]
+       to:         params[:to]
      } %>
   <%= turbo_stream.append "games-grid-cards" do %>
     <%= render "build_grid_card", game: game, list: @list, add_params: grid_add_params, added: added %>
@@ -35,26 +34,4 @@
   <%= turbo_stream.append "swipe-stack-cards" do %>
     <%= render "build_swipe_card", game: game, list: @list, add_params: swipe_add_params, added: added %>
   <% end %>
-<% end %>
-
-<%# Update the empty state so the next "See more" fetches the following page %>
-<%= turbo_stream.update "swipe-empty-state" do %>
-  <p>You've seen all the games in this batch!</p>
-  <%= link_to "See more",
-        build_list_path(@list,
-          page:       @next_page,
-          limit:      params[:limit],
-          tab:        "swipe",
-          genres:     params[:genres],
-          platforms:  params[:platforms],
-          publishers: params[:publishers],
-          game_modes: params[:game_modes],
-          rating:     params[:rating],
-          from:       params[:from],
-          to:         params[:to]
-        ),
-        class: "btn btn-outline-primary btn-sm" %>
-  <%= link_to "Back to grid", "#grid-view",
-        data: { "bs-toggle": "tab", "bs-target": "#grid-view" },
-        class: "btn btn-secondary btn-sm" %>
 <% end %>
