@@ -4,7 +4,9 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     authorize @game
 
-    if @game.rawg_id.present? && @game.store_links.nil?
+    # Lazily fetch + cache buy links on first view. Guard on blank? (not nil?):
+    # the column defaults to [], so nil? never fires for imported/seeded games.
+    if @game.rawg_id.present? && @game.store_links.blank?
       links = RawgService.new.stores(@game.rawg_id)
       @game.update_columns(store_links: links)
     end

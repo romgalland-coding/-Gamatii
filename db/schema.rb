@@ -97,6 +97,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_073247) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["user_id", "likeable_type", "likeable_id"], name: "index_likes_on_user_id_and_likeable_type_and_likeable_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
@@ -116,6 +117,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_073247) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["list_id"], name: "index_list_likes_on_list_id"
+    t.index ["user_id", "list_id"], name: "index_list_likes_on_user_id_and_list_id", unique: true
     t.index ["user_id"], name: "index_list_likes_on_user_id"
   end
 
