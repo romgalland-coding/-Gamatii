@@ -24,7 +24,7 @@
 
 .lists-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
@@ -39,21 +39,30 @@
   &:hover { color: #000; text-decoration: none; }
 
   &__covers {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 3px;
-    aspect-ratio: 1 / 1;
-    border-radius: 0.75rem;
-    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    padding-inline: 0.5rem;
   }
 
   &__cover {
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    border-radius: 0.65rem;
     background-size: cover;
     background-position: center;
     background-color: $mat-blue-light;
 
-    &--empty { background-color: $color-muted; }
+    &--overflow {
+      background-color: $mat-bg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.55);
+      border: 2px solid rgba(0, 0, 0, 0.1);
+    }
   }
 
   &__name {
@@ -1227,6 +1236,11 @@
 
   .list-show__name {
     font-size: 2.25rem;
+  }
+
+  // Two list cards per row on desktop.
+  .lists-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   // Two game cards per row on desktop; one per row on mobile.
