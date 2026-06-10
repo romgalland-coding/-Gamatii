@@ -1,0 +1,17 @@
+<turbo-frame id="find-friends-results">
+  <div class="user-modal__body">
+    <% if @users.any? %>
+      <% @users.each do |u| %>
+        <div class="user-row">
+          <%= link_to user_path(u), class: "user-row__link", data: { turbo_frame: "_top" } do %>
+            <%= render "users/avatar", user: u, size: "sm" %>
+            <span class="user-row__name"><%= u.gamer_tag %></span>
+          <% end %>
+          <%= render "users/follow_pill", user: u %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="user-modal__empty">No users found.</p>
+    <% end %>
+  </div>
+</turbo-frame>

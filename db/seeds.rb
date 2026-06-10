@@ -185,8 +185,9 @@ TAG_POOL = %w[
   ShadowFox GlitchWizard ByteRunner CrimsonAce FrostByte
   TurboNova PhantomDrift QuasarKid EmberWolf StarlitHex
   RogueCircuit ApexRaven LunarSpecter VoidStriker NitroGhost
+  CosmicRift IronPulse ZenithByte NebulaDrift CipherWolf
 ]
-generated_count = 15 - CURATED_USERS.size
+generated_count = 20 - CURATED_USERS.size
 generated_users = TAG_POOL.first(generated_count).each_with_index.map do |tag, i|
   {
     email: "#{tag.downcase}@seed.gamatii",
