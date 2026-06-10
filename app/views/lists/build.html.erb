@@ -1,4 +1,14 @@
-<div class="lists-page" data-controller="build-filter">
+<div class="lists-page"
+     data-controller="build-filter see-more"
+     data-see-more-url-value="<%= build_list_path(@list,
+       genres:     params[:genres],
+       platforms:  params[:platforms],
+       publishers: params[:publishers],
+       game_modes: params[:game_modes],
+       rating:     params[:rating],
+       from:       params[:from],
+       to:         params[:to]
+     ) %>">
   <%= link_to "‹ Back to list", list_path(@list), class: "list-show__back" %>
 
   <header class="d-flex justify-content-between align-items-start">
@@ -50,28 +60,18 @@
                game_modes: params[:game_modes],
                rating:     params[:rating],
                from:       params[:from],
-               to:         params[:to],
-               limit:      params[:limit]
+               to:         params[:to]
              } %>
           <%= render "build_grid_card", game: game, list: @list, add_params: add_params, added: added %>
         <% end %>
       </div>
 
       <div class="text-center mt-3">
-        <%= link_to "See more",
-              build_list_path(@list,
-                page:       (params[:limit].presence || 20).to_i / 20 + 1,
-                limit:      params[:limit],
-                tab:        "grid",
-                genres:     params[:genres],
-                platforms:  params[:platforms],
-                publishers: params[:publishers],
-                game_modes: params[:game_modes],
-                rating:     params[:rating],
-                from:       params[:from],
-                to:         params[:to]
-              ),
-              class: "btn btn-outline-primary btn-sm" %>
+        <button class="btn btn-outline-primary btn-sm"
+                data-see-more-target="button"
+                data-action="click->see-more#load">
+          See more
+        </button>
       </div>
     </div>
 
@@ -80,20 +80,11 @@
 
         <div class="swipe-stack__empty" data-swipe-target="empty" id="swipe-empty-state" style="display:none;">
           <p>You've seen all <%= @games.length %> games!</p>
-          <%= link_to "See more",
-                build_list_path(@list,
-                  page:       (params[:limit].presence || 20).to_i / 20 + 1,
-                  limit:      params[:limit],
-                  tab:        "swipe",
-                  genres:     params[:genres],
-                  platforms:  params[:platforms],
-                  publishers: params[:publishers],
-                  game_modes: params[:game_modes],
-                  rating:     params[:rating],
-                  from:       params[:from],
-                  to:         params[:to]
-                ),
-                class: "btn btn-outline-primary btn-sm" %>
+          <button class="btn btn-outline-primary btn-sm"
+                  data-see-more-target="button"
+                  data-action="click->see-more#load">
+            See more
+          </button>
           <%= link_to "Back to grid", "#grid-view",
                 data: { "bs-toggle": "tab", "bs-target": "#grid-view" },
                 class: "btn btn-secondary btn-sm" %>
