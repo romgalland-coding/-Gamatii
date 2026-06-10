@@ -6,9 +6,10 @@
        data-controller="quiz-autocomplete"
        data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(quiz) %>"
        data-action="turbo:submit-end->quiz-autocomplete#reset">
+    <% topic = quiz_topic(quiz) %>
     <%= text_field_tag :quiz_query,
           nil,
-          placeholder: "Search a game to guess…",
+          placeholder: "Find a #{[topic, "game"].compact_blank.join(" ")} the community likes…",
           class: "quiz-input",
           autocomplete: "off",
           disabled: guesses_remaining <= 0,
