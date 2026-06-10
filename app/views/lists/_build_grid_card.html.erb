@@ -34,7 +34,8 @@
           <button class="btn btn-secondary btn-sm" disabled>Added</button>
         <% else %>
           <%= button_to "Add to list", list_list_games_path(list), params: add_params,
-                class: "btn btn-primary btn-sm m-0" %>
+                class: "btn btn-primary btn-sm m-0",
+                data: { "bs-dismiss": "modal" } %>
         <% end %>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
