@@ -285,6 +285,18 @@
   position: relative;
 }
 
+// Magnifying-glass icon sitting inside the input, left-aligned.
+.quiz-input-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
 // Autocomplete dropdown anchored under the input
 .quiz-autocomplete-results {
   position: absolute;
@@ -317,14 +329,16 @@
 
 .quiz-input {
   width: 100%;
-  padding: 0.85rem 1.1rem;
+  padding: 0.85rem 1.1rem 0.85rem 2.7rem;
   border: 2.5px solid #000;
-  border-radius: 0.9rem;
+  border-radius: 999px;
   box-shadow: 3px 3px 0 0 #000;
   background-color: #fff;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 500;
   outline: none;
+
+  &::placeholder { color: rgba(0, 0, 0, 0.35); }
 
   &:focus { box-shadow: 4px 4px 0 0 #000; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
