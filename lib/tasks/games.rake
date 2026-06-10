@@ -30,4 +30,20 @@ namespace :games do
 
     puts "\nDone."
   end
+
+  desc "Backfill store_links (buy links) for games that don't have them yet"
+  task backfill_store_links: :environment do
+    service = RawgService.new
+    games = Game.where.not(rawg_id: nil).select { |g| g.store_links.blank? }
+    puts "Backfilling store links for #{games.size} games…"
+
+    games.each do |game|
+      links = service.stores(game.rawg_id)
+      game.update_columns(store_links: links)
+      print links.any? ? "." : "○" # ○ = game has no stores on RAWG
+      sleep 0.25
+    end
+
+    puts "\nDone."
+  end
 end
