@@ -461,7 +461,7 @@
     font-weight: 700;
     color: #555;
     white-space: nowrap;
-    width: 4rem;
+    width: 4.5rem;
     flex-shrink: 0;
   }
 }
@@ -771,27 +771,51 @@
 }
 
 // Title input (new list form)
+// New-list form: title field + filter rows, styled to match the filter panel.
+.new-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #000;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  // White dropdown triggers on this form (the shared filter panel keeps cream).
+  .filter-dropdown__trigger {
+    background: #fff;
+  }
+}
+
+// Extra breathing room between the filters and the Create & discover CTA.
+.new-list-section + .lists-create-btn {
+  margin-top: 1.75rem;
+}
+
+// Prominent bordered title field — was a faint underline that blended into the
+// cream background, so users kept missing it.
 .list-title-input {
   width: 100%;
-  background: none;
-  border: none;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0;
-  padding: 0.25rem 0;
+  background: #fff;
+  border: 2.5px solid #000;
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.85rem;
   font-size: 1.25rem;
   font-weight: 700;
   color: #000;
   outline: none;
-  box-shadow: none;
 
   &::placeholder {
-    color: rgba(0, 0, 0, 0.25);
-    font-weight: 400;
+    color: rgba(0, 0, 0, 0.35);
+    font-weight: 500;
   }
 
   &:focus {
-    border-bottom-color: #000;
-    box-shadow: none;
+    box-shadow: 3px 3px 0 0 #000;
   }
 }
 

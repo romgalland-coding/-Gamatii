@@ -3,6 +3,10 @@
 .feed-actions {
   display: flex;
   gap: 0.5rem;
+  // Extra breathing room above and below the buttons. This stacks on top of the
+  // parent .home-section's flex gap, so only the space around these buttons
+  // grows — the title↔subtitle gap is unaffected.
+  margin: 0.75rem 0;
 
   &__find {
     flex: 0 0 calc(33.333% - 0.25rem);
