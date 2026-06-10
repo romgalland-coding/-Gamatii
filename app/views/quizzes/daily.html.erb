@@ -3,7 +3,7 @@
   <div class="quiz-header">
     <div>
       <h1 class="quiz-title"><i class="fa-solid fa-trophy"></i> Daily Quiz</h1>
-      <p class="quiz-subtitle">Guess today's list, pick for tomorrow's.</p>
+      <p class="quiz-subtitle">Guess what the community likes</p>
     </div>
     <div class="quiz-header__aside" data-controller="quiz-howto">
       <button type="button" class="quiz-howto-btn" data-action="quiz-howto#open">
@@ -27,13 +27,12 @@
 
     <%# ---- TODAY'S QUIZ (guess) TAB — now the default ---- %>
 
-    <div class="quiz-prompt quiz-prompt--blue">
+    <div class="quiz-prompt">
       <div class="quiz-prompt__label-row">
-        <p class="quiz-prompt__label">TODAY'S QUIZ</p>
+        <p class="quiz-prompt__label">GUESS THE COMMUNITY'S</p>
         <%= render "quizzes/timer", ended_quiz_id: @yesterday_quiz.id %>
       </div>
       <h2 class="quiz-prompt__title"><%= @yesterday_quiz.name %></h2>
-      <p class="quiz-prompt__desc">Guess what the gamatii community selected</p>
       <% if current_user %>
         <%= render "quizzes/score_line", score: @score, guesses_remaining: @guesses_remaining %>
       <% end %>
@@ -79,22 +78,23 @@
 
     <%# ---- TODAY TAB ---- %>
 
-    <div class="quiz-prompt quiz-prompt--yellow">
+    <div class="quiz-prompt">
       <div class="quiz-prompt__label-row">
-        <p class="quiz-prompt__label">TOMORROW'S LIST</p>
+        <p class="quiz-prompt__label">SELECT YOUR</p>
         <%= render "quizzes/timer" %>
       </div>
       <h2 class="quiz-prompt__title"><%= @today_quiz.name %></h2>
-      <p class="quiz-prompt__desc">Add up to 5 games. Submissions close at midnight CET.</p>
+      <p class="quiz-prompt__desc">Your choices will help create tomorrow's daily quiz</p>
     </div>
 
     <% if current_user %>
       <div class="quiz-input-row"
            data-controller="quiz-autocomplete"
            data-quiz-autocomplete-url-value="<%= autocomplete_games_quiz_path(@today_quiz) %>">
+        <% topic = quiz_topic(@today_quiz) %>
         <%= text_field_tag :quiz_query,
               nil,
-              placeholder: "Search a game to pick…",
+              placeholder: "Find a #{[topic, "game"].compact_blank.join(" ")} that you like…",
               class: "quiz-input",
               autocomplete: "off",
               disabled: @my_submissions.count >= 5,
@@ -102,18 +102,14 @@
         <div id="quiz_autocomplete_results" class="quiz-autocomplete-results"></div>
       </div>
 
-      <p class="quiz-picks-label">YOUR PICKS · <%= @my_submissions.count %>/5</p>
-
       <% if @my_submissions.any? %>
         <ul class="quiz-picks">
           <% @my_submissions.each do |qg| %>
             <li class="quiz-pick-row">
               <span><%= qg.game.title %></span>
-              <%= link_to quiz_game_path(qg),
+              <%= link_to "X", quiz_game_path(qg),
                     class: "quiz-pick-row__remove",
-                    data: { turbo_method: :delete } do %>
-                <i class="fa-solid fa-xmark"></i>
-              <% end %>
+                    data: { turbo_method: :delete } %>
             </li>
           <% end %>
         </ul>
