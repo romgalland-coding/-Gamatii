@@ -39,7 +39,7 @@
   border-radius: 1.25rem;
   border: 2.5px solid #000;
   box-shadow: 3px 3px 0 0 #000;
-  background-color: $mat-yellow;
+  background-color: $mat-blue;
   color: #000;
   text-decoration: none;
 
@@ -166,6 +166,7 @@
 // ---------- Create CTA ----------
 .home-create-btn {
   border-radius: 2rem !important;
+  box-shadow: 2px 2px 0 0 #000;
 }
 
 // ---------- Desktop ----------

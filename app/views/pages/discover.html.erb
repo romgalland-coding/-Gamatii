@@ -1,8 +1,8 @@
 <div class="discover">
   <header class="discover__header">
     <h1 class="discover__title">Discover</h1>
-    <p class="discover__subtitle pt-3">Let <strong>Matia</strong> find your next game.</p>
-    <p class="discover__subtitle pt-3">Not sure what to play next? Chat with our AI game advisor and tell it what you're in the mood for.</p>
+    <p class="discover__subtitle">Let <strong>Matia</strong> find your next game.</p>
+    <p class="discover__subtitle">Not sure what to play next? Chat with our AI game advisor and tell it what you're in the mood for.</p>
   </header>
 
   <%= button_to chats_path, method: :post, class: "btn btn-primary discover__new-chat" do %>
@@ -10,7 +10,7 @@
   <% end %>
 
   <section class="discover__section" data-controller="list-search">
-    <h2 class="discover__section-title">Search trough lists</h2>
+    <h2 class="discover__section-title">Search community lists</h2>
     <div class="discover__search-bar">
       <i class="fa-solid fa-magnifying-glass discover__search-icon"></i>
       <input
