@@ -1,0 +1,44 @@
+<%# Find Friends modal — same .user-modal shell as _user_list_modal, with live search. %>
+<div class="user-modal__backdrop" data-action="click->profile-modal#close">
+  <div class="user-modal" data-action="click->profile-modal#stop">
+    <header class="user-modal__header">
+      <h2 class="user-modal__title">Find Friends</h2>
+      <button class="user-modal__close" data-action="profile-modal#close" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </header>
+
+    <div class="user-modal__search">
+      <%= form_with url: search_users_path, method: :get,
+            data: { turbo_frame: "find-friends-results", controller: "find-friends-search" } do |f| %>
+        <div class="user-modal__search-wrap">
+          <i class="fa-solid fa-magnifying-glass user-modal__search-icon"></i>
+          <%= f.text_field :q, value: params[:q],
+                placeholder: "Search by gamer tag…",
+                autocomplete: "off",
+                class: "user-modal__search-input",
+                data: { find_friends_search_target: "input",
+                        action: "input->find-friends-search#search" } %>
+        </div>
+      <% end %>
+    </div>
+
+    <turbo-frame id="find-friends-results">
+      <div class="user-modal__body">
+        <% if users.any? %>
+          <% users.each do |u| %>
+            <div class="user-row">
+              <%= link_to user_path(u), class: "user-row__link", data: { turbo_frame: "_top" } do %>
+                <%= render "users/avatar", user: u, size: "sm" %>
+                <span class="user-row__name"><%= u.gamer_tag %></span>
+              <% end %>
+              <%= render "users/follow_pill", user: u %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="user-modal__empty">No users found.</p>
+        <% end %>
+      </div>
+    </turbo-frame>
+  </div>
+</div>

@@ -50,6 +50,10 @@ Rails.application.routes.draw do
 
   # Public user profiles + social graph
   resources :users, only: [:show] do
+    collection do
+      get :find_friends
+      get :search
+    end
     member do
       get :followers
       get :following

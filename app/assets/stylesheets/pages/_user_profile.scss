@@ -319,6 +319,37 @@
     padding: 1.5rem 0;
     margin: 0;
   }
+
+  &__search {
+    padding: 0.75rem 0.85rem;
+    border-bottom: 2px solid #000;
+  }
+
+  &__search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+    font-size: 0.85rem;
+  }
+
+  &__search-input {
+    width: 100%;
+    border: 2px solid #000;
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.75rem 0.5rem 2.1rem;
+    font-size: 0.9rem;
+    background: #fff;
+    outline: none;
+
+    &:focus { border-color: $mat-blue; box-shadow: 0 0 0 3px rgba($mat-blue, 0.25); }
+  }
 }
 
 .user-row {

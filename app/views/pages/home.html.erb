@@ -1,4 +1,4 @@
-<div class="home-page">
+<div class="home-page" data-controller="profile-modal">
 
   <%# ---------- Welcome ---------- %>
   <header class="home-welcome">
@@ -27,7 +27,10 @@
       <p class="home-section__subtitle">Posts from people you follow.</p>
 
       <div class="feed-actions">
-        <%= link_to "#", class: "btn btn-outline-dark feed-actions__find" do %>
+        <%= link_to find_friends_users_path, class: "btn btn-outline-dark feed-actions__find",
+              data: { action: "click->profile-modal#open:prevent",
+                      profile_modal_url_param: find_friends_users_path,
+                      turbo: false } do %>
           <i class="fa-solid fa-magnifying-glass"></i> Find friends
         <% end %>
         <div class="feed-actions__create">
@@ -114,6 +117,8 @@
     <%= link_to "✦ Create a new list", new_list_path,
                 class: "btn btn-primary w-100 home-create-btn" %>
   <% end %>
+
+  <div id="user-modal" data-profile-modal-target="container"></div>
 
 </div>
 

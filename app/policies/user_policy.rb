@@ -12,6 +12,14 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
+  def find_friends?
+    user.present?
+  end
+
+  def search?
+    user.present?
+  end
+
   # Account management (the singular /profile) stays self-only.
   def edit?
     user == record
