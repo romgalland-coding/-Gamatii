@@ -1,7 +1,9 @@
 <div id="post-<%= post.id %>" class="post-card" data-controller="toggle">
   <div class="post-card__header">
     <%= link_to user_path(post.user), class: "post-card__user" do %>
-      <div class="post-card__avatar"><%= post.user.gamer_tag.first(2).upcase %></div>
+      <div class="post-card__avatar" style="background-color: <%= post.user.avatar_background %>">
+        <%= post.user.avatar_glyph %>
+      </div>
       <div class="post-card__meta">
         <span class="post-card__name"><%= post.user.gamer_tag %></span>
         <span class="post-card__time"><%= time_ago_in_words(post.created_at) %> ago</span>

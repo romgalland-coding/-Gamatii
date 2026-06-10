@@ -313,42 +313,36 @@ puts "  PixelKnight now follows 4 users."
 
 # Lists belonging to the followed users (for sharing)
 nb_played   = neon_byte.lists.find_by(list_type: "played")
-vc_wishlist = vortex_caster.lists.find_by(list_type: "wishlist")
+sf_wishlist = shadow_fox.lists.find_by(list_type: "wishlist")
 sf_custom   = shadow_fox.lists.find_by(list_type: "custom")
 gw_played   = glitch_wizard.lists.find_by(list_type: "played")
 
 POST_SPECS = [
-  # 1 — text only
   {
     author: neon_byte,
     body: "Just finished The Last of Us for the third time. Every single playthrough hits differently. Ellie's arc in Part II is criminally underrated storytelling.",
-    url: nil, list: nil, photo_url: nil
+    url: nil, list: nil,
+    photo_url: "https://images.lanouvellerepublique.fr/image/upload/t_1020w/f_auto/5f05c781990e2d6f048b4578.jpg"
   },
-  # 2 — text + URL + list
+  # 3 — text + URL + list
   {
     author: shadow_fox,
     body: "007: First Light — open world Bond game confirmed. IO Interactive might actually pull this off. Already on my wishlist, link has all the details.",
     url: "https://www.ign.com/articles/007-first-light-everything-we-know",
-    list: vc_wishlist, photo_url: nil
+    list: sf_wishlist, photo_url: nil
   },
-  # 3 — list share only
+  # 4 — list share only
   {
     author: shadow_fox,
     body: nil, url: nil,
     list: sf_custom, photo_url: nil
   },
-  # 4 — text + list
+  # 5 — text + list
   {
     author: glitch_wizard,
     body: "Wrapped these up this year. My taste is immaculate, don't @ me.",
     url: nil,
     list: gw_played, photo_url: nil
-  },
-  # 5 — photo only (The Last of Us)
-  {
-    author: neon_byte,
-    body: nil, url: nil, list: nil,
-    photo_url: "https://images.lanouvellerepublique.fr/image/upload/t_1020w/f_auto/5f05c781990e2d6f048b4578.jpg"
   },
   # 6 — text + photo (Hollow Knight)
   {
@@ -433,6 +427,18 @@ POST_SPECS.each_with_index do |spec, i|
   likers.each { |liker| post.likes.find_or_create_by!(user: liker) }
 
   puts "  Post #{i + 1}/#{POST_SPECS.size} by #{spec[:author].gamer_tag} — #{post.comments.count} comments, #{post.likes.count} likes"
+end
+
+# Add 007: First Light to ShadowFox's wishlist (shared in the activity feed post).
+puts "\nFetching 007: First Light for ShadowFox's wishlist…"
+results_007 = rawg_get("/games", search: "007 First Light", search_precise: true, page_size: 5)["results"] || []
+game_007 = results_007.first
+if game_007
+  record_007 = upsert_game(game_007)
+  sf_wishlist.list_games.find_or_create_by!(game: record_007) if record_007
+  puts "  Added #{game_007['name']} to ShadowFox's wishlist."
+else
+  puts "  007: First Light not found on RAWG — skipping."
 end
 
 # Any real (non-seed) account in the DB gets auto-followed to the 4 content
