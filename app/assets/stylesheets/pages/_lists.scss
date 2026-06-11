@@ -64,6 +64,13 @@
       color: rgba(0, 0, 0, 0.55);
       border: 2px solid rgba(0, 0, 0, 0.1);
     }
+
+    // Placeholder slot for lists with fewer than 4 games — keeps every card the
+    // same height by always filling four cover slots.
+    &--empty {
+      background-color: $mat-bg;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+    }
   }
 
   &__name {
