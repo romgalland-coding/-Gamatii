@@ -27,7 +27,11 @@
     </div>
   <% end %>
 
-  <div class="game-show__cover" <%= lazy_bg(@game.cover_img) %>></div>
+  <div class="game-show__cover" <%= lazy_bg(@game.cover_img) %>>
+    <% if @game.rating.present? %>
+      <span class="game-show__metascore"><%= @game.rating %></span>
+    <% end %>
+  </div>
 
   <% shots = @game.screenshots.presence || [@game.in_game_img].compact %>
   <div class="game-show__thumbnails"
