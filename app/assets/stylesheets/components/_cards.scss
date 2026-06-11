@@ -4,7 +4,7 @@
 .card {
   border: 2.5px solid #000;
   border-radius: 1rem;
-  box-shadow: 5px 5px 0 0 #000;
+  box-shadow: 3px 3px 0 0 #000;
   background-color: white;
 
   .card-header {
@@ -35,7 +35,7 @@
 
     &:hover {
       transform: translate(-1px, -1px);
-      box-shadow: 6px 6px 0 0 #000;
+      box-shadow: 3px 3px 0 0 #000;
     }
 
     &:active {
