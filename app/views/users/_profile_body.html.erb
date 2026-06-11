@@ -26,7 +26,7 @@
 
   <%# Header: avatar + name + counts %>
   <header class="user-profile__header">
-    <%= render "users/avatar", user: user, size: "lg" %>
+    <%= render "users/avatar_editor", user: user, owner: owner %>
 
     <div class="user-profile__id">
       <h1 class="user-profile__name"><%= user.gamer_tag %></h1>
@@ -87,6 +87,21 @@
       <p class="user-profile__lists-empty">No lists yet.</p>
     <% end %>
   </section>
+
+  <%# My Posts — owner only, newest first %>
+  <% if owner %>
+    <section class="user-profile__posts">
+      <h2 class="user-profile__lists-title">My Posts</h2>
+      <% posts = local_assigns.fetch(:posts, []) %>
+      <% if posts.any? %>
+        <div class="activity-feed">
+          <%= render partial: "posts/post", collection: posts, as: :post %>
+        </div>
+      <% else %>
+        <p class="user-profile__lists-empty">No posts yet.</p>
+      <% end %>
+    </section>
+  <% end %>
 
   <%# Modal mount point — turbo_stream / Stimulus injects the popup here %>
   <div id="user-modal" data-profile-modal-target="container"></div>
