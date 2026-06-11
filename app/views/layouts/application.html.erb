@@ -23,7 +23,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="<%= content_for(:body_class) %>">
     <% flash.each do |type, message| %>
       <% css_class = type.to_s == "alert" ? "alert-warning" : "alert-success" %>
       <div class="alert <%= css_class %> alert-dismissible fade show flash-toast" role="alert">

@@ -172,7 +172,7 @@
 // ---------- Desktop ----------
 @include desktop {
   .home-page {
-    max-width: 760px;
+    max-width: 900px;
     height: auto;          // no bottom nav on desktop; don't trap content in one viewport
     min-height: 100vh;
     padding-bottom: 2.5rem; // room for the Create-list button's drop shadow
