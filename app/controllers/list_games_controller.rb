@@ -6,7 +6,7 @@ class ListGamesController < ApplicationController
     @game = Game.find_or_create_by(rawg_id: params[:rawg_id].to_i) do |g|
       g.title        = rawg_data["name"]
       g.cover_img    = rawg_data["background_image"]
-      g.genre        = rawg_data["genres"]&.first&.dig("name")
+      g.genre        = rawg_data["genres"]&.map { |g| g["name"] }&.join(", ")
       g.platforms    = rawg_data["platforms"]&.map { |p| p.dig("platform", "name") } || []
       g.rating       = rawg_data["metacritic"] # column holds the Metascore (0–100); see db/seeds.rb
       g.release_date = rawg_data["released"]

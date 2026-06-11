@@ -38,7 +38,7 @@ class Game < ApplicationRecord
     {
       title: rawg_data["name"],
       cover_img: rawg_data["background_image"],
-      genre: rawg_data["genres"]&.first&.dig("name"),
+      genre: rawg_data["genres"]&.map { |g| g["name"] }&.join(", "),
       platforms: rawg_data["platforms"]&.map { |p| p.dig("platform", "name") } || [],
       rating: rawg_data["metacritic"], # column holds the Metascore (0–100); see db/seeds.rb
       release_date: rawg_data["released"],
