@@ -19,6 +19,12 @@ class User < ApplicationRecord
   # so each user gets a stable tile color even without seeded data.
   AVATAR_COLORS = %w[#F6C453 #A7D7A0 #9EC5FE #F4A8C0 #C4B5FD #FCD9A8 #9AE6D5].freeze
 
+  # Curated emoji set offered in the profile avatar picker.
+  AVATAR_EMOJIS = %w[
+    🎮 🕹️ 👾 🐉 🦄 🤖 👻 🐙 🦅 🌙 🔥 🐺 ⚡️ 🍄 🦝 🛸 🧙 🐱 🦊 🐲
+    🌟 💀 🎯 🏆 🥷 🐸 🦖 🐳 🌈 🍕 🎸 👑 💎 🚀 🧠 🦁 🐯 🐼 🦉 🍩
+  ].freeze
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

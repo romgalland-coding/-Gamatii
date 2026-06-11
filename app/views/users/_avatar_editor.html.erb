@@ -1,0 +1,50 @@
+<%# Owner-editable avatar: click to pick an emoji. Falls back to the plain
+    avatar for non-owners. Wrapped in #profile-avatar so the picker can swap it
+    in place via turbo_stream after saving. Locals: user, owner. %>
+<% owner = local_assigns.fetch(:owner, false) %>
+<div id="profile-avatar" class="profile-avatar">
+  <% if owner %>
+    <div class="profile-avatar__picker" data-controller="avatar-picker">
+      <button type="button" class="profile-avatar__btn"
+              data-action="click->avatar-picker#toggle"
+              aria-label="Change avatar">
+        <%= render "users/avatar", user: user, size: "lg" %>
+        <span class="profile-avatar__edit-badge"><i class="fa-solid fa-pen"></i></span>
+      </button>
+
+      <div class="profile-avatar__popover" data-avatar-picker-target="popover">
+        <%= form_with model: user, url: profile_path, method: :patch,
+              data: { avatar_picker_target: "form" } do |f| %>
+          <%# Both fields submit together so a color-only change still routes to
+              the avatar region (the controller keys off avatar_emoji). %>
+          <%= f.hidden_field :avatar_emoji, data: { avatar_picker_target: "emojiField" } %>
+          <%= f.hidden_field :avatar_color, value: user.avatar_background, data: { avatar_picker_target: "colorField" } %>
+
+          <p class="profile-avatar__section-label">Emoji</p>
+          <div class="profile-avatar__grid">
+            <% User::AVATAR_EMOJIS.each do |emoji| %>
+              <button type="button"
+                      class="profile-avatar__emoji <%= 'is-selected' if user.avatar_emoji == emoji %>"
+                      data-emoji="<%= emoji %>"
+                      data-action="click->avatar-picker#select"><%= emoji %></button>
+            <% end %>
+          </div>
+
+          <p class="profile-avatar__section-label">Color</p>
+          <div class="profile-avatar__colors">
+            <% User::AVATAR_COLORS.each do |color| %>
+              <button type="button"
+                      class="profile-avatar__color <%= 'is-selected' if user.avatar_background.casecmp?(color) %>"
+                      style="background-color: <%= color %>"
+                      data-color="<%= color %>"
+                      data-action="click->avatar-picker#selectColor"
+                      aria-label="Use <%= color %>"></button>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <%= render "users/avatar", user: user, size: "lg" %>
+  <% end %>
+</div>
