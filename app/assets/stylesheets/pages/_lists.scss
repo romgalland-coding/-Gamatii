@@ -357,9 +357,10 @@
 
   &.is-scrolled {
     position: fixed;
+    top: 1rem;
+    right: 1.5rem;
     z-index: 1000;
-    padding: 0.6rem 0.75rem;
-    margin-right: 1rem;
+    padding: 0.6rem 1.25rem;
     .filter-btn-label { display: none; }
   }
 
