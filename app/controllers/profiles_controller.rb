@@ -70,6 +70,7 @@ class ProfilesController < ApplicationController
       :email,
       :bio,
       :avatar_emoji,
+      :avatar_color,
       :password,
       :password_confirmation,
       platform: []

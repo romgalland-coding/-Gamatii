@@ -250,11 +250,22 @@
     &.is-open { display: block; }
   }
 
+  &__section-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(0, 0, 0, 0.45);
+    margin: 0 0 0.35rem;
+
+    &:not(:first-child) { margin-top: 0.75rem; }
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 0.25rem;
-    max-height: 12rem;
+    max-height: 10rem;
     overflow-y: auto;
   }
 
@@ -271,6 +282,25 @@
 
     &:hover { background-color: $mat-bg; }
     &.is-selected { border-color: #000; background-color: $mat-blue-light; }
+  }
+
+  &__colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  &__color {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid #000;
+    cursor: pointer;
+    padding: 0;
+
+    &.is-selected {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+    }
   }
 }
 

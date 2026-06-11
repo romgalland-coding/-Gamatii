@@ -1,10 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Owner-only avatar emoji picker. Clicking the avatar opens a popover grid of
-// emojis; choosing one sets the hidden field and submits the form (Turbo), so
-// the avatar region re-renders with the new emoji. Closes on outside click.
+// Owner-only avatar picker. Clicking the avatar opens a popover with an emoji
+// grid and a color row; choosing either sets the matching hidden field and
+// submits the form (Turbo), so the avatar region re-renders. The form always
+// carries both emoji + color so a color-only change still round-trips. Closes
+// on outside click.
 export default class extends Controller {
-  static targets = ["popover", "field", "form"]
+  static targets = ["popover", "emojiField", "colorField", "form"]
 
   connect() {
     this._onOutside = (e) => { if (!this.element.contains(e.target)) this.close() }
@@ -27,7 +29,14 @@ export default class extends Controller {
 
   // An emoji button was clicked: stash it and submit the form.
   select(event) {
-    this.fieldTarget.value = event.currentTarget.dataset.emoji
+    this.emojiFieldTarget.value = event.currentTarget.dataset.emoji
+    this.close()
+    this.formTarget.requestSubmit()
+  }
+
+  // A color swatch was clicked: stash it and submit the form.
+  selectColor(event) {
+    this.colorFieldTarget.value = event.currentTarget.dataset.color
     this.close()
     this.formTarget.requestSubmit()
   }
