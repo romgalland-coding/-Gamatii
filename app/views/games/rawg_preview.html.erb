@@ -3,13 +3,12 @@
     <div class="game-show__cover mb-3" <%= lazy_bg(rawg_thumb(@game["background_image"], 600)) %>></div>
   <% end %>
 
-  <p class="game-show__genre"><%= @game["genres"]&.map { |g| g["name"] }&.join(", ") %></p>
   <h1 class="game-show__title mb-2"><%= @game["name"] %></h1>
 
   <% if @game["platforms"].present? %>
     <div class="game-show__tags mb-3">
-      <% @game["platforms"].each do |p| %>
-        <span class="game-show__platform-tag"><%= p.dig("platform", "name") %></span>
+      <% @game["platforms"].map { |p| short_platform_label(p.dig("platform", "name")) }.uniq.each do |label| %>
+        <span class="game-show__platform-tag"><%= label %></span>
       <% end %>
     </div>
   <% end %>
@@ -34,13 +33,13 @@
       <div class="game-show__info-label">Studio</div>
       <%= @game["developers"]&.map { |d| d["name"] }&.join(", ").presence || "TBD" %>
     </div>
-    <div class="game-show__info-badge">
+    <div class="game-show__info-badge" style="flex: 0 0 auto; min-width: 4.5rem;">
       <div class="game-show__info-label">Released</div>
       <%= @game["released"]&.first(4) || "TBD" %>
     </div>
-    <div class="game-show__info-badge">
-      <div class="game-show__info-label">Rating</div>
-      <%= @game["metacritic"] || "N/A" %>
+    <div class="game-show__info-badge" style="flex: 2;">
+      <div class="game-show__info-label">Genre</div>
+      <%= @game["genres"]&.map { |g| g["name"] }&.join(", ") %>
     </div>
   </div>
 <% end %>

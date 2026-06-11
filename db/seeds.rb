@@ -67,7 +67,7 @@ def upsert_game(g)
     cover_img: g["background_image"],
     in_game_img: g.dig("short_screenshots", 1, "image"),
     screenshots: (g["short_screenshots"] || []).filter_map { |s| s["image"] }[1..3].to_a,
-    genre: g.dig("genres", 0, "name"),
+    genre: g["genres"]&.map { |genre| genre["name"] }&.join(", "),
     platforms: platforms_arr,
     # `rating` stores the Metascore (0–100), not RAWG's user rating — the UI
     # already labels this column "Metacritic" (lists filter) and the quiz ranks

@@ -16,8 +16,16 @@
     </div>
   </div>
 
-  <p class="game-show__genre"><%= @game.genre %></p>
   <h1 class="game-show__title"><%= @game.title %></h1>
+  <%# <p class="game-show__genre"><%= @game.genre %>
+
+  <% if @game.platforms.present? %>
+    <div class="game-show__tags">
+      <% @game.platforms.map { |p| short_platform_label(p) }.uniq.each do |label| %>
+        <span class="game-show__platform-tag"><%=label%></span>
+      <% end %>
+    </div>
+  <% end %>
 
   <div class="game-show__cover" <%= lazy_bg(@game.cover_img) %>></div>
 
@@ -45,14 +53,6 @@
     </div>
   </div>
 
-  <% if @game.platforms.present? %>
-    <h2 class="game-show__section-title">Platforms</h2>
-    <div class="game-show__tags">
-      <% @game.platforms.map { |p| short_platform_label(p) }.uniq.each do |label| %>
-        <span class="game-show__platform-tag"><%= label %></span>
-      <% end %>
-    </div>
-  <% end %>
 
   <h2 class="game-show__section-title">Description</h2>
   <% desc = @game.description.to_s %>
@@ -74,13 +74,13 @@
       <div class="game-show__info-label">Studio</div>
       <%= @game.developer || "TBD" %>
     </div>
-    <div class="game-show__info-badge">
+    <div class="game-show__info-badge" style="flex: 0 0 auto; min-width: 4.5rem;">
       <div class="game-show__info-label">Released</div>
       <%= @game.release_date&.year || "TBD" %>
     </div>
-    <div class="game-show__info-badge">
-      <div class="game-show__info-label">Rating</div>
-      <%= @game.rating || "N/A" %>
+    <div class="game-show__info-badge" style="flex: 2;">
+      <div class="game-show__info-label">Genre</div>
+      <%= @game.genre.presence || "N/A" %>
     </div>
   </div>
 
