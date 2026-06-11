@@ -435,8 +435,15 @@ results_007 = rawg_get("/games", search: "007 First Light", search_precise: true
 game_007 = results_007.first
 if game_007
   record_007 = upsert_game(game_007)
-  sf_wishlist.list_games.find_or_create_by!(game: record_007) if record_007
-  puts "  Added #{game_007['name']} to ShadowFox's wishlist."
+  if record_007
+    # Add to every user's wishlist so it has the highest list_games count and
+    # ranks first in @popular_games on the home page.
+    created_users.each do |u|
+      wishlist = u.lists.find_by(list_type: "wishlist")
+      wishlist.list_games.find_or_create_by!(game: record_007) if wishlist
+    end
+    puts "  Added #{game_007['name']} to all #{created_users.size} users' wishlists (home page boost)."
+  end
 else
   puts "  007: First Light not found on RAWG — skipping."
 end
