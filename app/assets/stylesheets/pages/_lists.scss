@@ -1325,8 +1325,8 @@
 
     &.active, &.is-active {
       background-color: $mat-blue;
-      border-color: #000;
       color: #000;
+      // No border on the selected tab — the blue fill is enough.
     }
 
     &:not(.active):not(.is-active):hover {
