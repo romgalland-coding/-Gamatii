@@ -7,6 +7,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+
 }
 
 .lists-title {
@@ -339,13 +340,21 @@
   border-radius: 999px;
   border: 2.5px solid #000;
   box-shadow: 2px 2px 0 0 #000;
-  background-color: $mat-green;
+  background-color: #fff;
   font-weight: 700;
   font-size: 1rem;
   color: #000;
   cursor: pointer;
 
   &:hover { color: #000; }
+
+  &.is-scrolled {
+    position: fixed;
+    z-index: 1000;
+    padding: 0.6rem 0.75rem;
+    margin-right: 1rem;
+    .filter-btn-label { display: none; }
+  }
 
   &.is-active {
 
