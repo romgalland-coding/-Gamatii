@@ -59,6 +59,8 @@
   }
 }
 
+.bottom-nav__logo { display: none; }
+
 // Ensure page content doesn't hide behind the fixed nav
 body {
   padding-bottom: 5rem;
@@ -78,9 +80,12 @@ body {
       max-width: none;
       height: 100%;
       margin: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     &__items {
+      flex: 1;
       flex-direction: column;
       justify-content: flex-start;
       align-items: stretch;
@@ -107,6 +112,13 @@ body {
         // Keep the resting position on desktop; the lift looks odd in a vertical list.
         transform: none;
       }
+    }
+
+    &__logo {
+      display: block;
+      width: 13rem;
+      height: auto;
+      margin: 0 auto 1.5rem;
     }
   }
 
