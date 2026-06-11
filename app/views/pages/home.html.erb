@@ -3,7 +3,7 @@
   <%# ---------- Welcome ---------- %>
   <header class="home-welcome">
     <p class="home-welcome__eyebrow">Welcome back</p>
-    <h1 class="home-welcome__name">
+    <h1 class="home-welcome__name mt-4">
       <%= current_user ? current_user.gamer_tag : "Gamer" %>
     </h1>
   </header>
@@ -22,7 +22,7 @@
   <% if current_user %>
     <section class="home-section">
       <header class="home-section__head">
-        <h2 class="home-section__title">🗣️ Activity Feed</h2>
+        <h2 class="home-section__title mb-2">🗣️ Activity Feed</h2>
       </header>
       <p class="home-section__subtitle">Posts from people you follow.</p>
 
