@@ -15,6 +15,7 @@
 <div id="quiz_score_region">
   <div data-controller="quiz-score leaderboard-toggle"
        data-quiz-score-auto-value="<%= auto %>"
+       data-quiz-score-key-value="quiz-score-seen-<%= @yesterday_quiz.id %>"
        data-quiz-score-share-text-value="<%= share_text %>">
 
     <% if guesses_remaining <= 0 %>

@@ -249,7 +249,10 @@ puts "  #{follow_count} follow relationships created."
 puts "\nCreating daily quizzes…"
 Quiz.destroy_all
 Quiz::THEMES.each_with_index do |theme, position|
-  Quiz.create!(name: theme[:name], position: position)
+  quiz = Quiz.create!(name: theme[:name], position: position)
+  # Freeze the top-5 now, from the freshly-seeded catalogue, so later RAWG
+  # imports from guessing can't leak in and reshuffle the ranking.
+  quiz.freeze_answer_pool!(5)
 end
 puts "  #{Quiz::THEMES.size} quizzes created (positions 0–#{Quiz::THEMES.size - 1})."
 
@@ -292,6 +295,14 @@ puts "  #{seed_users.size} users seeded across #{Quiz.count} quizzes."
 # ── Random vote counts (placeholder until likes exist) ───────────────────────
 puts "\nAssigning random vote counts to lists…"
 List.find_each { |list| list.update_column(:votes_count, rand(0..200)) }
+
+# Pin IronPulse's Favorites to the top of the popular lists (home + discover both
+# rank by votes_count DESC). Set well above the random max (200) so it always wins.
+iron_pulse_favorites = User.find_by(gamer_tag: "IronPulse")
+                          &.lists&.find_by(name: "Favorites")
+iron_pulse_favorites&.update_column(:votes_count, 999)
+puts iron_pulse_favorites ? "  Pinned IronPulse › Favorites to top (votes_count 999)." \
+                          : "  ⚠️  IronPulse Favorites not found — not pinned."
 
 # ── Activity Feed: follows + posts + comments + likes ────────────────────────
 require "open-uri"

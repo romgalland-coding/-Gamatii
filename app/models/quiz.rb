@@ -57,10 +57,34 @@ class Quiz < ApplicationRecord
     filter.call(Game.all).order(rating: :desc)
   end
 
-  # The top `limit` distinct games for this quiz. De-dupes by title because
-  # picks imported from RAWG can create a second record for a game we already
-  # seeded; ordered highest-rated first, so uniq keeps the best-rated copy.
+  # The top `limit` distinct games for this quiz, highest-rated first.
+  #
+  # Reads the FROZEN set (`answer_game_ids`) when present so the ranking is
+  # stable: a user guessing a game imports a new RAWG Game record that would
+  # otherwise match `answer_scope` and reshuffle the live top-5. The frozen ids
+  # are captured once at creation (see `freeze_answer_pool!`). Falls back to the
+  # live computation for quizzes created before freezing (or in tests).
   def answer_pool(limit)
+    if answer_game_ids.present?
+      by_id = Game.where(id: answer_game_ids).index_by(&:id)
+      answer_game_ids.filter_map { |id| by_id[id] }.first(limit)
+    else
+      live_answer_pool(limit)
+    end
+  end
+
+  # Computes the top-5 from the current Game table and stores their ids, in rank
+  # order, as this quiz's permanent answer set. Idempotent.
+  def freeze_answer_pool!(limit = 5)
+    update!(answer_game_ids: live_answer_pool(limit).map(&:id))
+  end
+
+  private
+
+  # The live, recomputed pool — top `limit` distinct games by rating. De-dupes by
+  # title because picks imported from RAWG can create a second record for a game
+  # we already seeded; ordered highest-rated first, so uniq keeps the best copy.
+  def live_answer_pool(limit)
     answer_scope.uniq { |game| game.title.to_s.downcase.strip }.first(limit)
   end
 end
