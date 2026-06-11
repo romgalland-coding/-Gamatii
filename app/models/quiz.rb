@@ -44,8 +44,8 @@ class Quiz < ApplicationRecord
     { name: "Top 5 Nintendo Switch games", fetch: { platform: "Nintendo Switch" }, filter: platform_is("Nintendo Switch") },
     { name: "Top 5 PlayStation 5 games", fetch: { platform: "PlayStation 5" }, filter: platform_is("PlayStation 5") },
     { name: "Top 5 RPGs", fetch: { genre: "role-playing-games-rpg" }, filter: genre_like("RPG") },
-    { name: "Top 5 Shooters", fetch: { genre: "shooter" }, filter: genre_is("Shooter") },
-    { name: "Top 5 Indie games", fetch: { genre: "indie" }, filter: genre_is("Indie") }
+    { name: "Top 5 Shooters", fetch: { genre: "shooter" }, filter: genre_like("Shooter") },
+    { name: "Top 5 Indie games", fetch: { genre: "indie" }, filter: genre_like("Indie") }
   ].freeze
 
   THEME_BY_NAME = THEMES.index_by { |t| t[:name] }.freeze
