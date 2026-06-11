@@ -12,7 +12,8 @@ class PagesController < ApplicationController
                          .order(Arel.sql("COUNT(list_games.id) DESC"))
                          .limit(4)
 
-    @popular_lists = List.includes(:user, :games).order(votes_count: :desc).limit(4)
+    # COALESCE so a no-votes list (NULL) sorts as 0, not first (matches discover).
+    @popular_lists = List.includes(:user, :games).order(Arel.sql("COALESCE(votes_count, 0) DESC")).limit(4)
 
     if current_user
       followed_ids = current_user.following.pluck(:id) + [current_user.id]
