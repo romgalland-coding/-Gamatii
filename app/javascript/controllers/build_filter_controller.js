@@ -6,10 +6,37 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["panel", "toggleBtn", "form"]
 
+  connect() {
+    const btn = this.toggleBtnTarget
+    const rect = btn.getBoundingClientRect()
+    const initialTop = rect.top
+    const initialRight = window.innerWidth - rect.right
+
+    this._onScroll = () => {
+      const scrolled = window.scrollY > 60
+      btn.classList.toggle("is-scrolled", scrolled)
+      if (scrolled) {
+        btn.style.top = `${initialTop}px`
+        btn.style.right = `${initialRight}px`
+      } else {
+        btn.style.top = ""
+        btn.style.right = ""
+      }
+    }
+    window.addEventListener("scroll", this._onScroll, { passive: true })
+  }
+
+  disconnect() {
+    window.removeEventListener("scroll", this._onScroll)
+  }
+
   // --- Panel ---
 
   toggle() {
     this.panelTarget.classList.toggle("is-open")
+    if (this.panelTarget.classList.contains("is-open") && window.scrollY > 60) {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
   }
 
   close() {
