@@ -9,43 +9,46 @@
 
 <div class="user-profile" data-controller="profile-modal">
 
-  <%# Top bar: back link (public) or nothing, plus settings gear (owner) %>
-  <div class="user-profile__topbar">
-    <% if owner %>
-      <span></span>
-      <%= link_to settings_profile_path, class: "user-profile__settings", aria: { label: "Settings" } do %>
-        <i class="fa-solid fa-gear"></i>
-      <% end %>
-    <% else %>
+  <%# Back link for public profiles only — the owner's settings gear lives in
+      the header now, so owners don't get a standalone topbar row. %>
+  <% unless owner %>
+    <div class="user-profile__topbar">
       <%= link_to lists_path, class: "user-profile__back",
             data: { controller: "back", action: "back#back" } do %>
         <i class="fa-solid fa-chevron-left"></i> Back
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
-  <%# Header: avatar + name + counts %>
+  <%# Header: avatar on the left, name + stats stacked beside it (so the name
+      gets the full width and no longer truncates), settings gear top-right. %>
   <header class="user-profile__header">
     <%= render "users/avatar_editor", user: user, owner: owner %>
 
     <div class="user-profile__id">
       <h1 class="user-profile__name"><%= user.gamer_tag %></h1>
+
+      <div class="user-profile__stats">
+        <button class="user-stat" type="button"
+                data-action="profile-modal#open"
+                data-profile-modal-url-param="<%= followers_user_path(user) %>">
+          <span class="user-stat__count"><%= number_with_delimiter(user.followers.count) %></span>
+          <span class="user-stat__label">Followers</span>
+        </button>
+        <button class="user-stat" type="button"
+                data-action="profile-modal#open"
+                data-profile-modal-url-param="<%= following_user_path(user) %>">
+          <span class="user-stat__count"><%= number_with_delimiter(user.following.count) %></span>
+          <span class="user-stat__label">Following</span>
+        </button>
+      </div>
     </div>
 
-    <div class="user-profile__stats">
-      <button class="user-stat" type="button"
-              data-action="profile-modal#open"
-              data-profile-modal-url-param="<%= followers_user_path(user) %>">
-        <span class="user-stat__count"><%= number_with_delimiter(user.followers.count) %></span>
-        <span class="user-stat__label">Followers</span>
-      </button>
-      <button class="user-stat" type="button"
-              data-action="profile-modal#open"
-              data-profile-modal-url-param="<%= following_user_path(user) %>">
-        <span class="user-stat__count"><%= number_with_delimiter(user.following.count) %></span>
-        <span class="user-stat__label">Following</span>
-      </button>
-    </div>
+    <% if owner %>
+      <%= link_to settings_profile_path, class: "user-profile__settings", aria: { label: "Settings" } do %>
+        <i class="fa-solid fa-gear"></i>
+      <% end %>
+    <% end %>
   </header>
 
   <%# Bio (inline-editable for the owner, read-only otherwise) %>
