@@ -70,6 +70,7 @@
 }
 
 .game-show__cover {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   background-color: #d0d0d0;
@@ -79,6 +80,20 @@
   border-radius: 0.75rem;
   box-shadow: 3px 3px 0 0 #000;
   overflow: hidden;
+}
+
+.game-show__metascore {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #fff;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1.5px solid #000;
 }
 
 .game-show__thumbnails {
@@ -382,5 +397,12 @@
 
   .game-show__title {
     font-size: 2.25rem;
+  }
+
+  .game-show__metascore {
+    font-size: 1.25rem;
+    padding: 0.4rem 0.6rem;
+    top: 0.75rem;
+    right: 0.75rem;
   }
 }
