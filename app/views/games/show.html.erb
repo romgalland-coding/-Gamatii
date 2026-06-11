@@ -86,7 +86,7 @@
 
   <% if @game.store_links.present? %>
     <h2 class="game-show__section-title">Buy</h2>
-    <% store_rows = @game.store_links.size > 6 ? @game.store_links.each_slice((@game.store_links.size / 2.0).ceil).to_a : [@game.store_links] %>
+    <% store_rows = @game.store_links.size > 3 ? @game.store_links.each_slice((@game.store_links.size / 2.0).ceil).to_a : [@game.store_links] %>
     <div class="game-show__stores-wrap">
       <% store_rows.each do |row| %>
         <div class="game-show__stores">
