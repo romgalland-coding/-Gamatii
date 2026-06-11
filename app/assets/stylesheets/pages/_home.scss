@@ -82,6 +82,43 @@
 }
 
 // ---------- Sections ----------
+// Home tab switcher — left-aligned underline nav (fewer pill shapes on screen).
+.home-tabs {
+  display: flex;
+  gap: 1.25rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.home-tab {
+  position: relative;
+  padding: 0 0 0.6rem;
+  border: none;
+  background: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.1;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+
+  // Active underline indicator, sitting on the container's bottom border.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background-color: transparent;
+  }
+
+  &--active {
+    color: #000;
+    &::after { background-color: #000; }
+  }
+
+  &:hover { color: #000; }
+}
+
 .home-section {
   display: flex;
   flex-direction: column;
@@ -95,7 +132,7 @@
   }
 
   &__subtitle {
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: rgba(0, 0, 0, 0.5);
     margin: -0.4rem 0 0;
   }

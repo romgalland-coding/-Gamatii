@@ -1,4 +1,4 @@
-<div class="home-page" data-controller="profile-modal">
+<div class="home-page" data-controller="profile-modal home-tabs">
 
   <%# ---------- Welcome ---------- %>
   <header class="home-welcome">
@@ -18,12 +18,22 @@
     <i class="fa-solid fa-arrow-right quiz-cta__arrow"></i>
   <% end %>
 
-  <%# ---------- Activity Feed ---------- %>
-  <% if current_user %>
-    <section class="home-section">
-      <header class="home-section__head">
-        <h2 class="home-section__title mb-2">🗣️ Activity Feed</h2>
-      </header>
+  <%# ---------- Tab switcher ---------- %>
+  <div class="home-tabs" role="tablist">
+    <button type="button" class="home-tab home-tab--active"
+            data-home-tabs-target="tab" data-tab="feed"
+            data-action="home-tabs#switch">Feed</button>
+    <button type="button" class="home-tab"
+            data-home-tabs-target="tab" data-tab="games"
+            data-action="home-tabs#switch">Popular Games</button>
+    <button type="button" class="home-tab"
+            data-home-tabs-target="tab" data-tab="lists"
+            data-action="home-tabs#switch">Popular Lists</button>
+  </div>
+
+  <%# ---------- Feed panel (default) ---------- %>
+  <section class="home-section" data-home-tabs-target="panel" data-tab="feed">
+    <% if current_user %>
       <p class="home-section__subtitle">Posts from people you follow.</p>
 
       <div class="feed-actions">
@@ -55,14 +65,13 @@
           </p>
         <% end %>
       </div>
-    </section>
-  <% end %>
+    <% else %>
+      <p class="home-section__subtitle">Log in to see posts from people you follow.</p>
+    <% end %>
+  </section>
 
-  <%# ---------- Popular Games ---------- %>
-  <section class="home-section home-section--spaced">
-    <header class="home-section__head">
-      <h2 class="home-section__title">🔥 Popular games this week</h2>
-    </header>
+  <%# ---------- Popular Games panel ---------- %>
+  <section class="home-section" data-home-tabs-target="panel" data-tab="games" hidden>
     <p class="home-section__subtitle">Most added to lists in the last 3 days.</p>
 
     <div class="popular-games">
@@ -80,11 +89,8 @@
     </div>
   </section>
 
-  <%# ---------- Popular Lists ---------- %>
-  <section class="home-section home-section--spaced">
-    <header class="home-section__head">
-      <h2 class="home-section__title">📚 Popular lists</h2>
-    </header>
+  <%# ---------- Popular Lists panel ---------- %>
+  <section class="home-section" data-home-tabs-target="panel" data-tab="lists" hidden>
     <p class="home-section__subtitle">Most-liked lists right now.</p>
 
     <div class="popular-lists">
@@ -111,12 +117,6 @@
       <% end %>
     </div>
   </section>
-
-  <%# ---------- Create a list CTA ---------- %>
-  <% if current_user %>
-    <%= link_to "✦ Create a new list", new_list_path,
-                class: "btn btn-primary w-100 home-create-btn" %>
-  <% end %>
 
   <div id="user-modal" data-profile-modal-target="container"></div>
 
