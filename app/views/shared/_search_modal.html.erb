@@ -1,7 +1,8 @@
 <div data-controller="search-modal" data-list-id="<%= list_id %>">
-  <button class="btn btn-primary list-show__add"
-          data-action="click->search-modal#open">
-    <i class="fa-solid fa-magnifying-glass"></i> Search title
+  <button class="list-show__search-btn"
+          data-action="click->search-modal#open"
+          aria-label="Search a game by title">
+    <i class="fa-solid fa-magnifying-glass"></i>
   </button>
 
   <div data-search-modal-target="modal" class="search-modal">
