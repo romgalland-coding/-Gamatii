@@ -5,7 +5,7 @@
   </div>
 
   <div class="card list-show__header"
-       data-controller="share"
+       data-controller="share manage-menu"
        data-share-url-value="<%= list_url(@list) %>"
        data-share-title-value="<%= @list.name %>">
     <div class="list-show__header-cover" id="list-header-cover-<%= @list.id %>">
@@ -13,6 +13,15 @@
     </div>
     <div class="list-show__header-info">
       <h1 class="list-show__name"><%= @list.name %></h1>
+      <% if current_user == @list.user %>
+        <%= form_with model: @list, method: :patch, class: "list-show__name-form" do |f| %>
+          <%= f.text_field :name, class: "list-show__name-input", maxlength: 25,
+                aria: { label: "List name" } %>
+          <button type="submit" class="list-show__name-save" aria-label="Save name">
+            <i class="fa-solid fa-check"></i>
+          </button>
+        <% end %>
+      <% end %>
       <p class="list-show__meta" id="list-games-count-<%= @list.id %>"><%= pluralize(@list_games.size, "game") %></p>
       <p class="list-show__meta">by <%= link_to @list.user.gamer_tag, user_path(@list.user), class: "list-show__author-link" %></p>
       <div class="list-show__stats">
@@ -24,40 +33,58 @@
         <% end %>
       </div>
     </div>
+
+    <%# Owner-only "manage" menu — rare admin actions (edit, delete) tucked into
+        the header card instead of competing with the content actions. %>
+    <% if current_user == @list.user %>
+      <div class="list-show__manage">
+        <button class="list-show__manage-btn"
+                data-action="click->manage-menu#toggle"
+                aria-label="Manage list">
+          <i class="fa-solid fa-ellipsis"></i>
+        </button>
+        <div class="list-show__manage-menu" data-manage-menu-target="menu">
+          <button class="list-show__manage-item"
+                  data-action="click->list-edit#toggle click->manage-menu#close">
+            <i class="fa-solid fa-pen"></i> Edit list
+          </button>
+          <button class="list-show__manage-item list-show__manage-item--danger"
+                  data-action="click->confirm-dialog#open click->manage-menu#close">
+            <i class="fa-solid fa-trash"></i> Delete list
+          </button>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <% if current_user == @list.user %>
-    <%# Primary add path: browse & bulk-add via the grid/swipe discovery view. %>
-    <%= link_to build_list_path(@list), class: "list-show__discover-btn" do %>
-      <i class="fa-solid fa-compass"></i> Discover games
-    <% end %>
+    <%# Done-editing bar — only visible while editing (toggles edit mode off). %>
+    <button class="list-show__done-btn" data-action="click->list-edit#toggle">
+      <i class="fa-solid fa-check"></i> Done editing
+    </button>
 
-    <div class="list-show__cta">
-      <button class="list-show__edit-btn"
-              data-action="click->list-edit#toggle">
-        <i class="fa-solid fa-pen"></i> Edit
-      </button>
-      <%= render "shared/search_modal", list_id: @list.id %>
-      <% if @list_games.any? %>
-        <button class="list-show__filter-btn"
-                data-action="click->list-filter#toggle"
-                data-list-filter-target="toggleBtn">
-          <i class="fa-solid fa-sliders"></i> Filter
-          <span class="list-show__filter-count" data-list-filter-target="count"></span>
-        </button>
+    <%# Find & add games: the primary job on your own list. Discover (browse +
+        bulk-add) is the main CTA; the search icon adds a game by title. %>
+    <div class="list-show__find">
+      <%= link_to build_list_path(@list), class: "list-show__discover-btn" do %>
+        <i class="fa-solid fa-compass"></i> Discover games
       <% end %>
+      <%= render "shared/search_modal", list_id: @list.id %>
     </div>
 
+    <%# Filter — a floating control, reachable while scrolling the games. %>
     <% if @list_games.any? %>
+      <button class="list-show__filter-fab"
+              data-action="click->list-filter#toggle"
+              data-list-filter-target="toggleBtn"
+              aria-label="Filter games">
+        <i class="fa-solid fa-sliders"></i>
+        <span class="list-show__filter-count" data-list-filter-target="count"></span>
+      </button>
       <%= render "lists/filter_panel", list_games: @list_games %>
     <% end %>
 
     <div class="list-show__delete-zone" data-controller="confirm-dialog">
-      <button class="btn btn-danger w-100 list-show__delete"
-              data-action="click->confirm-dialog#open">
-        Delete list
-      </button>
-
       <dialog class="confirm-dialog"
               data-confirm-dialog-target="dialog"
               data-action="click->confirm-dialog#backdropClose">

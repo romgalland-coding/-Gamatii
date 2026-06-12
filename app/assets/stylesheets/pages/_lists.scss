@@ -135,6 +135,7 @@
 }
 
 .list-show__header {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -142,6 +143,72 @@
   padding: 0;
   min-height: 160px;
   background-color: #fff;
+}
+
+// "⋯" manage menu in the header's top-right (owner-only admin actions).
+.list-show__manage {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 20;
+
+  &-btn {
+    width: 2.1rem;
+    height: 2.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.55rem;
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &:hover { background: $mat-bg; }
+  }
+
+  &-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    min-width: 9.5rem;
+    background: #fff;
+    border: 2.5px solid #000;
+    border-radius: 0.75rem;
+    box-shadow: 3px 3px 0 0 #000;
+    padding: 0.3rem;
+    z-index: 30;
+
+    &.is-open { display: block; }
+  }
+
+  &-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #000;
+    text-align: left;
+    cursor: pointer;
+
+    i { width: 1rem; text-align: center; color: rgba(0, 0, 0, 0.55); }
+
+    &:hover { background: $mat-bg; }
+
+    &--danger {
+      color: $mat-red-dark;
+      i { color: $mat-red-dark; }
+      &:hover { background: $mat-red-light; }
+    }
+  }
 }
 
 .list-show__header-cover {
@@ -197,6 +264,45 @@
   line-height: 1.1;
 }
 
+// Inline list-name editor (shown in place of the <h1> while editing).
+.list-show__name-form {
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.list-show__name-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: $headers-font;
+  line-height: 1.1;
+  padding: 0.1rem 0.4rem;
+  border: 2px solid #000;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #000;
+
+  &:focus { outline: none; box-shadow: 2px 2px 0 0 #000; }
+}
+
+.list-show__name-save {
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 2px solid #000;
+  background: $mat-blue;
+  color: #000;
+  cursor: pointer;
+
+  &:active { transform: translate(1px, 1px); }
+}
+
 .list-show__meta {
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.55);
@@ -212,20 +318,29 @@
 }
 
 .list-show-page {
-  .list-game-card__remove,
-  .list-show__delete-zone {
-    display: none;
-  }
+  // Per-game remove (trash) buttons only appear in edit mode.
+  .list-game-card__remove { display: none; }
+
+  // Name editing: static <h1> by default, inline form only while editing.
+  .list-show__name-form { display: none; }
+  // "Done editing" button only appears while editing.
+  .list-show__done-btn { display: none; }
 
   &.is-editing {
     .list-game-card__remove { display: flex; }
-    .list-show__delete-zone { display: block; }
-
-    .list-show__edit {
-      color: #000;
-      opacity: 1;
-    }
+    .list-show__name { display: none; }
+    .list-show__name-form { display: flex; }
+    .list-show__done-btn { display: flex; }
+    // Editing is a focused mode: hide the manage "⋯" and the find row so the
+    // header shows the name editor + Done, and the games show their remove btns.
+    .list-show__manage { display: none; }
+    .list-show__find { display: none; }
   }
+
+  // The delete-zone only wraps the confirm <dialog> (a fixed-position modal), so
+  // it should take no space in the column flow — otherwise it adds a stray gap
+  // between the Discover row and the games.
+  .list-show__delete-zone { display: contents; }
 }
 
 .list-show__stats {
@@ -288,61 +403,32 @@
   &:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 #000; }
 }
 
-.list-show__cta {
-  display: flex;
-  gap: 0.75rem;
-
-  > [data-controller="search-modal"] {
-    flex: 2;
-    display: flex;
-  }
-}
-
-.list-show__edit-btn {
-  display: inline-flex;
+// "Done editing" — full-width confirm shown only in edit mode.
+.list-show__done-btn {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  flex: 1;
-  min-width: 0;
-  padding: 0.6rem 1.25rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
   border-radius: 999px;
   border: 2.5px solid #000;
   box-shadow: 2px 2px 0 0 #000;
-  background-color: $mat-yellow;
+  background-color: $mat-green;
   font-weight: 700;
   font-size: 1rem;
   color: #000;
   cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 
-  &:hover { color: #000; }
+  &:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 #000; }
 }
 
-.list-show__add {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  flex: 2;
-  padding: 0.6rem 1.25rem !important;
-  border-radius: 999px !important;
-  border: 2.5px solid #000 !important;
-  box-shadow: 2px 2px 0 0 #000 !important;
-  background-color: #fff !important;
-  font-weight: 700 !important;
-  font-size: 1rem !important;
-  color: #000 !important;
-  cursor: pointer;
-
-  &:hover { color: #000 !important; background-color: $mat-blue-light !important; }
-}
-
+// Inline filter button (still used on the build/discovery page header).
 .list-show__filter-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  flex: 1;
-  min-width: 0;
   padding: 0.6rem 1.25rem;
   border-radius: 999px;
   border: 2.5px solid #000;
@@ -354,24 +440,74 @@
   cursor: pointer;
 
   &:hover { color: #000; }
+  &:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 #000; }
 
-  &.is-scrolled {
-    position: fixed;
-    top: 1rem;
-    right: 1.5rem;
-    z-index: 1000;
-    padding: 0.6rem 1.25rem;
-    .filter-btn-label { display: none; }
-  }
+  &.is-active { background-color: $mat-blue; }
+}
 
-  &.is-active {
+// Find & add row: primary Discover CTA + a search-by-title icon button.
+.list-show__find {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
 
+  .list-show__discover-btn { flex: 1; }
 
-    .list-show__filter-count { background: #000000; color: white; }
-  }
+  // The search-modal controller wraps its trigger; let the wrapper sit inline.
+  > [data-controller="search-modal"] { display: flex; }
+}
+
+// Square search icon button beside Discover (neutral, matches the toolbar).
+.list-show__search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 2.5px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+  background-color: #fff;
+  font-size: 1.05rem;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:hover { background-color: $mat-bg; }
+  &:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 #000; }
+}
+
+// Filter — floating action button, fixed bottom-right above the nav.
+.list-show__filter-fab {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 6rem;
+  z-index: 1000;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2.5px solid #000;
+  box-shadow: 3px 3px 0 0 #000;
+  background-color: #fff;
+  font-size: 1.15rem;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:hover { background-color: $mat-bg; }
+  &:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 #000; }
+
+  // Active = filters applied: fill blue and show the count badge.
+  &.is-active { background-color: $mat-blue; }
 }
 
 .list-show__filter-count {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
   display: none;
   align-items: center;
   justify-content: center;
@@ -1269,6 +1405,11 @@
 
   .list-show-page {
     max-width: 900px;
+  }
+
+  // No bottom nav on desktop, so the filter FAB can sit lower.
+  .list-show__filter-fab {
+    bottom: 2rem;
   }
 
   .lists-title {
